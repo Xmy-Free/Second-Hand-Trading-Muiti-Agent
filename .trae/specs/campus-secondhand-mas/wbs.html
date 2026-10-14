@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>校园二手交易平台 Multi-Agent · WBS 工作分解结构</title>
+<style>
+  :root{
+    --ink:#0f172a; --sub:#475569; --line:#cbd5e1; --bg:#f4f7fb;
+    --c1:#4f46e5; --c2:#0ea5e9; --c3:#14b8a6; --c4:#22c55e; --c5:#f59e0b;
+    --c6:#f97316; --c7:#ef4444; --c8:#8b5cf6; --c9:#64748b;
+    --card-shadow:0 6px 18px rgba(15,23,42,.08), 0 1px 3px rgba(15,23,42,.06);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    font-family:"Microsoft YaHei","PingFang SC","Segoe UI",system-ui,sans-serif;
+    background:
+      radial-gradient(1200px 420px at 50% -120px, #eef2ff 0%, rgba(238,242,255,0) 60%),
+      var(--bg);
+    color:var(--ink);
+    display:flex; flex-direction:column;
+    height:100vh; overflow:hidden;
+  }
+  /* ============ Header ============ */
+  header{
+    padding:14px 28px 10px;
+    display:flex; align-items:flex-end; justify-content:space-between; gap:18px;
+    flex:0 0 auto;
+  }
+  .title h1{font-size:21px; font-weight:800; letter-spacing:.5px;}
+  .title h1 .accent{
+    background:linear-gradient(90deg,var(--c1),var(--c3));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .title p{margin-top:3px; font-size:12px; color:var(--sub); letter-spacing:.4px;}
+  .meta{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
+  .tag{
+    font-size:11px; padding:4px 10px; border-radius:999px;
+    background:#fff; border:1px solid #e2e8f0; color:var(--sub);
+    box-shadow:0 1px 2px rgba(15,23,42,.04);
+  }
+  .tag b{color:var(--ink);}
+  .tag.p0{border-color:#c7d2fe; background:#eef2ff; color:#3730a3;}
+  .tag.p1{border-color:#fed7aa; background:#fff7ed; color:#9a3412;}
+
+  /* ============ Chart ============ */
+  .canvas{flex:1 1 auto; padding:4px 24px 8px; display:flex; flex-direction:column; min-height:0;}
+  .root{
+    align-self:center; text-align:center;
+    background:linear-gradient(135deg,#312e81,#4f46e5 55%,#0d9488);
+    color:#fff; border-radius:14px; padding:10px 30px;
+    box-shadow:0 12px 26px rgba(49,46,129,.32);
+    flex:0 0 auto;
+  }
+  .root .r-en{font-size:10px; letter-spacing:2.5px; opacity:.75; text-transform:uppercase;}
+  .root .r-cn{font-size:17px; font-weight:800; margin-top:1px;}
+
+  .stem{width:2px; height:14px; background:var(--line); flex:0 0 auto;}
+  .rail{
+    position:relative; flex:0 0 auto; height:2px; width:calc(100% - 1*(100%/9));
+    /* 跨越各列中心，由 JS 无关的固定比例控制 */
+    align-self:center; background:var(--line);
+  }
+  .phases{
+    flex:1 1 auto; min-height:0;
+    display:grid; grid-template-columns:repeat(9,1fr); gap:10px;
+  }
+  .phase{display:flex; flex-direction:column; min-height:0; position:relative;}
+  .phase::before{
+    content:""; position:absolute; top:-16px; left:50%; width:2px; height:16px;
+    background:var(--line);
+  }
+  .pcard{
+    background:#fff; border-radius:12px; box-shadow:var(--card-shadow);
+    display:flex; flex-direction:column; height:100%;
+    border:1px solid #e8edf4; overflow:hidden;
+  }
+  .phead{
+    padding:8px 9px 7px; color:#fff; position:relative;
+    display:flex; flex-direction:column; gap:1px;
+  }
+  .phead .no{
+    position:absolute; right:8px; top:7px;
+    font-size:9px; font-weight:700; opacity:.85;
+    background:rgba(255,255,255,.18); border-radius:6px; padding:1px 6px;
+  }
+  .phead .nm{font-size:13px; font-weight:800; line-height:1.25; padding-right:26px;}
+  .phead .en{font-size:8.5px; letter-spacing:1px; opacity:.8; font-weight:600;}
+  .pkgs{padding:7px 8px 6px; display:flex; flex-direction:column; justify-content:space-evenly; gap:5px; flex:1 1 auto;}
+  .pkg{
+    font-size:11px; line-height:1.3; color:#334155;
+    background:#f8fafc; border:1px solid #edf1f6; border-left-width:3px;
+    border-radius:7px; padding:4px 7px;
+  }
+  .pkg .code{font-weight:700; color:#0f172a;}
+  .pkg.p1{background:#fff8f0; border-color:#fde6c8;}
+  .deliver{
+    margin:0 8px 8px; padding:5px 8px; border-radius:8px;
+    font-size:10px; line-height:1.3; color:#1e293b;
+    background:#f1f5f9; border:1px dashed #cbd5e1; flex:0 0 auto;
+  }
+  .deliver b{color:var(--c1);}
+
+  /* phase colors */
+  .bg1{background:linear-gradient(135deg,#4338ca,#6366f1);} .lk1{border-left-color:var(--c1);}
+  .bg2{background:linear-gradient(135deg,#0284c7,#0ea5e9);} .lk2{border-left-color:var(--c2);}
+  .bg3{background:linear-gradient(135deg,#0f766e,#14b8a6);} .lk3{border-left-color:var(--c3);}
+  .bg4{background:linear-gradient(135deg,#15803d,#22c55e);} .lk4{border-left-color:var(--c4);}
+  .bg5{background:linear-gradient(135deg,#d97706,#f59e0b);} .lk5{border-left-color:var(--c5);}
+  .bg6{background:linear-gradient(135deg,#ea580c,#f97316);} .lk6{border-left-color:var(--c6);}
+  .bg7{background:linear-gradient(135deg,#dc2626,#ef4444);} .lk7{border-left-color:var(--c7);}
+  .bg8{background:linear-gradient(135deg,#7c3aed,#8b5cf6);} .lk8{border-left-color:var(--c8);}
+  .bg9{background:linear-gradient(135deg,#475569,#64748b);} .lk9{border-left-color:var(--c9);}
+
+  /* ============ Milestones ============ */
+  .milestones{
+    flex:0 0 auto; margin:2px 24px 0;
+    background:#fff; border:1px solid #e8edf4; border-radius:12px;
+    box-shadow:var(--card-shadow);
+    padding:8px 14px; display:flex; align-items:center; gap:0;
+  }
+  .ms-title{font-size:11px; font-weight:800; color:var(--c1); white-space:nowrap; margin-right:10px;}
+  .ms-track{flex:1; display:flex; justify-content:space-between; position:relative;}
+  .ms-track::before{
+    content:""; position:absolute; top:7px; left:2%; right:2%; height:2px;
+    background:linear-gradient(90deg,var(--c1),var(--c3),var(--c5),var(--c7));
+    border-radius:2px; opacity:.55;
+  }
+  .ms{position:relative; z-index:1; text-align:center; flex:1;}
+  .ms .dot{
+    width:14px;height:14px;border-radius:50%; margin:0 auto 3px;
+    background:#fff; border:3px solid var(--c1);
+  }
+  .ms:nth-child(2) .dot{border-color:var(--c2);}
+  .ms:nth-child(3) .dot{border-color:var(--c3);}
+  .ms:nth-child(4) .dot{border-color:var(--c5);}
+  .ms:nth-child(5) .dot{border-color:var(--c7);}
+  .ms:nth-child(6) .dot{border-color:var(--c8);}
+  .ms .mt{font-size:10.5px; font-weight:700; color:#1e293b;}
+  .ms .md{font-size:9px; color:var(--sub);}
+
+  footer{
+    flex:0 0 auto; padding:7px 28px 10px;
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:10px; color:var(--sub);
+  }
+  .legend{display:flex; gap:14px;}
+  .legend span{display:inline-flex; align-items:center; gap:5px;}
+  .sw{width:10px;height:10px;border-radius:3px;display:inline-block;}
+
+  /* ====== Responsive scaling: narrow / short screens auto-fit, never scroll ====== */
+  @media (max-width:1500px){
+    .pkg{font-size:10.5px; padding:3px 6px;}
+    .phead .nm{font-size:12px;}
+  }
+  @media (max-height:820px){
+    header{padding:9px 24px 6px;}
+    .title h1{font-size:18px;}
+    .root{padding:7px 22px;} .root .r-cn{font-size:15px;}
+    .stem{height:10px;} .phase::before{top:-12px;height:12px;}
+    .milestones{padding:6px 12px;} .ms .dot{width:11px;height:11px;border-width:2.5px;margin-bottom:2px;}
+    .ms .md{display:none;}
+    footer{padding:5px 24px 7px;}
+    .deliver{display:none;}
+  }
+  @media print{ body{height:auto;overflow:visible;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title">
+    <h1>校园二手交易平台 <span class="accent">Multi-Agent 系统</span> · WBS 工作分解结构</h1>
+    <p>1 个协调管理 Agent ＋ 8 个专家 Agent ｜ 冲突检测 → 对等协商 → 协调仲裁 → 人工兜底 ｜ 依据第 1 周周报（仅作参考）重新规划</p>
+  </div>
+  <div class="meta">
+    <span class="tag">学号 <b>2400320321</b></span>
+    <span class="tag">梁奕琦 / 曾志新老师</span>
+    <span class="tag p0"><b>P0</b> 必交付</span>
+    <span class="tag p1"><b>P1</b> 增强项</span>
+    <span class="tag">v1.0 · 2026-10-11</span>
+  </div>
+</header>
+
+<div class="canvas">
+  <div class="root">
+    <div class="r-en">Campus Second-hand Trading · Multi-Agent Platform</div>
+    <div class="r-cn">校园二手交易 Multi-Agent 平台（可运行 · 可演示 · 可解释 · 可复现）</div>
+  </div>
+  <div class="stem"></div>
+  <div class="rail"></div>
+
+  <div class="phases">
+
+    <!-- W1 -->
+    <div class="phase">
+      <div class="pcard">
+        <div class="phead bg1"><span class="no">阶段 1</span><span class="nm">需求与详细设计</span><span class="en">DESIGN</span></div>
+        <div class="pkgs">
+          <div class="pkg lk1"><span class="code">1.1</span> PRD 需求评审与冻结</div>
+          <div class="pkg lk1"><span class="code">1.2</span> 9 张 Agent 角色卡片（IO 契约/异常码）</div>
+          <div class="pkg lk1"><span class="code">1.3</span> ACL 消息通信协议规范</div>
+          <div class="pkg lk1"><span class="code">1.4</span> 冲突检测清单与仲裁评分卡</div>
+          <div class="pkg lk1"><span class="code">1.5</span> ER 模型 / 订单状态机详设</div>
+        </div>
+        <div class="deliver"><b>里程碑 M1</b>：详细设计说明书冻结</div>
+      </div>
+    </div>
+
+    <!-- W2 -->
+    <div class="phase">
+      <div class="pcard">
+        <div class="phead bg2"><span class="no">阶段 2</span><span class="nm">工程基础设施</span><span class="en">FOUNDATION</span></div>
+        <div class="pkgs">
+          <div class="pkg lk2"><span class="code">2.1</span> 前后端工程骨架与配置</div>
+          <div class="pkg lk2"><span class="code">2.2</span> 数据模型建表与迁移</div>
+          <div class="pkg lk2"><span class="code">2.3</span> JWT 认证与角色鉴权</div>
+          <div class="pkg lk2"><span class="code">2.4</span> 种子账号 / 商品 / 历史价</div>
+          <div class="pkg lk2"><span class="code">2.5</span> 统一响应 / 日志 / 异常</div>
+        </div>
+        <div class="deliver"><b>产出</b>：可登录的空系统骨架</div>
+      </div>
+    </div>
+
+    <!-- W3 -->
+    <div class="phase">
+      <div class="pcard">
+        <div class="phead bg3"><span class="no">阶段 3</span><span class="nm">Agent 通信内核</span><span class="en">MAS KERNEL</span></div>
+        <div class="pkgs">
+          <div class="pkg lk3"><span class="code">3.1</span> 类型化黑板 State + 检查点</div>
+          <div class="pkg lk3"><span class="code">3.2</span> ACL 消息总线与 Schema 校验</div>
+          <div class="pkg lk3"><span class="code">3.3</span> Agent 基类契约 + 注册表</div>
+          <div class="pkg lk3"><span class="code">3.4</span> LLM 适配层 + RuleLLM 兜底</div>
+          <div class="pkg lk3"><span class="code">3.5</span> 轨迹记录 / 时间旅行</div>
+        </div>
+        <div class="deliver"><b>里程碑 M2</b>：内核就绪 · AC-8/10/11</div>
+      </div>
+    </div>
+
+    <!-- W4 -->
+    <div class="phase">
+      <div class="pcard">
+        <div class="phead bg4"><span class="no">阶段 4</span><span class="nm">九类 Agent 实现</span><span class="en">AGENTS ×9</span></div>
+        <div class="pkgs">
+          <div class="pkg lk4"><span class="code">4.1</span> 协调者编排图</div>
+          <div class="pkg lk4"><span class="code">4.2</span> 用户代理 Agent</div>
+          <div class="pkg lk4"><span class="code">4.3</span> 商品 / 审核 Agent</div>
+          <div class="pkg lk4"><span class="code">4.4</span> 搜索推荐 Agent</div>
+          <div class="pkg lk4"><span class="code">4.5</span> 议价谈判 Agent</div>
+          <div class="pkg lk4"><span class="code">4.6</span> 交易履约 Agent</div>
+          <div class="pkg lk4"><span class="code">4.7</span> 信用评价 Agent</div>
+          <div class="pkg lk4"><span class="code">4.8</span> 纠纷仲裁 Agent</div>
+        </div>
+        <div class="deliver"><b>里程碑 M3</b>：主链路命令行贯通</div>
+      </div>
+    </div>
+
+    <!-- W5 -->
+    <div class="phase">
+      <div class="pcard">
+        <div class="phead bg5"><span class="no">阶段 5</span><span class="nm">冲突决策引擎</span><span class="en">CONFLICT ENGINE</span></div>
+        <div class="pkgs">
+          <div class="pkg lk5"><span class="code">5.1</span> 四类冲突检测</div>
+          <div class="pkg lk5"><span class="code">5.2</span> 一级协商：让步 + 纳什参考</div>
+          <div class="pkg lk5"><span class="code">5.3</span> 二级仲裁：效用 + 加权投票</div>
+          <div class="pkg lk5"><span class="code">5.4</span> 三级人工 interrupt + 冻结</div>
+          <div class="pkg lk5"><span class="code">5.5</span> 一票否决与 Agent 熔断</div>
+        </div>
+        <div class="deliver"><b>里程碑 M4</b>：冲突机制完成 · 研究核心</div>
+      </div>
+    </div>
+
+    <!-- W6 -->
+    <div class="phase">
+      <div class="pcard">
+        <div class="phead bg6"><span class="no">阶段 6</span><span class="nm">业务 API 层</span><span class="en">API / WS</span></div>
+        <div class="pkgs">
+          <div class="pkg lk6"><span class="code">6.1</span> 商品 / 审核接口</div>
+          <div class="pkg lk6"><span class="code">6.2</span> 搜索推荐接口</div>
+          <div class="pkg lk6"><span class="code">6.3</span> 议价 WebSocket 实时通道</div>
+          <div class="pkg lk6"><span class="code">6.4</span> 订单 / 支付 / 交付接口</div>
+          <div class="pkg lk6"><span class="code">6.5</span> 评价 / 信用接口</div>
+          <div class="pkg lk6"><span class="code">6.6</span> 申诉仲裁 / 管理接口</div>
+        </div>
+        <div class="deliver"><b>产出</b>：OpenAPI 全量接口</div>
+      </div>
+    </div>
+
+    <!-- W7 -->
+    <div class="phase">
+      <div class="pcard">
+        <div class="phead bg7"><span class="no">阶段 7</span><span class="nm">Web 前端</span><span class="en">VUE 3 UI</span></div>
+        <div class="pkgs">
+          <div class="pkg lk7"><span class="code">7.1</span> 脚手架 / 登录 / 布局</div>
+          <div class="pkg lk7"><span class="code">7.2</span> 发布页 / 我的商品</div>
+          <div class="pkg lk7"><span class="code">7.3</span> 市场 / 详情 / 推荐理由</div>
+          <div class="pkg lk7"><span class="code">7.4</span> 议价室（轮次/倒计时/纳什价）</div>
+          <div class="pkg lk7"><span class="code">7.5</span> 订单 / 支付 / 评价 / 信用</div>
+          <div class="pkg lk7"><span class="code">7.6</span> 申诉页与裁决书</div>
+          <div class="pkg lk7"><span class="code">7.7</span> 管理员人工工作台</div>
+          <div class="pkg p1 lk7"><span class="code">7.8</span> 黑板监控大屏 <b>P1</b></div>
+        </div>
+        <div class="deliver"><b>里程碑 M5</b>：全栈联调 · AC-2/13/14</div>
+      </div>
+    </div>
+
+    <!-- W8 -->
+    <div class="phase">
+      <div class="pcard">
+        <div class="phead bg8"><span class="no">阶段 8</span><span class="nm">剧本 · 测试 · 实验</span><span class="en">QA / LAB</span></div>
+        <div class="pkgs">
+          <div class="pkg lk8"><span class="code">8.1</span> ≥10 个冲突剧本（C1–C8+）</div>
+          <div class="pkg lk8"><span class="code">8.2</span> 并发抢单一致性测试</div>
+          <div class="pkg lk8"><span class="code">8.3</span> LLM 故障注入 / 降级测试</div>
+          <div class="pkg lk8"><span class="code">8.4</span> pytest 回归与覆盖率</div>
+          <div class="pkg p1 lk8"><span class="code">8.5</span> 效用权重对比实验 <b>P1</b></div>
+        </div>
+        <div class="deliver"><b>产出</b>：测试报告 / 实验记录</div>
+      </div>
+    </div>
+
+    <!-- W9 -->
+    <div class="phase">
+      <div class="pcard">
+        <div class="phead bg9"><span class="no">阶段 9</span><span class="nm">部署与交付</span><span class="en">DELIVERY</span></div>
+        <div class="pkgs">
+          <div class="pkg lk9"><span class="code">9.1</span> 一键启动脚本（免装依赖）</div>
+          <div class="pkg lk9"><span class="code">9.2</span> README / 部署文档</div>
+          <div class="pkg p1 lk9"><span class="code">9.3</span> Docker Compose <b>P1</b></div>
+          <div class="pkg lk9"><span class="code">9.4</span> 答辩演示脚本与数据</div>
+          <div class="pkg lk9"><span class="code">9.5</span> 周报 / 报告素材沉淀</div>
+        </div>
+        <div class="deliver"><b>里程碑 M6</b>：系统交付验收</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="milestones">
+    <div class="ms-title">◆ 关键里程碑</div>
+    <div class="ms-track">
+      <div class="ms"><div class="dot"></div><div class="mt">M1 设计冻结</div><div class="md">PRD/协议/详设</div></div>
+      <div class="ms"><div class="dot"></div><div class="mt">M2 内核就绪</div><div class="md">黑板/ACL/LLM双通道</div></div>
+      <div class="ms"><div class="dot"></div><div class="mt">M3 主链路贯通</div><div class="md">9 Agent 端到端</div></div>
+      <div class="ms"><div class="dot"></div><div class="mt">M4 冲突机制完成</div><div class="md">三级阶梯+否决熔断</div></div>
+      <div class="ms"><div class="dot"></div><div class="mt">M5 全栈联调</div><div class="md">前端+管理台</div></div>
+      <div class="ms"><div class="dot"></div><div class="mt">M6 交付验收</div><div class="md">测试/文档/演示</div></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="legend">
+    <span><i class="sw" style="background:#eef2ff;border:1px solid #c7d2fe"></i>P0 核心工作包</span>
+    <span><i class="sw" style="background:#fff8f0;border:1px solid #fde6c8"></i>P1 增强工作包</span>
+    <span><i class="sw" style="background:linear-gradient(90deg,#4f46e5,#14b8a6)"></i>阶段依赖：设计 → 基础设施 → 内核 → Agent → 冲突 → API → 前端 → 测试 → 交付</span>
+  </div>
+  <div>配套文档：spec.md（需求文档 + 技术栈） · tasks.md（实施任务队列）</div>
+</footer>
+
+</body>
+</html>

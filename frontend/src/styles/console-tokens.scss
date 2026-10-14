@@ -1,0 +1,307 @@
+// =============================================================
+// Mission Control 控制台 · 双主题语义 Token（--cc-*）
+// 深色：深空蓝黑 + 霓虹辉光 + 玻璃拟态（沿用既有视觉）
+// 浅色：云白 / 雾灰底 + 品牌靛蓝 #6366F1 / 青 #0891B2 点缀 + 柔和投影
+// Token 仅被控制台组件消费，挂在 :root 上不影响业务页面
+// =============================================================
+
+// =============================================================
+// 深色主题（默认）
+// =============================================================
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  // -------- 表面层级 --------
+  --cc-panel: rgba(255, 255, 255, 0.035);
+  --cc-panel-solid: rgba(17, 25, 48, 0.65);
+  --cc-panel-hover: rgba(255, 255, 255, 0.06);
+  --cc-raise: rgba(255, 255, 255, 0.045);
+  --cc-raise-2: rgba(255, 255, 255, 0.03);
+  --cc-inset: rgba(2, 8, 23, 0.5);
+  --cc-inset-2: rgba(4, 8, 22, 0.55);
+  --cc-node-fill: rgba(17, 24, 52, 0.92);
+  --cc-drawer-bg: #0f172f;
+  --cc-code-bg: rgba(255, 255, 255, 0.06);
+
+  // -------- 边框 / 分隔线 --------
+  --cc-border: rgba(148, 163, 184, 0.14);
+  --cc-border-soft: rgba(148, 163, 184, 0.1);
+  --cc-border-strong: rgba(129, 140, 248, 0.35);
+  --cc-divider: rgba(148, 163, 184, 0.1);
+
+  // -------- 文字层级 --------
+  --cc-text-1: #e8eeff; // 标题 / 主数值
+  --cc-text-2: #c2cce6; // 正文
+  --cc-text-3: #8b98bd; // 次要说明
+  --cc-text-muted: #6b78a0; // 辅助 / 时间
+  --cc-text-faint: #5e6b8d; // 占位 / 最弱
+  --cc-link: #a5b4fc;
+  --cc-link-2: #c7d2fe;
+  --cc-cyan-text: #67e8f9;
+  --cc-violet-text: #c4b5fd;
+
+  // -------- 品牌点缀 --------
+  --cc-indigo: #818cf8;
+  --cc-cyan: #22d3ee;
+
+  // -------- 语义状态色（主色 / 文字 / 柔底 / 描边 / 辉光） --------
+  --cc-success: #34d399;
+  --cc-success-text: #6ee7b7;
+  --cc-success-soft: rgba(52, 211, 153, 0.1);
+  --cc-success-border: rgba(52, 211, 153, 0.35);
+  --cc-success-glow: rgba(52, 211, 153, 0.35);
+
+  --cc-warning: #fbbf24;
+  --cc-warning-text: #fde68a;
+  --cc-warning-soft: rgba(251, 191, 36, 0.1);
+  --cc-warning-border: rgba(251, 191, 36, 0.35);
+  --cc-warning-glow: rgba(251, 191, 36, 0.35);
+
+  --cc-danger: #fb7185;
+  --cc-danger-text: #fda4af;
+  --cc-danger-soft: rgba(251, 113, 133, 0.1);
+  --cc-danger-border: rgba(251, 113, 133, 0.35);
+  --cc-danger-glow: rgba(251, 113, 133, 0.4);
+
+  --cc-violet: #c084fc;
+  --cc-violet-soft: rgba(167, 139, 250, 0.12);
+  --cc-violet-border: rgba(167, 139, 250, 0.35);
+
+  --cc-orange: #fb923c;
+  --cc-orange-text: #fdba74;
+  --cc-orange-soft: rgba(251, 146, 60, 0.1);
+  --cc-orange-border: rgba(251, 146, 60, 0.32);
+
+  // -------- 阴影 / 辉光 --------
+  --cc-shadow-panel: 0 12px 40px rgba(2, 6, 23, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --cc-shadow-card: 0 12px 36px rgba(2, 6, 23, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --cc-shadow-pop: 0 18px 48px rgba(0, 0, 0, 0.6), 0 0 22px rgba(99, 102, 241, 0.18);
+  --cc-hover-bg: rgba(99, 102, 241, 0.08);
+  --cc-hover-border: rgba(99, 102, 241, 0.25);
+
+  // 数据驱动 chip（冲突类型等，--sc 由元素内联提供）
+  --cc-chip-active-bg: color-mix(in srgb, var(--sc, var(--cc-indigo)) 24%, transparent);
+  --cc-chip-active-fg: #ffffff;
+
+  // -------- 遮罩 / 滚动条 / 背景装饰 --------
+  --cc-mask: rgba(10, 16, 32, 0.6);
+  --cc-scroll: rgba(120, 132, 180, 0.35);
+  --cc-scroll-hover: rgba(120, 132, 180, 0.55);
+  --cc-grid-line: rgba(129, 140, 248, 0.05);
+  --cc-glow-a: #6366f1;
+  --cc-glow-b: #22d3ee;
+  --cc-glow-opacity: 0.16;
+
+  // -------- 标题渐变 / 进度轨 --------
+  --cc-title-gradient: linear-gradient(90deg, #e0e7ff, #67e8f9);
+  --cc-track-bg: rgba(148, 163, 184, 0.15);
+  --cc-track-fill: linear-gradient(90deg, #6366f1, #22d3ee);
+
+  // -------- 表单控件 --------
+  --cc-input-bg: rgba(255, 255, 255, 0.04);
+  --cc-input-text: #dbe4ff;
+
+  // -------- JSON 语法着色 --------
+  --cc-jv-key: #93c5fd;
+  --cc-jv-string: #86efac;
+  --cc-jv-number: #fcd34d;
+  --cc-jv-boolean: #f0abfc;
+  --cc-jv-null: #7c8bb4;
+
+  // -------- FlowGraph 节点 / 连线 --------
+  --cc-node-stroke-idle: rgba(148, 163, 184, 0.22);
+  --cc-node-stroke-done: rgba(52, 211, 153, 0.65);
+  --cc-node-stroke-warn: rgba(251, 191, 36, 0.7);
+  --cc-node-stroke-bad: rgba(251, 113, 133, 0.75);
+  --cc-node-stroke-pending: #fbbf24;
+  --cc-node-title-idle: #93a0c6;
+  --cc-node-title-done: #d1fae5;
+  --cc-node-title-warn: #fef3c7;
+  --cc-node-title-bad: #ffe4e6;
+  --cc-node-badge-idle: rgba(148, 163, 184, 0.18);
+  --cc-node-badge-done: rgba(52, 211, 153, 0.22);
+  --cc-node-badge-warn: rgba(251, 191, 36, 0.25);
+  --cc-node-badge-bad: rgba(251, 113, 133, 0.25);
+  --cc-edge-dim: rgba(148, 163, 184, 0.22);
+  --cc-edge-glow-flow: rgba(99, 102, 241, 0.55);
+  --cc-edge-glow-amber: rgba(251, 191, 36, 0.55);
+  --cc-edge-glow-red: rgba(251, 113, 133, 0.55);
+  --cc-edge-label-dim: rgba(148, 163, 184, 0.45);
+  --cc-edge-label-flow: #a5f3fc;
+  --cc-edge-label-amber: #fde68a;
+  --cc-edge-label-red: #fecdd3;
+  --cc-label-halo: rgba(11, 16, 32, 0.9);
+  --cc-arrow-dim: rgba(148, 163, 184, 0.35);
+  --cc-arrow-flow: #22d3ee;
+  --cc-arrow-amber: #fbbf24;
+  --cc-arrow-red: #fb7185;
+  --cc-fg-pop-bg: rgba(15, 21, 44, 0.96);
+  --cc-fg-pop-border: rgba(129, 140, 248, 0.3);
+  --cc-conf-row-bg: rgba(2, 8, 23, 0.4);
+
+  // -------- 投票仪表条 --------
+  --cc-zone-block: linear-gradient(90deg, rgba(251, 113, 133, 0.25), rgba(251, 113, 133, 0.5));
+  --cc-zone-manual: linear-gradient(90deg, rgba(251, 191, 36, 0.32), rgba(251, 191, 36, 0.45), rgba(251, 191, 36, 0.32));
+  --cc-zone-allow: linear-gradient(90deg, rgba(52, 211, 153, 0.5), rgba(52, 211, 153, 0.25));
+  --cc-needle: #e8eeff;
+  --cc-needle-glow: rgba(232, 238, 255, 0.9);
+  --cc-threshold: rgba(226, 232, 240, 0.55);
+  --cc-threshold-strong: rgba(226, 232, 240, 0.85);
+}
+
+// =============================================================
+// 浅色主题 · 云白雾灰 + 靛蓝 / 青点缀
+// =============================================================
+:root,
+:root[data-theme='light'] {
+  // -------- 表面层级 --------
+  --cc-panel: rgba(255, 255, 255, 0.86);
+  --cc-panel-solid: rgba(255, 255, 255, 0.92);
+  --cc-panel-hover: #ffffff;
+  --cc-raise: #f1f4fc;
+  --cc-raise-2: #f6f8fe;
+  --cc-inset: #f4f6fd;
+  --cc-inset-2: #f8faff;
+  --cc-node-fill: #ffffff;
+  --cc-drawer-bg: #ffffff;
+  --cc-code-bg: #eef2fb;
+
+  // -------- 边框 / 分隔线 --------
+  --cc-border: rgba(99, 102, 241, 0.14);
+  --cc-border-soft: rgba(15, 23, 42, 0.07);
+  --cc-border-strong: rgba(99, 102, 241, 0.4);
+  --cc-divider: rgba(15, 23, 42, 0.08);
+
+  // -------- 文字层级 --------
+  --cc-text-1: #1e293b;
+  --cc-text-2: #334155;
+  --cc-text-3: #64748b;
+  --cc-text-muted: #94a3b8;
+  --cc-text-faint: #a8b3c9;
+  --cc-link: #4f46e5;
+  --cc-link-2: #4338ca;
+  --cc-cyan-text: #0e7490;
+  --cc-violet-text: #7c3aed;
+
+  // -------- 品牌点缀 --------
+  --cc-indigo: #6366f1;
+  --cc-cyan: #0891b2;
+
+  // -------- 语义状态色 --------
+  --cc-success: #059669;
+  --cc-success-text: #047857;
+  --cc-success-soft: rgba(5, 150, 105, 0.09);
+  --cc-success-border: rgba(5, 150, 105, 0.28);
+  --cc-success-glow: rgba(5, 150, 105, 0.22);
+
+  --cc-warning: #d97706;
+  --cc-warning-text: #b45309;
+  --cc-warning-soft: rgba(217, 119, 6, 0.1);
+  --cc-warning-border: rgba(217, 119, 6, 0.3);
+  --cc-warning-glow: rgba(217, 119, 6, 0.22);
+
+  --cc-danger: #e11d48;
+  --cc-danger-text: #be123c;
+  --cc-danger-soft: rgba(225, 29, 72, 0.08);
+  --cc-danger-border: rgba(225, 29, 72, 0.28);
+  --cc-danger-glow: rgba(225, 29, 72, 0.24);
+
+  --cc-violet: #7c3aed;
+  --cc-violet-soft: rgba(124, 58, 237, 0.09);
+  --cc-violet-border: rgba(124, 58, 237, 0.28);
+
+  --cc-orange: #ea580c;
+  --cc-orange-text: #c2410c;
+  --cc-orange-soft: rgba(234, 88, 12, 0.09);
+  --cc-orange-border: rgba(234, 88, 12, 0.28);
+
+  // -------- 阴影（柔和靛蓝系投影） --------
+  --cc-shadow-panel: 0 10px 30px rgba(79, 86, 166, 0.08), 0 2px 8px rgba(15, 23, 42, 0.04);
+  --cc-shadow-card: 0 8px 24px rgba(79, 86, 166, 0.09), 0 1px 3px rgba(15, 23, 42, 0.05);
+  --cc-shadow-pop: 0 24px 60px rgba(79, 86, 166, 0.18), 0 4px 14px rgba(15, 23, 42, 0.08);
+  --cc-hover-bg: rgba(99, 102, 241, 0.06);
+  --cc-hover-border: rgba(99, 102, 241, 0.3);
+
+  // 数据驱动 chip（冲突类型等，--sc 由元素内联提供）
+  --cc-chip-active-bg: var(--sc, var(--cc-indigo));
+  --cc-chip-active-fg: #ffffff;
+
+  // -------- 遮罩 / 滚动条 / 背景装饰 --------
+  --cc-mask: rgba(238, 242, 251, 0.72);
+  --cc-scroll: rgba(100, 116, 139, 0.3);
+  --cc-scroll-hover: rgba(100, 116, 139, 0.5);
+  --cc-grid-line: rgba(99, 102, 241, 0.07);
+  --cc-glow-a: #6366f1;
+  --cc-glow-b: #22d3ee;
+  --cc-glow-opacity: 0.1;
+
+  // -------- 标题渐变 / 进度轨 --------
+  --cc-title-gradient: linear-gradient(90deg, #4338ca, #0e7490);
+  --cc-track-bg: rgba(100, 116, 139, 0.16);
+  --cc-track-fill: linear-gradient(90deg, #6366f1, #06b6d4);
+
+  // -------- 表单控件 --------
+  --cc-input-bg: #ffffff;
+  --cc-input-text: #334155;
+
+  // -------- JSON 语法着色 --------
+  --cc-jv-key: #2563eb;
+  --cc-jv-string: #059669;
+  --cc-jv-number: #d97706;
+  --cc-jv-boolean: #c026d3;
+  --cc-jv-null: #94a3b8;
+
+  // -------- FlowGraph 节点 / 连线 --------
+  --cc-node-stroke-idle: rgba(148, 163, 184, 0.45);
+  --cc-node-stroke-done: rgba(5, 150, 105, 0.65);
+  --cc-node-stroke-warn: rgba(217, 119, 6, 0.65);
+  --cc-node-stroke-bad: rgba(225, 29, 72, 0.65);
+  --cc-node-stroke-pending: #d97706;
+  --cc-node-title-idle: #94a3b8;
+  --cc-node-title-done: #065f46;
+  --cc-node-title-warn: #92400e;
+  --cc-node-title-bad: #9f1239;
+  --cc-node-badge-idle: rgba(148, 163, 184, 0.22);
+  --cc-node-badge-done: rgba(5, 150, 105, 0.18);
+  --cc-node-badge-warn: rgba(217, 119, 6, 0.2);
+  --cc-node-badge-bad: rgba(225, 29, 72, 0.18);
+  --cc-edge-dim: rgba(148, 163, 184, 0.6);
+  --cc-edge-glow-flow: rgba(79, 70, 229, 0.22);
+  --cc-edge-glow-amber: rgba(217, 119, 6, 0.22);
+  --cc-edge-glow-red: rgba(225, 29, 72, 0.22);
+  --cc-edge-label-dim: #94a3b8;
+  --cc-edge-label-flow: #0e7490;
+  --cc-edge-label-amber: #b45309;
+  --cc-edge-label-red: #be123c;
+  --cc-label-halo: rgba(255, 255, 255, 0.92);
+  --cc-arrow-dim: rgba(148, 163, 184, 0.6);
+  --cc-arrow-flow: #06b6d4;
+  --cc-arrow-amber: #d97706;
+  --cc-arrow-red: #e11d48;
+  --cc-fg-pop-bg: rgba(255, 255, 255, 0.97);
+  --cc-fg-pop-border: rgba(99, 102, 241, 0.25);
+  --cc-conf-row-bg: #f6f8fe;
+
+  // -------- 投票仪表条 --------
+  --cc-zone-block: linear-gradient(90deg, rgba(225, 29, 72, 0.16), rgba(225, 29, 72, 0.32));
+  --cc-zone-manual: linear-gradient(90deg, rgba(217, 119, 6, 0.2), rgba(217, 119, 6, 0.32), rgba(217, 119, 6, 0.2));
+  --cc-zone-allow: linear-gradient(90deg, rgba(5, 150, 105, 0.32), rgba(5, 150, 105, 0.16));
+  --cc-needle: #4338ca;
+  --cc-needle-glow: rgba(99, 102, 241, 0.55);
+  --cc-threshold: rgba(100, 116, 139, 0.4);
+  --cc-threshold-strong: rgba(71, 85, 105, 0.7);
+}
+
+// =============================================================
+// 主题切换平滑过渡（仅控制台子树，不覆盖组件自身的 transform/opacity 动效）
+// =============================================================
+.console-page,
+.console-page *,
+.console-page *::before,
+.console-page *::after {
+  transition-property:
+    background-color, background, border-color, color, fill, stroke,
+    box-shadow;
+  transition-duration: 0.28s;
+  transition-timing-function: ease;
+}

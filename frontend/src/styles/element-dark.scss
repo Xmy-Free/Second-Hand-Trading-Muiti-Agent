@@ -1,0 +1,151 @@
+// =============================================================
+// 深色主题 · Mission Control 指挥中心
+// 通过 html[data-theme='dark'] 切换：#0B1020 深空底、
+// 霓虹状态色、玻璃拟态面板、辉光效果
+// =============================================================
+
+@use 'tokens' as *;
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  // -------- 应用语义变量 --------
+  --app-brand: #{$console-neon-indigo};
+  --app-brand-strong: #a5b4fc;
+  --app-brand-soft: rgba(129, 140, 248, 0.14);
+  --app-accent: #{$console-neon-cyan};
+  --app-gradient: linear-gradient(135deg, #818cf8 0%, #22d3ee 100%);
+  --app-gradient-deep: linear-gradient(135deg, #6366f1 0%, #06b6d4 100%);
+
+  --app-success: #{$console-neon-green};
+  --app-success-soft: rgba(52, 211, 153, 0.12);
+  --app-warning: #{$console-neon-amber};
+  --app-warning-soft: rgba(251, 191, 36, 0.12);
+  --app-danger: #{$console-neon-red};
+  --app-danger-soft: rgba(251, 113, 133, 0.12);
+  --app-info: #{$info-400};
+  --app-info-soft: rgba(56, 189, 248, 0.12);
+
+  --app-bg-page: #{$console-bg};
+  --app-bg-page-gradient:
+    radial-gradient(1100px 560px at 88% -12%, rgba(34, 211, 238, 0.09), transparent 60%),
+    radial-gradient(1000px 620px at -8% -8%, rgba(99, 102, 241, 0.16), transparent 58%),
+    linear-gradient(180deg, #0d1326 0%, #070b16 100%);
+  --app-bg: #{$console-surface};
+  --app-card-bg: rgba(255, 255, 255, 0.04);
+  --app-card-bg-solid: #{$console-surface};
+  --app-card-border: #{$console-border};
+  --app-card-border-strong: #{$console-border-strong};
+  --app-glass-blur: 18px;
+
+  --app-text-primary: #e8eeff;
+  --app-text-regular: #c2cce6;
+  --app-text-secondary: #8b98bd;
+  --app-text-placeholder: #5e6b8d;
+  --app-text-inverse: #070b16;
+
+  --app-divider: rgba(148, 163, 184, 0.14);
+  --app-mask: rgba(2, 6, 23, 0.72);
+
+  --app-shadow-card: #{$shadow-console-panel};
+  --app-shadow-card-hover: 0 16px 48px rgba(2, 6, 23, 0.7), 0 0 24px rgba(99, 102, 241, 0.14);
+  --app-shadow-pop: 0 24px 64px rgba(0, 0, 0, 0.7);
+  --app-shadow-glow: #{$shadow-console-glow-indigo};
+
+  --app-header-bg: rgba(11, 16, 32, 0.72);
+  --app-nav-item-hover: rgba(129, 140, 248, 0.12);
+  --app-nav-item-active: linear-gradient(135deg, rgba(129, 140, 248, 0.22), rgba(34, 211, 238, 0.16));
+
+  // =============================================================
+  // Element Plus 深色重写
+  // =============================================================
+  --el-font-family: #{$font-family};
+
+  --el-color-primary: #818cf8;
+  --el-color-primary-light-3: color-mix(in srgb, #818cf8 68%, #{$console-bg});
+  --el-color-primary-light-5: color-mix(in srgb, #818cf8 46%, #{$console-bg});
+  --el-color-primary-light-7: color-mix(in srgb, #818cf8 26%, #{$console-bg});
+  --el-color-primary-light-8: color-mix(in srgb, #818cf8 16%, #{$console-bg});
+  --el-color-primary-light-9: color-mix(in srgb, #818cf8 9%, #{$console-bg});
+  --el-color-primary-dark-2: color-mix(in srgb, #818cf8 78%, #05081f);
+
+  --el-color-success: #{$console-neon-green};
+  --el-color-success-light-3: color-mix(in srgb, #{$console-neon-green} 55%, #{$console-bg});
+  --el-color-success-light-5: color-mix(in srgb, #{$console-neon-green} 36%, #{$console-bg});
+  --el-color-success-light-7: color-mix(in srgb, #{$console-neon-green} 22%, #{$console-bg});
+  --el-color-success-light-8: color-mix(in srgb, #{$console-neon-green} 14%, #{$console-bg});
+  --el-color-success-light-9: color-mix(in srgb, #{$console-neon-green} 8%, #{$console-bg});
+  --el-color-success-dark-2: color-mix(in srgb, #{$console-neon-green} 78%, #05081f);
+
+  --el-color-warning: #{$console-neon-amber};
+  --el-color-warning-light-3: color-mix(in srgb, #{$console-neon-amber} 55%, #{$console-bg});
+  --el-color-warning-light-5: color-mix(in srgb, #{$console-neon-amber} 36%, #{$console-bg});
+  --el-color-warning-light-7: color-mix(in srgb, #{$console-neon-amber} 22%, #{$console-bg});
+  --el-color-warning-light-8: color-mix(in srgb, #{$console-neon-amber} 14%, #{$console-bg});
+  --el-color-warning-light-9: color-mix(in srgb, #{$console-neon-amber} 8%, #{$console-bg});
+  --el-color-warning-dark-2: color-mix(in srgb, #{$console-neon-amber} 80%, #05081f);
+
+  --el-color-danger: #{$console-neon-red};
+  --el-color-error: #{$console-neon-red};
+  --el-color-danger-light-3: color-mix(in srgb, #{$console-neon-red} 55%, #{$console-bg});
+  --el-color-danger-light-5: color-mix(in srgb, #{$console-neon-red} 36%, #{$console-bg});
+  --el-color-danger-light-7: color-mix(in srgb, #{$console-neon-red} 22%, #{$console-bg});
+  --el-color-danger-light-8: color-mix(in srgb, #{$console-neon-red} 14%, #{$console-bg});
+  --el-color-danger-light-9: color-mix(in srgb, #{$console-neon-red} 8%, #{$console-bg});
+  --el-color-danger-dark-2: color-mix(in srgb, #{$console-neon-red} 80%, #05081f);
+  --el-color-error-light-3: color-mix(in srgb, #{$console-neon-red} 55%, #{$console-bg});
+  --el-color-error-light-5: color-mix(in srgb, #{$console-neon-red} 36%, #{$console-bg});
+  --el-color-error-light-7: color-mix(in srgb, #{$console-neon-red} 22%, #{$console-bg});
+  --el-color-error-light-8: color-mix(in srgb, #{$console-neon-red} 14%, #{$console-bg});
+  --el-color-error-light-9: color-mix(in srgb, #{$console-neon-red} 8%, #{$console-bg});
+  --el-color-error-dark-2: color-mix(in srgb, #{$console-neon-red} 80%, #05081f);
+
+  --el-color-info: #{$info-400};
+  --el-color-info-light-3: color-mix(in srgb, #{$info-400} 55%, #{$console-bg});
+  --el-color-info-light-5: color-mix(in srgb, #{$info-400} 36%, #{$console-bg});
+  --el-color-info-light-7: color-mix(in srgb, #{$info-400} 22%, #{$console-bg});
+  --el-color-info-light-8: color-mix(in srgb, #{$info-400} 14%, #{$console-bg});
+  --el-color-info-light-9: color-mix(in srgb, #{$info-400} 8%, #{$console-bg});
+  --el-color-info-dark-2: color-mix(in srgb, #{$info-400} 80%, #05081f);
+
+  // 文本
+  --el-text-color-primary: #e8eeff;
+  --el-text-color-regular: #c2cce6;
+  --el-text-color-secondary: #8b98bd;
+  --el-text-color-placeholder: #5e6b8d;
+  --el-text-color-disabled: #4a5578;
+
+  // 边框
+  --el-border-color: #283252;
+  --el-border-color-light: #222b47;
+  --el-border-color-lighter: #1c2440;
+  --el-border-color-extra-light: #171e38;
+  --el-border-color-dark: #323d63;
+  --el-border-color-darker: #46527d;
+  --el-border-color-hover: #6370a8;
+
+  // 填充（半透明白 = 玻璃抬升）
+  --el-fill-color: rgba(255, 255, 255, 0.07);
+  --el-fill-color-light: rgba(255, 255, 255, 0.05);
+  --el-fill-color-lighter: rgba(255, 255, 255, 0.035);
+  --el-fill-color-extra-light: rgba(255, 255, 255, 0.02);
+  --el-fill-color-dark: rgba(255, 255, 255, 0.09);
+  --el-fill-color-darker: rgba(255, 255, 255, 0.12);
+  --el-fill-color-blank: #111834;
+
+  // 背景
+  --el-bg-color: #{$console-surface};
+  --el-bg-color-page: #{$console-bg};
+  --el-bg-color-overlay: #{$console-surface-2};
+
+  // 遮罩 / 阴影
+  --el-mask-color: rgba(2, 6, 23, 0.72);
+  --el-mask-color-extra-light: rgba(2, 6, 23, 0.45);
+  --el-box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  --el-box-shadow-light: 0 4px 14px rgba(0, 0, 0, 0.38);
+  --el-box-shadow-lighter: 0 2px 8px rgba(0, 0, 0, 0.32);
+  --el-box-shadow-dark: 0 18px 48px rgba(0, 0, 0, 0.62);
+
+  --el-disabled-bg-color: rgba(255, 255, 255, 0.05);
+  --el-disabled-text-color: #4a5578;
+}

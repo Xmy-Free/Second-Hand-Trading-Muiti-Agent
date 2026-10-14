@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>软件需求规格说明书 V4</title>
+  <style>
+
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+/* docx-view.css — WPS 网页版 + A4 连续白纸阅读质感（用于 pandoc 转出的自包含 HTML） */
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+/* 浅灰工作台 */
+html {
+  background: #e9edf3;
+}
+
+/* body 本身即一张连续 A4 长纸（WPS 连续页视图） */
+body {
+  background: #fff;
+  width: 820px;
+  max-width: 94%;
+  margin: 24px auto 44px;
+  padding: 68px 76px 92px;
+  border-radius: 3px;
+  box-shadow: 0 8px 30px rgba(20, 48, 92, .14);
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+  font-size: 15px;
+  line-height: 1.8;
+  color: #1f2937;
+}
+
+/* 标题块 */
+#title-block-header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #16407e;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 24px;
+  text-align: center;
+  margin: 0 0 18px;
+}
+
+h1.title {
+  border-bottom: 2px solid #2E6BE6;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+}
+
+#title-block-header .subtitle {
+  font-size: 15px;
+  font-weight: 400;
+  color: #4b5563;
+  text-align: center;
+}
+
+#title-block-header .author,
+#title-block-header .date {
+  font-size: 13.5px;
+  color: #6b7280;
+  text-align: center;
+  margin: 4px 0;
+}
+
+h2 {
+  font-size: 19px;
+  padding-left: 10px;
+  border-left: 4px solid #2E6BE6;
+  margin: 26px 0 12px;
+}
+
+h3 {
+  font-size: 16px;
+  margin: 20px 0 10px;
+}
+
+h4 { font-size: 15px; }
+
+p { margin: 8px 0; }
+
+a {
+  color: #2E6BE6;
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+/* 表格 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  font-size: 13.5px;
+}
+
+th, td {
+  border: 1px solid #c9d3e0;
+  padding: 7px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: #eef4ff;
+  color: #16407e;
+  font-weight: 700;
+}
+
+tr:nth-child(even) td { background: #fafcff; }
+
+/* 图片 */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 12px auto;
+  border-radius: 4px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+figure {
+  margin: 14px 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  text-align: center;
+}
+figcaption {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 6px;
+}
+
+/* 引用块 */
+blockquote {
+  margin: 12px 0;
+  padding: 10px 16px;
+  background: #f2f7ff;
+  border-left: 4px solid #2E6BE6;
+  color: #374151;
+  border-radius: 0 4px 4px 0;
+}
+blockquote p { margin: 4px 0; }
+
+/* 列表 */
+ul, ol { padding-left: 28px; }
+li { margin: 4px 0; }
+
+/* 代码 */
+code, pre, kbd, samp {
+  font-family: Consolas, "JetBrains Mono", "Courier New", monospace;
+}
+
+code {
+  background: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13.5px;
+}
+
+pre {
+  background: #f3f4f6;
+  padding: 14px 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+pre code {
+  background: none;
+  padding: 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #d5dde8;
+  margin: 22px 0;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #eef1f6;
+}
+::-webkit-scrollbar-thumb {
+  background: #c3ccd9;
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a7b3c4;
+}
+
+/* 打印：还原 A4 纸面 */
+@media print {
+  html { background: #fff; }
+  body {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+  a { color: #16407e; text-decoration: none; }
+  tr, img, figure { break-inside: avoid; page-break-inside: avoid; }
+  h1, h2, h3 { break-after: avoid; page-break-after: avoid; }
+}
+
+@page {
+  size: A4;
+  margin: 20mm 18mm;
+}
+
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">软件需求规格说明书 V4</h1>
+</header>
+<p><strong>软件需求规格说明书</strong></p>
+<p>Software Requirements Specification</p>
+<p>——————————————————————————</p>
+<p><strong>校园二手交易平台 Multi-Agent 系统</strong></p>
+<p>1 个协调管理 Agent ＋ 8 个专家 Agent ｜ 冲突检测 · 三级决策 · 安全否决</p>
+<table style="width:95%;">
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 65%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>文 档 编 号</strong></th>
+<th style="text-align: center;">SRS-MAS-2026-001</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>当 前 版 本</strong></td>
+<td style="text-align: center;">V4.0</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>密 级</strong></td>
+<td style="text-align: center;">内部 · 项目组</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>编 制 人</strong></td>
+<td style="text-align: center;">梁奕琦（学号 2400320321）</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>审 核 人</strong></td>
+<td style="text-align: center;">梁奕琦</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>指 导 教 师</strong></td>
+<td style="text-align: center;">曾志新</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>日 期</strong></td>
+<td style="text-align: center;">2026 年 10 月 1 日 — 10 月 13 日</td>
+</tr>
+</tbody>
+</table>
+<p><em>本文件包含 V1–V4 共四轮迭代的演进记录，当前发布内容为V4 版需求基线</em></p>
+<p><strong>一 文档控制信息</strong></p>
+<p>▍<strong>1.1 版本修订历史（V1 → V4 四轮迭代）</strong></p>
+<table style="width:96%;">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 12%" />
+<col style="width: 9%" />
+<col style="width: 37%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 8%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>版本</strong></th>
+<th style="text-align: center;"><strong>日期</strong></th>
+<th style="text-align: center;"><strong>阶段</strong></th>
+<th style="text-align: center;"><strong>主要修订内容</strong></th>
+<th style="text-align: center;"><strong>修订人</strong></th>
+<th style="text-align: center;"><strong>审核人</strong></th>
+<th style="text-align: center;"><strong>状态</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">V1.0</td>
+<td style="text-align: center;">2026-10-01</td>
+<td style="text-align: center;"><p>业务调研</p>
+<p>初稿</p></td>
+<td style="text-align: left;">完成校园二手交易业务链路调研；提出信息不对称、信任缺失、议价低效、纠纷难处理四大痛点；初步划分用户角色与核心交易主链路。</td>
+<td style="text-align: center;">梁奕琦</td>
+<td style="text-align: center;">梁奕琦</td>
+<td style="text-align: center;">已归档</td>
+</tr>
+<tr>
+<td style="text-align: center;">V1.1</td>
+<td style="text-align: center;">2026-10-03</td>
+<td style="text-align: center;">需求补充</td>
+<td style="text-align: left;">补充异常链路（申诉、退换、纠纷仲裁）；形成功能需求与非功能需求雏形；明确排除真实支付与物流。</td>
+<td style="text-align: center;">梁奕琦</td>
+<td style="text-align: center;">梁奕琦</td>
+<td style="text-align: center;">已归档</td>
+</tr>
+<tr>
+<td style="text-align: center;">V2.0</td>
+<td style="text-align: center;">2026-10-06</td>
+<td style="text-align: center;">角色设计</td>
+<td style="text-align: left;">确立“1 协调者 + 8 专家”共 9 类 Agent 角色及职责表；提出黑板 SSOT + 消息总线的四层总体结构。</td>
+<td style="text-align: center;">梁奕琦</td>
+<td style="text-align: center;">梁奕琦</td>
+<td style="text-align: center;">已归档</td>
+</tr>
+<tr>
+<td style="text-align: center;">V3.0</td>
+<td style="text-align: center;">2026-10-09</td>
+<td style="text-align: center;">机制设计</td>
+<td style="text-align: left;">新增冲突检测机制（资源/目标/知识/决策四类）；设计三级处理阶梯、全局效用函数、加权投票与安全一票否决；输出 8 类冲突场景矩阵。</td>
+<td style="text-align: center;">梁奕琦</td>
+<td style="text-align: center;">梁奕琦</td>
+<td style="text-align: center;">已归档</td>
+</tr>
+<tr>
+<td style="text-align: center;">V3.1</td>
+<td style="text-align: center;">2026-10-11</td>
+<td style="text-align: center;">技术选型</td>
+<td style="text-align: left;">核查 2026 年框架时效：确定 LangGraph 1.x 为唯一编排框架，AutoGen 进入维护模式故弃用；确定 DeepSeek V4 + RuleLLM 双通道；确定 FastAPI + Vue3 技术栈。</td>
+<td style="text-align: center;">梁奕琦</td>
+<td style="text-align: center;">梁奕琦</td>
+<td style="text-align: center;">已归档</td>
+</tr>
+<tr>
+<td style="text-align: center;">V4.0</td>
+<td style="text-align: center;">2026-10-13</td>
+<td style="text-align: center;"><p>需求完善</p>
+<p>（V4）</p></td>
+<td style="text-align: left;">明确 P0/P1 范围；细化 15 项功能需求、9 个状态机定义与 15 条验收标准；补全并发抢单锁规则、议价参数与 ACL 消息字段；形成可开发、可验收的需求基线。</td>
+<td style="text-align: center;">梁奕琦</td>
+<td style="text-align: center;">梁奕琦</td>
+<td style="text-align: center;">★ 当前生效</td>
+</tr>
+</tbody>
+</table>
+<p>▍<strong>1.2 四轮迭代需求演进对照</strong></p>
+<table style="width:96%;">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 21%" />
+<col style="width: 28%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>需求维度</strong></th>
+<th style="text-align: center;"><strong>V1 业务初稿</strong></th>
+<th style="text-align: center;"><strong>V2 角色设计</strong></th>
+<th style="text-align: center;"><strong>V3 冲突机制</strong></th>
+<th style="text-align: center;"><strong>V4 需求基线</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">系统定位</td>
+<td style="text-align: left;">二手交易功能平台</td>
+<td style="text-align: left;">多 Agent 协作原型</td>
+<td style="text-align: left;">带冲突决策的 MAS</td>
+<td style="text-align: left;">可运行·可演示·可解释·可复现的 MAS</td>
+</tr>
+<tr>
+<td style="text-align: left;">Agent 数量</td>
+<td style="text-align: left;">未划分</td>
+<td style="text-align: left;">9 类角色定义</td>
+<td style="text-align: left;">9 类 + 熔断代管</td>
+<td style="text-align: left;">9 类，契约化可插拔（注册表）</td>
+</tr>
+<tr>
+<td style="text-align: left;">核心机制</td>
+<td style="text-align: left;">仅交易主链路</td>
+<td style="text-align: left;">黑板 + 消息协作</td>
+<td style="text-align: left;">四级检测 + 三级阶梯</td>
+<td style="text-align: left;">再叠加效用/投票/否决/人工 interrupt</td>
+</tr>
+<tr>
+<td style="text-align: left;">大模型策略</td>
+<td style="text-align: left;">未明确</td>
+<td style="text-align: left;">LLM 辅助</td>
+<td style="text-align: left;">LLM 生成 + 规则约束</td>
+<td style="text-align: left;">结构化输出→校验→重试→RuleLLM 兜底，无 Key 可演</td>
+</tr>
+<tr>
+<td style="text-align: left;">并发一致性</td>
+<td style="text-align: left;">未涉及</td>
+<td style="text-align: left;">提出加锁思路</td>
+<td style="text-align: left;">抢单优先级</td>
+<td style="text-align: left;">预占锁 + 乐观版本号 + 三优先 + 超时回滚</td>
+</tr>
+<tr>
+<td style="text-align: left;">验收方式</td>
+<td style="text-align: left;">无</td>
+<td style="text-align: left;">人工演示</td>
+<td style="text-align: left;">场景走查</td>
+<td style="text-align: left;">15 条 AC（12 rule + 3 rubric）+ ≥10 剧本</td>
+</tr>
+<tr>
+<td style="text-align: left;">交付界面</td>
+<td style="text-align: left;">未规划</td>
+<td style="text-align: left;">概念页面</td>
+<td style="text-align: left;">买卖端页面</td>
+<td style="text-align: left;">买卖端 + 管理员工作台 + 监控大屏(P1)</td>
+</tr>
+</tbody>
+</table>
+<p>▍<strong>1.3 评审与签署</strong></p>
+<table style="width:96%;">
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 36%" />
+<col style="width: 14%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>角色</strong></th>
+<th style="text-align: center;"><strong>姓名</strong></th>
+<th style="text-align: center;"><strong>职责</strong></th>
+<th style="text-align: center;"><strong>签署日期</strong></th>
+<th style="text-align: center;"><strong>意见</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">编制人</td>
+<td style="text-align: center;">梁奕琦</td>
+<td style="text-align: left;">需求调研、分析与文档编制</td>
+<td style="text-align: center;">2026-10-13</td>
+<td style="text-align: left;">同意作为 V4 基线发布</td>
+</tr>
+<tr>
+<td style="text-align: center;">审核人</td>
+<td style="text-align: center;">梁奕琦</td>
+<td style="text-align: left;">需求完整性、一致性与可验收性审核</td>
+<td style="text-align: center;">2026-10-13</td>
+<td style="text-align: left;">审核通过</td>
+</tr>
+<tr>
+<td style="text-align: center;">指导教师</td>
+<td style="text-align: center;">曾志新</td>
+<td style="text-align: left;">技术方向与机制合理性指导</td>
+<td style="text-align: center;">2026-10-13</td>
+<td style="text-align: left;">—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>二 引言</strong></p>
+<p>▍<strong>2.1 编写目的</strong></p>
+<p>本文档是“校园二手交易平台 Multi-Agent 系统”的软件需求规格说明书（SRS）V4 版，用于明确系统必须实现的功能、行为、约束与验收标准，作为后续概要设计、详细设计、编码实现、测试验收与答辩演示的统一需求基线。本文档已综合 V1–V4 四轮迭代的调研、角色设计、冲突机制设计与技术选型结论。</p>
+<p>▍<strong>2.2 项目背景</strong></p>
+<p>校园二手交易核心链路为“商品发布 → 平台审核 → 搜索推荐 → 咨询议价 → 下单支付 → 校内交付 → 确认收货 → 双向评价”，异常链路包括申诉、退换与纠纷仲裁。经 V1 阶段调研，校园场景存在四大痛点：</p>
+<table style="width:95%;">
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 14%" />
+<col style="width: 45%" />
+<col style="width: 26%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>编号</strong></th>
+<th style="text-align: center;"><strong>痛点</strong></th>
+<th style="text-align: center;"><strong>具体表现</strong></th>
+<th style="text-align: center;"><strong>针对性 Agent</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">P-1</td>
+<td style="text-align: center;">信息不对称</td>
+<td style="text-align: left;">商品描述失真、货不对板</td>
+<td style="text-align: left;">商品管理 / 内容审核</td>
+</tr>
+<tr>
+<td style="text-align: center;">P-2</td>
+<td style="text-align: center;">信任缺失</td>
+<td style="text-align: left;">陌生人交易顾虑，缺乏信用约束</td>
+<td style="text-align: left;">信用评价 / 纠纷仲裁</td>
+</tr>
+<tr>
+<td style="text-align: center;">P-3</td>
+<td style="text-align: center;">议价低效</td>
+<td style="text-align: left;">反复砍价消耗精力、容易谈崩</td>
+<td style="text-align: left;">议价谈判 / 用户代理</td>
+</tr>
+<tr>
+<td style="text-align: center;">P-4</td>
+<td style="text-align: center;">纠纷处理难</td>
+<td style="text-align: left;">责任难界定、平台介入慢</td>
+<td style="text-align: left;">纠纷仲裁 / 协调管理</td>
+</tr>
+</tbody>
+</table>
+<p>单一智能体难以同时承担目标相互冲突的多类任务（审核求严、推荐求撮合、议价求中立、信用求风险敏感）。本项目以多 Agent 分工协作，并将“冲突检测与群体决策机制”作为研究核心。</p>
+<p>▍<strong>2.3 术语与缩略语</strong></p>
+<table style="width:95%;">
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>术语</strong></th>
+<th style="text-align: center;"><strong>全称 / 含义</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">MAS</td>
+<td style="text-align: left;">Multi-Agent System，多智能体系统</td>
+</tr>
+<tr>
+<td style="text-align: left;">SSOT</td>
+<td style="text-align: left;">Single Source of Truth，全局状态黑板的单一事实源</td>
+</tr>
+<tr>
+<td style="text-align: left;">ACL</td>
+<td style="text-align: left;">Agent Communication Language，本项目采用 FIPA ACL 风格的标准消息协议</td>
+</tr>
+<tr>
+<td style="text-align: left;">协调者 Coordinator</td>
+<td style="text-align: left;">负责任务编排、冲突终裁、熔断与人工转接的管理 Agent</td>
+</tr>
+<tr>
+<td style="text-align: left;">专家 Agent</td>
+<td style="text-align: left;">用户代理、商品、审核、搜索、议价、履约、信用、仲裁共 8 个专业 Agent</td>
+</tr>
+<tr>
+<td style="text-align: left;">veto（一票否决）</td>
+<td style="text-align: left;">内容审核 Agent 对违禁/欺诈判定的最高优先级否决，不可被投票或效用覆盖</td>
+</tr>
+<tr>
+<td style="text-align: left;">纳什参考价</td>
+<td style="text-align: left;">在可行成交区间内使双方让步空间乘积最大的议价参考点</td>
+</tr>
+<tr>
+<td style="text-align: left;">RuleLLM</td>
+<td style="text-align: left;">自研确定性规则引擎，在无 API Key 或 LLM 异常时提供合法兜底输出</td>
+</tr>
+</tbody>
+</table>
+<p>▍<strong>2.4 参考资料</strong></p>
+<table style="width:95%;">
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 63%" />
+<col style="width: 24%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>序号</strong></th>
+<th style="text-align: center;"><strong>资料名称</strong></th>
+<th style="text-align: center;"><strong>类型</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">《校园二手交易平台 Multi-Agent 设计与实现 · 周报（第 1 周）》</td>
+<td style="text-align: center;">项目调研输入</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: left;">LangGraph 官方文档（Checkpointer / Human-in-the-loop），2026</td>
+<td style="text-align: center;">官方技术文档</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;">Microsoft AutoGen 维护公告与 Microsoft Agent Framework 1.0 GA 公告，2026</td>
+<td style="text-align: center;">官方技术文档</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">FIPA ACL Message Structure Specification</td>
+<td style="text-align: center;">通信协议规范</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">DeepSeek 开放平台 API 文档，2026</td>
+<td style="text-align: center;">大模型接口文档</td>
+</tr>
+</tbody>
+</table>
+<p><strong>三 总体描述</strong></p>
+<p>▍<strong>3.1 产品定义</strong></p>
+<p>系统是一个可运行、可演示、可解释、可复现实验的校园二手交易 Web 平台原型：由 1 个协调管理 Agent 与 8 个专家 Agent 围绕“全局状态黑板（SSOT）+ 标准消息”协作，自动完成交易主链路；遇到冲突时按“对等协商 → 协调仲裁 → 人工兜底”三级阶梯升级，安全类判定拥有不可被覆盖的一票否决权。</p>
+<p>▍<strong>3.2 用户角色与目标</strong></p>
+<table style="width:95%;">
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 41%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>用户角色</strong></th>
+<th style="text-align: center;"><strong>使用目标</strong></th>
+<th style="text-align: center;"><strong>关键操作</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">卖家学生</td>
+<td style="text-align: left;">快速发布规范商品、获得定价建议、高效成交、申诉有门</td>
+<td style="text-align: left;">发布、改价、议价、确认交付、评价、申诉</td>
+</tr>
+<tr>
+<td style="text-align: left;">买家学生</td>
+<td style="text-align: left;">找到匹配商品、由 Agent 辅助议价、安全下单、维权有据</td>
+<td style="text-align: left;">搜索、议价、下单、模拟支付、收货、评价、申诉</td>
+</tr>
+<tr>
+<td style="text-align: left;">平台管理员（校方）</td>
+<td style="text-align: left;">人工复核与终裁、接管异常 Agent、审计全程留痕</td>
+<td style="text-align: left;">人工复核、三级终裁、安全处置、熔断接管</td>
+</tr>
+<tr>
+<td style="text-align: left;">研究者 / 演示者</td>
+<td style="text-align: left;">一键运行冲突剧本、观察黑板与决策轨迹、调参实验</td>
+<td style="text-align: left;">剧本运行、轨迹回放、权重对比</td>
+</tr>
+</tbody>
+</table>
+<p>▍<strong>3.3 四层总体结构</strong></p>
+<table style="width:95%;">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 26%" />
+<col style="width: 53%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>层次</strong></th>
+<th style="text-align: center;"><strong>组成</strong></th>
+<th style="text-align: center;"><strong>职责</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">① 用户层</td>
+<td style="text-align: left;">卖家、买家、管理员</td>
+<td style="text-align: left;">通过 Web 界面发起操作、接收解释性结论与确认请求</td>
+</tr>
+<tr>
+<td style="text-align: left;">② 协调层</td>
+<td style="text-align: left;">协调管理 Agent（Coordinator）</td>
+<td style="text-align: left;">任务编排、冲突检测、三级调度、效用评分、加权投票、熔断与人工转接</td>
+</tr>
+<tr>
+<td style="text-align: left;">③ 专家 Agent 层</td>
+<td style="text-align: left;">8 个可插拔专家 Agent</td>
+<td style="text-align: left;">用户代理、商品、审核、搜索、议价、履约、信用、仲裁</td>
+</tr>
+<tr>
+<td style="text-align: left;">④ 数据与工具层</td>
+<td style="text-align: left;">黑板 SSOT、业务数据库、规则库、大模型适配层</td>
+<td style="text-align: left;">状态持久化、检查点、确定性规则与 LLM 双通道能力</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>协作原则：</strong> 全部 Agent 围绕类型化黑板协作，Agent 间只通过 ACL 标准消息通信，不私自共享可变状态；黑板状态唯一、可查、可回放。</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<p>▍<strong>3.4 范围界定</strong></p>
+<table style="width:95%;">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 76%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>范围</strong></th>
+<th style="text-align: center;"><strong>内容</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">P0（本期必须）</td>
+<td style="text-align: left;">买卖双方完整交易旅程、9 类 Agent、三级冲突机制、8 类冲突场景、管理员工作台、≥10 个冲突剧本</td>
+</tr>
+<tr>
+<td style="text-align: left;">P1（资源允许）</td>
+<td style="text-align: left;">黑板监控大屏、效用权重界面化调参与 A/B 对比实验、Docker Compose 部署</td>
+</tr>
+<tr>
+<td style="text-align: left;">明确不做</td>
+<td style="text-align: left;">真实支付通道与资金清算、真实物流、校方统一身份认证对接、原生移动 App、生产级高并发集群、基于真实数据的模型训练</td>
+</tr>
+</tbody>
+</table>
+<p><strong>四 多 Agent 角色定义（1 协调者 + 8 专家）</strong></p>
+<table style="width:96%;">
+<colgroup>
+<col style="width: 4%" />
+<col style="width: 13%" />
+<col style="width: 25%" />
+<col style="width: 17%" />
+<col style="width: 20%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>#</strong></th>
+<th style="text-align: center;"><strong>Agent 角色</strong></th>
+<th style="text-align: center;"><strong>定位</strong></th>
+<th style="text-align: center;"><strong>关键输入</strong></th>
+<th style="text-align: center;"><strong>关键输出 / 决策</strong></th>
+<th style="text-align: center;"><strong>主要协作对象</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">①</td>
+<td style="text-align: left;"><p>协调管理</p>
+<p>Coordinator</p></td>
+<td style="text-align: left;">调度中枢与裁判长：编排、注册管理、状态监控、冲突终裁、熔断与人工转接</td>
+<td style="text-align: left;">用户请求、各 Agent 状态与上报</td>
+<td style="text-align: left;">分派指令、仲裁裁决、流程跳转/熔断</td>
+<td style="text-align: left;">全部 Agent</td>
+</tr>
+<tr>
+<td style="text-align: center;">②</td>
+<td style="text-align: left;"><p>用户代理</p>
+<p>User Agent</p></td>
+<td style="text-align: left;">用户数字分身（按买家/卖家实例化）：意图理解、画像与底线、代客议价</td>
+<td style="text-align: left;">用户指令、历史行为、对方报价</td>
+<td style="text-align: left;">结构化意图、出价策略、用户确认请求</td>
+<td style="text-align: left;">协调者、议价、搜索</td>
+</tr>
+<tr>
+<td style="text-align: center;">③</td>
+<td style="text-align: left;"><p>商品管理</p>
+<p>Commodity</p></td>
+<td style="text-align: left;">上架管家：结构化、自动分类、成色标签、定价区间、库存上下架</td>
+<td style="text-align: left;">商品描述、历史成交价</td>
+<td style="text-align: left;">标准商品档案、建议价、上架结果</td>
+<td style="text-align: left;">审核、搜索、议价</td>
+</tr>
+<tr>
+<td style="text-align: center;">④</td>
+<td style="text-align: left;"><p>内容审核</p>
+<p>Moderation</p></td>
+<td style="text-align: left;">安检员：违禁/虚假/欺诈识别；拥有安全一票否决权</td>
+<td style="text-align: left;">商品档案、用户历史</td>
+<td style="text-align: left;">通过/驳回/人工复核 + 置信度 + 依据</td>
+<td style="text-align: left;">商品、仲裁、协调者</td>
+</tr>
+<tr>
+<td style="text-align: center;">⑤</td>
+<td style="text-align: left;"><p>搜索推荐</p>
+<p>Search</p></td>
+<td style="text-align: left;">导购员：多条件检索、意向匹配、带理由的个性化排序</td>
+<td style="text-align: left;">搜索请求、画像、商品池</td>
+<td style="text-align: left;">排序列表 + 匹配理由</td>
+<td style="text-align: left;">用户代理、商品</td>
+</tr>
+<tr>
+<td style="text-align: center;">⑥</td>
+<td style="text-align: left;"><p>议价谈判</p>
+<p>Negotiation</p></td>
+<td style="text-align: left;">中立主持人：多轮出价、让步策略、纳什参考价、僵局识别</td>
+<td style="text-align: left;">双方底价、轮次、时限</td>
+<td style="text-align: left;">撮合价 / 破裂结论、议价记录</td>
+<td style="text-align: left;">用户代理、信用、履约</td>
+</tr>
+<tr>
+<td style="text-align: center;">⑦</td>
+<td style="text-align: left;"><p>交易履约</p>
+<p>Order</p></td>
+<td style="text-align: left;">账房调度：订单状态机、商品锁定防抢单、支付交付跟踪、超时处理</td>
+<td style="text-align: left;">成交请求、支付/交付事件</td>
+<td style="text-align: left;">订单状态、锁/解锁、结算结果</td>
+<td style="text-align: left;">议价、信用、仲裁</td>
+</tr>
+<tr>
+<td style="text-align: center;">⑧</td>
+<td style="text-align: left;"><p>信用评价</p>
+<p>Credit</p></td>
+<td style="text-align: left;">信用局：互评聚合、信用分动态计算、风险画像</td>
+<td style="text-align: left;">评价、履约记录、举报</td>
+<td style="text-align: left;">信用分、风险标签、可信度意见</td>
+<td style="text-align: left;">审核、议价、仲裁</td>
+</tr>
+<tr>
+<td style="text-align: center;">⑨</td>
+<td style="text-align: left;"><p>纠纷仲裁</p>
+<p>Arbitrator</p></td>
+<td style="text-align: left;">线上小法官：证据链汇总、规则裁决、重大纠纷上报人工</td>
+<td style="text-align: left;">申诉请求、全链路证据</td>
+<td style="text-align: left;">裁决书、处罚建议</td>
+<td style="text-align: left;">信用、订单、协调者</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>粒度说明：</strong> 本期保留 9 类角色，统一实现为遵循同一契约的专家节点，通过注册表发现、可插拔；是否合并角色留待依据运行期通信开销再评估。</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<p><strong>五 功能需求</strong></p>
+<p>功能需求编号 FR-1 ~ FR-15，覆盖账号、9 类 Agent 能力、消息协议、人工工作台、可解释审计、剧本模拟与 Web 前端。</p>
+<table style="width:95%;">
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 14%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>编号</strong></th>
+<th style="text-align: center;"><strong>模块</strong></th>
+<th style="text-align: center;"><strong>需求描述（触发 → 处理规则 → 结果）</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">FR-1</td>
+<td style="text-align: left;">账号认证</td>
+<td style="text-align: left;">学号注册/登录；密码 bcrypt 哈希；JWT 签发与角色鉴权；内置种子账号（含 2400320321）；冻结账号禁止交易但可申诉。</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-2</td>
+<td style="text-align: left;">用户代理 Agent</td>
+<td style="text-align: left;">自然语言意图结构化；维护画像与保留价；授权区间内自动出价，越界或成交前必须人工确认；意图不清时引导澄清。</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-3</td>
+<td style="text-align: left;">商品管理 Agent</td>
+<td style="text-align: left;">描述结构化、自动分类与成色标签；基于历史成交价给建议区间（卖家可改）；建档后进入“待审核”；支持主动下架未锁定商品。</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-4</td>
+<td style="text-align: left;">内容审核 Agent</td>
+<td style="text-align: left;">违禁词规则库 + LLM 双判定，输出 通过/驳回/人工复核 + 置信度 + 逐条依据；命中违禁欺诈即 veto 冻结，不可被覆盖；驳回允许补材料重提一次。</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-5</td>
+<td style="text-align: left;">搜索推荐 Agent</td>
+<td style="text-align: left;">仅检索在售商品；综合相关性/成色/价格/信用/画像排序；每条结果给出匹配理由；方案须通过目标相容性检查，偏向佣金则重排。</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-6</td>
+<td style="text-align: left;">议价谈判 Agent</td>
+<td style="text-align: left;">双边会话状态机；单调让步（买价不降、卖价不升，违例拒收）；时间压力；纳什参考价；默认最大 5 轮 / 120 秒；成交或超时破裂并推荐同类。</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-7</td>
+<td style="text-align: left;">交易履约 Agent</td>
+<td style="text-align: left;">成交预占锁（锁令牌+乐观版本+超时点）；抢单按“下单时间→信用分→支付完成”裁决；订单状态机；模拟支付超时/失败释放锁并回滚；校内面交确认。</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-8</td>
+<td style="text-align: left;">信用评价 Agent</td>
+<td style="text-align: left;">订单完成后双向评分（一单仅一次）；信用分按规则动态更新；输出风险标签；向审核/议价/订单/仲裁给出带置信度的风险意见。</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-9</td>
+<td style="text-align: left;">纠纷仲裁 Agent</td>
+<td style="text-align: left;">汇总证据包（档案/议价/订单节点/评价/信用）；输出结构化裁决书（责任+依据+执行方案+置信度）；超阈值或涉安全升级人工；联动信用处罚。</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-10</td>
+<td style="text-align: left;">协调管理 Agent</td>
+<td style="text-align: left;">任务分解与图编排、Agent 注册发现、状态监控；执行全部冲突检测与三级调度；熔断异常 Agent 并代管；interrupt 移交人工后恢复主流程。</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-11</td>
+<td style="text-align: left;">黑板与消息协议</td>
+<td style="text-align: left;">类型化黑板由 LangGraph State + Checkpointer 承载；ACL 消息含 消息ID/对话ID/performative/收发方/内容/置信度/超时/异常码/时间戳；偏差自动纠正并记录来源。</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-12</td>
+<td style="text-align: left;">人工工作台</td>
+<td style="text-align: left;">待办队列（商品复核、三级终裁、安全事件、熔断接管）；证据包查看；终裁写回黑板并驱动状态流转；人工动作强制留痕。</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-13</td>
+<td style="text-align: left;">可解释与审计</td>
+<td style="text-align: left;">审核结论、推荐理由、出价依据、裁决书、冲突升级路径全程可查；基于检查点提供决策轨迹回放。</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-14</td>
+<td style="text-align: left;">冲突剧本模拟</td>
+<td style="text-align: left;">内置 ≥10 个剧本覆盖 C1–C8；一键运行并输出逐步轨迹与期望结果对照表。</td>
+</tr>
+<tr>
+<td style="text-align: center;">FR-15</td>
+<td style="text-align: left;">Web 前端</td>
+<td style="text-align: left;">通用登录/首页；卖家发布与商品管理/议价/交付/申诉；买家市场/议价室/支付/评价/信用；管理员工作台；P1 监控大屏。</td>
+</tr>
+</tbody>
+</table>
+<p>▍<strong>5.1 商品与订单状态机</strong></p>
+<table style="width:95%;">
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 35%" />
+<col style="width: 47%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>对象</strong></th>
+<th style="text-align: center;"><strong>状态集合</strong></th>
+<th style="text-align: center;"><strong>关键迁移规则</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">商品 Item</td>
+<td style="text-align: left;">草稿 / 待审核 / 在售 / 被锁定 / 已成交 / 下架 / 驳回 / 冻结</td>
+<td style="text-align: left;">审核通过方可上架；被锁定仅持锁订单可见可支付；违禁欺诈直接冻结；成交后终态不可变更。</td>
+</tr>
+<tr>
+<td style="text-align: left;">订单 Order</td>
+<td style="text-align: left;">已创建 → 待支付 → 已支付 → 待收货 → 已完成 → 已评价；异常分支：已取消 / 申诉中 →（已完成 | 已退款）</td>
+<td style="text-align: left;">严格按状态机迁移，非法迁移一律拒绝；支付超时或失败转已取消并释放锁；申诉由仲裁裁决驱动；重复支付幂等拒绝。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>六 冲突决策机制（研究核心）</strong></p>
+<p>▍<strong>6.1 四类冲突检测</strong></p>
+<table style="width:95%;">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 37%" />
+<col style="width: 13%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>检测方式</strong></th>
+<th style="text-align: center;"><strong>触发条件</strong></th>
+<th style="text-align: center;"><strong>冲突类型</strong></th>
+<th style="text-align: center;"><strong>处置入口</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">规则检测</td>
+<td style="text-align: left;">状态机/锁校验失败（如已锁定商品收到下单）</td>
+<td style="text-align: left;">资源冲突</td>
+<td style="text-align: left;">一级协商 / 锁裁决</td>
+</tr>
+<tr>
+<td style="text-align: left;">意见检测</td>
+<td style="text-align: left;">多 Agent 结论相左且置信度接近</td>
+<td style="text-align: left;">决策冲突</td>
+<td style="text-align: left;">二级加权投票 / 仲裁</td>
+</tr>
+<tr>
+<td style="text-align: left;">目标检测</td>
+<td style="text-align: left;">各 Agent 行动提案目标不相容（佣金 vs 满意度）</td>
+<td style="text-align: left;">目标冲突</td>
+<td style="text-align: left;">二级效用比较</td>
+</tr>
+<tr>
+<td style="text-align: left;">信息检测</td>
+<td style="text-align: left;">Agent 私有状态与黑板 SSOT 不一致</td>
+<td style="text-align: left;">信息冲突</td>
+<td style="text-align: left;">以 SSOT 自动纠正并记录来源</td>
+</tr>
+</tbody>
+</table>
+<p>▍<strong>6.2 三级处理阶梯</strong></p>
+<table style="width:95%;">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 20%" />
+<col style="width: 40%" />
+<col style="width: 23%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>级别</strong></th>
+<th style="text-align: center;"><strong>触发条件</strong></th>
+<th style="text-align: center;"><strong>处理方式</strong></th>
+<th style="text-align: center;"><strong>升级出口</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><p>一级</p>
+<p>对等协商</p></td>
+<td style="text-align: left;">冲突初发、当事 Agent 可直接谈判</td>
+<td style="text-align: left;">限时 ≤3 轮自动让步、纳什参考价、规则解释、允许补材料</td>
+<td style="text-align: left;">成功→留痕恢复主流程；失败→升级二级</td>
+</tr>
+<tr>
+<td style="text-align: left;"><p>二级</p>
+<p>协调仲裁</p></td>
+<td style="text-align: left;">协商失败或多 Agent 意见相左</td>
+<td style="text-align: left;">协调者主持：全局效用函数评分 + 相关 Agent 加权投票（票权×置信度）</td>
+<td style="text-align: left;">出具含依据裁决书；被拒/分歧过大→三级</td>
+</tr>
+<tr>
+<td style="text-align: left;"><p>三级</p>
+<p>人工兜底</p></td>
+<td style="text-align: left;">涉资金/违禁/校园安全，或金额超阈值</td>
+<td style="text-align: left;">立即冻结相关操作；仲裁 Agent 汇总证据包提交管理员终裁</td>
+<td style="text-align: left;">人工裁决写回黑板，联动信用处罚并恢复/终止流程</td>
+</tr>
+</tbody>
+</table>
+<p>▍<strong>6.3 两类量化决策工具</strong></p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>◆ 全局效用函数 U</strong></th>
+<th style="text-align: center;"><strong>◆ 加权投票（含置信度）</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><p>U = 0.25·用户满意度 + 0.20·交易成功率 + 0.30·平台安全性 + 0.15·公平性 − 0.10·处理成本</p>
+<p>安全权重最高（0.30）；权重写入配置，P1 支持界面调参做对比实验。</p></td>
+<td style="text-align: left;"><p>风险类决策由信用、审核、交易等相关 Agent 投票，票权按专业相关性赋权并乘以各自置信度。</p>
+<p>平票或分歧过大时升级二级仲裁并暂缓支付。</p></td>
+</tr>
+</tbody>
+</table>
+<p>▍<strong>6.4 安全底线</strong></p>
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>▲ 不可覆盖：</strong> 内容审核 Agent 对违禁品、欺诈交易拥有一票否决权，任何投票或效用得分均不得覆盖；协调者可熔断隔离异常 Agent 并临时代管。实现上确定性规则优先于模型输出。</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<p>▍<strong>6.5 八类典型冲突场景矩阵</strong></p>
+<table style="width:96%;">
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 20%" />
+<col style="width: 9%" />
+<col style="width: 43%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>编号</strong></th>
+<th style="text-align: center;"><strong>冲突场景</strong></th>
+<th style="text-align: center;"><strong>类型</strong></th>
+<th style="text-align: center;"><strong>处置要点</strong></th>
+<th style="text-align: center;"><strong>主责 Agent</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">C1</td>
+<td style="text-align: left;">买卖双方议价僵持互让</td>
+<td style="text-align: center;">目标</td>
+<td style="text-align: left;">一级时间压力让步 + 纳什参考；超时破裂并推荐同类商品</td>
+<td style="text-align: center;">议价谈判</td>
+</tr>
+<tr>
+<td style="text-align: center;">C2</td>
+<td style="text-align: left;">多买家并发抢同一商品</td>
+<td style="text-align: center;">资源</td>
+<td style="text-align: left;">预占锁 + 三优先排序；失败者释放并推荐替代商品</td>
+<td style="text-align: center;">交易履约</td>
+</tr>
+<tr>
+<td style="text-align: center;">C3</td>
+<td style="text-align: left;">卖家不服审核驳回</td>
+<td style="text-align: center;">决策/知识</td>
+<td style="text-align: left;">一级解释补材料 → 二级规则库复核 → 三级人工</td>
+<td style="text-align: center;">审核 / 仲裁</td>
+</tr>
+<tr>
+<td style="text-align: center;">C4</td>
+<td style="text-align: left;">货不对板、未交付纠纷</td>
+<td style="text-align: center;">目标</td>
+<td style="text-align: left;">二级证据链裁决 + 信用扣罚；超阈值转三级人工</td>
+<td style="text-align: center;">纠纷仲裁</td>
+</tr>
+<tr>
+<td style="text-align: center;">C5</td>
+<td style="text-align: left;">推荐偏向佣金、不符需求</td>
+<td style="text-align: center;">目标</td>
+<td style="text-align: left;">二级效用比较，用户满意度不达标要求重排</td>
+<td style="text-align: center;">协调管理</td>
+</tr>
+<tr>
+<td style="text-align: center;">C6</td>
+<td style="text-align: left;">信用判高风险 vs 订单判可成交</td>
+<td style="text-align: center;">决策</td>
+<td style="text-align: left;">二级加权投票（风险权重高），分歧大则暂缓支付并升级</td>
+<td style="text-align: center;">协调管理</td>
+</tr>
+<tr>
+<td style="text-align: center;">C7</td>
+<td style="text-align: left;">各 Agent 状态不一致</td>
+<td style="text-align: center;">信息</td>
+<td style="text-align: left;">以黑板 SSOT 自动纠正并记录偏差来源</td>
+<td style="text-align: center;">协调管理</td>
+</tr>
+<tr>
+<td style="text-align: center;">C8</td>
+<td style="text-align: left;">疑似欺诈 / 违禁品交易</td>
+<td style="text-align: center;">安全</td>
+<td style="text-align: left;">立即拦截 + 一票否决，冻结并将证据直送人工</td>
+<td style="text-align: center;">内容审核</td>
+</tr>
+</tbody>
+</table>
+<p><strong>七 非功能需求</strong></p>
+<table style="width:95%;">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 10%" />
+<col style="width: 41%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>编号</strong></th>
+<th style="text-align: center;"><strong>类别</strong></th>
+<th style="text-align: center;"><strong>需求描述</strong></th>
+<th style="text-align: center;"><strong>可验证标准</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">NFR-1</td>
+<td style="text-align: left;">可解释</td>
+<td style="text-align: left;">每次审核/推荐/出价/仲裁给出依据与置信度</td>
+<td style="text-align: left;">结论与裁决书界面可见、可回溯</td>
+</tr>
+<tr>
+<td style="text-align: left;">NFR-2</td>
+<td style="text-align: left;">一致性</td>
+<td style="text-align: left;">同一商品不可重复成交</td>
+<td style="text-align: left;">并发测试下恰一单成交、无超卖</td>
+</tr>
+<tr>
+<td style="text-align: left;">NFR-3</td>
+<td style="text-align: left;">及时性</td>
+<td style="text-align: left;">常规操作秒级；议价单轮含 LLM 的 P95 ≤ 3 秒</td>
+<td style="text-align: left;">剧本计时；超时自动降级规则</td>
+</tr>
+<tr>
+<td style="text-align: left;">NFR-4</td>
+<td style="text-align: left;">安全可控</td>
+<td style="text-align: left;">密码哈希、JWT、数据按用户隔离、违禁必拦、veto 不可覆盖</td>
+<td style="text-align: left;">安全剧本与接口测试通过</td>
+</tr>
+<tr>
+<td style="text-align: left;">NFR-5</td>
+<td style="text-align: left;">可扩展</td>
+<td style="text-align: left;">Agent 遵循统一契约、注册表发现、可插拔</td>
+<td style="text-align: left;">新增示例 Agent 不改协调核心</td>
+</tr>
+<tr>
+<td style="text-align: left;">NFR-6</td>
+<td style="text-align: left;">LLM 稳定</td>
+<td style="text-align: left;">结构化输出 → 校验 → 重试 → 规则兜底；关键动作人工确认</td>
+<td style="text-align: left;">故障注入 / 无 Key 测试无脏状态</td>
+</tr>
+<tr>
+<td style="text-align: left;">NFR-7</td>
+<td style="text-align: left;">可复现</td>
+<td style="text-align: left;">无 API Key 可完整跑通 P0 与全部剧本；种子数据；一键启动</td>
+<td style="text-align: left;">全新环境按 README 启动成功</td>
+</tr>
+<tr>
+<td style="text-align: left;">NFR-8</td>
+<td style="text-align: left;">可观测</td>
+<td style="text-align: left;">检查点、结构化日志、冲突事件记录、轨迹回放</td>
+<td style="text-align: left;">监控台与日志可查</td>
+</tr>
+<tr>
+<td style="text-align: left;">NFR-9</td>
+<td style="text-align: left;">工程质量</td>
+<td style="text-align: left;">核心模块类型注解、pytest 覆盖、前后端可独立启动</td>
+<td style="text-align: left;">测试通过、README 可执行</td>
+</tr>
+</tbody>
+</table>
+<p><strong>八 技术选型与约束</strong></p>
+<p>▍<strong>8.1 技术栈（V3.1 核查 2026 年时效后确定）</strong></p>
+<table style="width:95%;">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 33%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>层</strong></th>
+<th style="text-align: center;"><strong>选型</strong></th>
+<th style="text-align: center;"><strong>选择理由</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">语言</td>
+<td style="text-align: left;">Python 3.11+</td>
+<td style="text-align: left;">AI 生态完整，团队技术方向一致</td>
+</tr>
+<tr>
+<td style="text-align: center;">Agent 编排</td>
+<td style="text-align: left;">LangGraph 1.x（1.2.x 活跃维护）</td>
+<td style="text-align: left;">图状态 + 条件边 + Checkpointer + interrupt，天然映射协商→仲裁→人工回环</td>
+</tr>
+<tr>
+<td style="text-align: center;">议价对话</td>
+<td style="text-align: left;">LangGraph 双边节点循环实现（不引入 AutoGen）</td>
+<td style="text-align: left;">AutoGen 2026 年进入维护模式，避免双框架风险</td>
+</tr>
+<tr>
+<td style="text-align: center;">大模型</td>
+<td style="text-align: left;">DeepSeek V4（OpenAI 兼容，可切 Qwen/GLM）</td>
+<td style="text-align: left;">国内直连、低成本、Agent 能力增强</td>
+</tr>
+<tr>
+<td style="text-align: center;">模型兜底</td>
+<td style="text-align: left;">自研 RuleLLM 确定性规则引擎</td>
+<td style="text-align: left;">无 Key/超时/格式漂移时自动降级，无 Key 可完整演示</td>
+</tr>
+<tr>
+<td style="text-align: center;">后端</td>
+<td style="text-align: left;">FastAPI + Uvicorn</td>
+<td style="text-align: left;">异步、自动 OpenAPI、原生 WebSocket</td>
+</tr>
+<tr>
+<td style="text-align: center;">数据库</td>
+<td style="text-align: left;">SQLModel + SQLite（WAL），可切 PostgreSQL</td>
+<td style="text-align: left;">零配置可跑；事务 + 乐观版本号保证并发正确</td>
+</tr>
+<tr>
+<td style="text-align: center;">认证</td>
+<td style="text-align: left;">python-jose（JWT）+ bcrypt</td>
+<td style="text-align: left;">学号登录与角色鉴权</td>
+</tr>
+<tr>
+<td style="text-align: center;">前端</td>
+<td style="text-align: left;">Vue3 + TypeScript + Vite + Pinia + Element Plus</td>
+<td style="text-align: left;">组件成熟、中文生态、交付快</td>
+</tr>
+<tr>
+<td style="text-align: center;">可视化 / 实时</td>
+<td style="text-align: left;">ECharts 5 / 原生 WebSocket</td>
+<td style="text-align: left;">监控大屏与议价室实时出价</td>
+</tr>
+<tr>
+<td style="text-align: center;">测试</td>
+<td style="text-align: left;">pytest + pytest-asyncio + httpx</td>
+<td style="text-align: left;">单元、接口、并发与故障注入测试</td>
+</tr>
+</tbody>
+</table>
+<p>▍<strong>8.2 约束、依赖与假设</strong></p>
+<table style="width:95%;">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>类别</strong></th>
+<th style="text-align: center;"><strong>内容</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">技术约束</td>
+<td style="text-align: left;">单机 Windows 开发与演示；不依赖外部基础设施即可运行（SQLite / 内置锁）。</td>
+</tr>
+<tr>
+<td style="text-align: left;">业务约束</td>
+<td style="text-align: left;">面向校园内二手实物商品；模拟支付；规则库与权重为经验初值，无真实数据训练。</td>
+</tr>
+<tr>
+<td style="text-align: left;">外部依赖</td>
+<td style="text-align: left;">DeepSeek（或兼容供应商）API Key 为可选项，缺失时 RuleLLM 全量兜底；需 Node.js 与 Python 3.11+。</td>
+</tr>
+<tr>
+<td style="text-align: left;">关键假设</td>
+<td style="text-align: left;">默认 Mock 演示模式；前端采用 Vue3；金额阈值/议价参数/效用权重均为可配置初值；P0 图片以 URL/占位 + 文本审核为主。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>九 验收标准（V4）</strong></p>
+<p>共 15 条验收标准：12 条 rule（客观二元条件）+ 3 条 rubric（评分维度，阈值 ≥4，满分 5）。</p>
+<table style="width:95%;">
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 8%" />
+<col style="width: 24%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>编号</strong></th>
+<th style="text-align: center;"><strong>类型</strong></th>
+<th style="text-align: center;"><strong>验收项</strong></th>
+<th style="text-align: center;"><strong>通过条件 / 证据</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">AC-1</td>
+<td style="text-align: center;">rule</td>
+<td style="text-align: left;">安全一票否决不可覆盖</td>
+<td style="text-align: left;">违禁商品在任何投票/效用放行下仍被冻结；C8 剧本 + 审计日志</td>
+</tr>
+<tr>
+<td style="text-align: center;">AC-2</td>
+<td style="text-align: center;">rule</td>
+<td style="text-align: left;">交易主链路端到端贯通</td>
+<td style="text-align: left;">发布→审核→搜索→议价→支付→交付→评价全通；订单达“已评价”</td>
+</tr>
+<tr>
+<td style="text-align: center;">AC-3</td>
+<td style="text-align: center;">rule</td>
+<td style="text-align: left;">并发抢单一致性</td>
+<td style="text-align: left;">两路并发下单恰一成功、无超卖；并发测试输出</td>
+</tr>
+<tr>
+<td style="text-align: center;">AC-4</td>
+<td style="text-align: center;">rule</td>
+<td style="text-align: left;">议价规则正确</td>
+<td style="text-align: left;">单调让步、区间成交、超时破裂、纳什价正确；C1 剧本断言</td>
+</tr>
+<tr>
+<td style="text-align: center;">AC-5</td>
+<td style="text-align: center;">rule</td>
+<td style="text-align: left;">三级阶梯可升级且可回溯</td>
+<td style="text-align: left;">二级裁决书 + interrupt 三级冻结 + 人工写回；C3/C4 轨迹</td>
+</tr>
+<tr>
+<td style="text-align: center;">AC-6</td>
+<td style="text-align: center;">rule</td>
+<td style="text-align: left;">SSOT 信息冲突自动纠正</td>
+<td style="text-align: left;">偏差自动纠正并记录来源；C7 剧本日志</td>
+</tr>
+<tr>
+<td style="text-align: center;">AC-7</td>
+<td style="text-align: center;">rule</td>
+<td style="text-align: left;">八类场景全覆盖</td>
+<td style="text-align: left;">C1–C8 均有剧本且总数 ≥10；一键运行对照表</td>
+</tr>
+<tr>
+<td style="text-align: center;">AC-8</td>
+<td style="text-align: center;">rule</td>
+<td style="text-align: left;">无 Key 可完整演示</td>
+<td style="text-align: left;">无 API Key 下 P0 与全部剧本成功；运行日志</td>
+</tr>
+<tr>
+<td style="text-align: center;">AC-9</td>
+<td style="text-align: center;">rule</td>
+<td style="text-align: left;">Agent 可插拔</td>
+<td style="text-align: left;">新增示例 Agent 不改协调核心即可被调用；注册测试</td>
+</tr>
+<tr>
+<td style="text-align: center;">AC-10</td>
+<td style="text-align: center;">rule</td>
+<td style="text-align: left;">决策轨迹可回放</td>
+<td style="text-align: left;">按检查点重放消息、结论、置信度与升级路径</td>
+</tr>
+<tr>
+<td style="text-align: center;">AC-11</td>
+<td style="text-align: center;">rule</td>
+<td style="text-align: left;">ACL 消息协议统一</td>
+<td style="text-align: left;">字段齐备、非法消息被拒；Schema 校验单测</td>
+</tr>
+<tr>
+<td style="text-align: center;">AC-12</td>
+<td style="text-align: center;">rule</td>
+<td style="text-align: left;">LLM 故障不产生脏状态</td>
+<td style="text-align: left;">非法 JSON/超时后重试降级或转人工；故障注入测试</td>
+</tr>
+<tr>
+<td style="text-align: center;">AC-13</td>
+<td style="text-align: center;">rubric</td>
+<td style="text-align: left;">前端完成度与易用性</td>
+<td style="text-align: left;">三类用户旅程完整、反馈清晰；1–5 分，阈值 ≥4</td>
+</tr>
+<tr>
+<td style="text-align: center;">AC-14</td>
+<td style="text-align: center;">rubric</td>
+<td style="text-align: left;">决策可解释质量</td>
+<td style="text-align: left;">四类结论“依据—置信度—结果”充分、裁决书完整；阈值 ≥4</td>
+</tr>
+<tr>
+<td style="text-align: center;">AC-15</td>
+<td style="text-align: center;">rubric</td>
+<td style="text-align: left;">架构与工程质量</td>
+<td style="text-align: left;">分层清晰、测试齐备、一键启动；阈值 ≥4</td>
+</tr>
+</tbody>
+</table>
+<p><strong>十 待确认事项（Open Questions）</strong></p>
+<table style="width:95%;">
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 23%" />
+<col style="width: 34%" />
+<col style="width: 31%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>序号</strong></th>
+<th style="text-align: center;"><strong>事项</strong></th>
+<th style="text-align: center;"><strong>V4 默认方案</strong></th>
+<th style="text-align: center;"><strong>决策影响</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Q1</td>
+<td style="text-align: left;">是否提供 DeepSeek API Key</td>
+<td style="text-align: left;">无 Key 的 RuleLLM Mock 模式，界面可切换</td>
+<td style="text-align: left;">影响真实 LLM 演示效果，不影响功能完整性</td>
+</tr>
+<tr>
+<td style="text-align: center;">Q2</td>
+<td style="text-align: left;">部署形态</td>
+<td style="text-align: left;">本机一键启动脚本；Docker Compose 列 P1</td>
+<td style="text-align: left;">影响老师在线访问的便利性</td>
+</tr>
+<tr>
+<td style="text-align: center;">Q3</td>
+<td style="text-align: left;">效用权重实验形态</td>
+<td style="text-align: left;">先配置文件，监控大屏完成后追加界面调参</td>
+<td style="text-align: left;">影响研究实验的交互效率</td>
+</tr>
+<tr>
+<td style="text-align: center;">Q4</td>
+<td style="text-align: left;">前端技术栈</td>
+<td style="text-align: left;">Vue3 + Element Plus</td>
+<td style="text-align: left;">可替换 React，不影响后端契约</td>
+</tr>
+<tr>
+<td style="text-align: center;">Q5</td>
+<td style="text-align: left;">图片能力</td>
+<td style="text-align: left;">P0 采用 URL/占位 + 文本审核</td>
+<td style="text-align: left;">真实图片鉴黄留待后续版本</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><p><strong>本需求规格说明书 V4.0 经四轮迭代于 2026 年 10 月 13 日形成开发与验收基线</strong></p>
+<p>编制人 / 审核人：梁奕琦 指导教师：曾志新</p></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+</body>
+</html>

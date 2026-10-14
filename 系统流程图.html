@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>/* 被演示 deck 以 iframe 嵌入时默认白色主题，单独打开仍为深色 */
+if(window.self!==window.top){document.documentElement.dataset.theme='light';}</script>
+<title>交易主链路 × 冲突三级决策流程图 · 校园二手交易平台 Multi-Agent</title>
+<style>
+  /* ================= 双主题 Token ================= */
+  :root{
+    --bg:#070d1a;
+    --hero-a:rgba(244,114,182,.13); --hero-b:rgba(56,189,248,.15);
+    --hero-c:#0a1326; --hero-d:#070d1a;
+    --panel:rgba(17,27,48,.72); --line:rgba(148,163,184,.16);
+    --txt:#e6edf7; --mut:#8fa3c0; --sub-b:#cdd9ec; --accent:#5eead4;
+    --card-txt:#a9bbd6; --foot:#5b6c88; --shadow:rgba(0,0,0,.8);
+    --chip-bg:rgba(13,22,42,.55); --chip-txt:#c4d2e8;
+    --btn-bg:rgba(13,22,42,.75); --btn-hover:rgba(94,234,212,.18);
+    --panel-solid:#0b1426; --nav-bg:rgba(10,17,33,.72);
+    --amber:#fbbf24; --orange:#fb923c; --red:#ff5d73;
+    --edge-main:#7d9bd8; --edge-amber:#fbbf24; --edge-green:#34d399;
+    --edge-red:#ff5d73; --edge-slate:#8fa3c0;
+    --accent2:#818cf8;
+  }
+  [data-theme="light"]{
+    --bg:#eef3fb;
+    --hero-a:rgba(219,39,119,.10); --hero-b:rgba(2,132,199,.12);
+    --hero-c:#f8fbff; --hero-d:#eef3fb;
+    --panel:rgba(255,255,255,.9); --line:rgba(30,58,95,.14);
+    --txt:#16233b; --mut:#5a6b85; --sub-b:#2b3d5c; --accent:#0d9488;
+    --card-txt:#51617c; --foot:#7b8aa3; --shadow:rgba(40,70,110,.25);
+    --chip-bg:rgba(255,255,255,.8); --chip-txt:#334763;
+    --btn-bg:rgba(255,255,255,.9); --btn-hover:rgba(13,148,136,.12);
+    --panel-solid:#ffffff; --nav-bg:rgba(255,255,255,.78);
+    --amber:#d97706; --orange:#c2410c; --red:#e11d48;
+    --edge-main:#2563eb; --edge-amber:#d97706; --edge-green:#059669;
+    --edge-red:#e11d48; --edge-slate:#64748b;
+    --accent2:#4f46e5;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg); color:var(--txt);
+    font-family:"Inter","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden; transition:background .45s,color .45s}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(700px 380px at 88% -6%, rgba(94,234,212,.06), transparent 70%),
+      radial-gradient(600px 340px at -6% 30%, rgba(129,140,248,.07), transparent 70%)}
+  ::selection{background:rgba(94,234,212,.3)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:rgba(120,140,180,.35);border-radius:8px;border:2px solid var(--bg)}
+  /* 顶部玻璃导航 */
+  .topnav{position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:12px 26px;background:transparent;backdrop-filter:blur(0);
+    border-bottom:1px solid transparent;transition:padding .4s,background .4s,border-color .4s,box-shadow .4s}
+  .topnav.scrolled{padding:9px 26px;background:var(--nav-bg);backdrop-filter:blur(16px) saturate(1.4);
+    border-bottom-color:var(--line);box-shadow:0 10px 30px -18px var(--shadow)}
+  .scroll-progress{position:fixed;top:0;left:0;height:2.5px;width:0;z-index:101;
+    background:linear-gradient(90deg,var(--accent),var(--accent2),#f472b6);
+    box-shadow:0 0 10px rgba(94,234,212,.7);border-radius:0 2px 2px 0;transition:width .12s linear}
+  .brand{display:flex;align-items:center;gap:11px}
+  .brand .logo{width:34px;height:34px;border-radius:10px;flex:none;position:relative;
+    background:conic-gradient(from 210deg,#5eead4,#818cf8,#f472b6,#5eead4);
+    box-shadow:0 6px 18px -6px rgba(94,234,212,.7)}
+  .brand .logo::after{content:"";position:absolute;inset:3px;border-radius:8px;background:var(--panel-solid)}
+  .brand .logo::before{content:"";position:absolute;inset:0;z-index:2;border-radius:10px;
+    background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.55),transparent 45%)}
+  .brand b{font-size:14px;white-space:nowrap}.brand small{display:block;font-size:10.5px;color:var(--mut);letter-spacing:.14em}
+  .nav-right{display:flex;align-items:center;gap:12px}
+  .nav-range{font-size:12px;color:var(--mut);padding:7px 13px;border:1px solid var(--line);border-radius:999px;
+    background:var(--chip-bg);white-space:nowrap}.nav-range b{color:var(--accent);font-weight:700}
+  /* 主题切换 */
+  .theme-toggle{display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+    border:1px solid var(--line); background:var(--btn-bg); color:var(--txt);
+    border-radius:999px; padding:8px 15px;
+    font-size:12.5px; font-weight:600; font-family:inherit;
+    box-shadow:0 6px 20px -10px var(--shadow); transition:.3s;white-space:nowrap}
+  .theme-toggle:hover{border-color:var(--accent); background:var(--btn-hover); transform:translateY(-1px)}
+  .theme-toggle .ico{font-size:14px; line-height:1;transition:transform .5s}
+  .theme-toggle:hover .ico{transform:rotate(30deg)}
+  .hero{position:relative; min-height:430px; display:flex; align-items:center; overflow:hidden;
+    padding-top:56px;
+    background:
+      radial-gradient(1100px 560px at 78% -10%, var(--hero-a), transparent 60%),
+      radial-gradient(820px 480px at 8% 108%, var(--hero-b), transparent 60%),
+      linear-gradient(180deg,var(--hero-c),var(--hero-d));
+    border-bottom:1px solid var(--line); transition:.4s}
+  .hero::after{content:"";position:absolute;inset:0;opacity:.5;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:56px 56px;
+    mask-image:radial-gradient(ellipse 90% 80% at 50% 30%,#000 30%,transparent 78%);
+    -webkit-mask-image:radial-gradient(ellipse 90% 80% at 50% 30%,#000 30%,transparent 78%)}
+  #particles{position:absolute; inset:0; width:100%; height:100%}
+  .hero-inner{position:relative; z-index:2; max-width:1200px; margin:0 auto; padding:62px 32px 50px; width:100%}
+  .eyebrow{display:inline-flex; align-items:center; gap:10px; font-size:11.5px; letter-spacing:.3em;
+    color:var(--accent); font-weight:700; text-transform:uppercase; margin-bottom:18px}
+  .eyebrow::before{content:""; width:28px; height:1px; background:linear-gradient(90deg,transparent,var(--accent))}
+  .eyebrow::after{content:""; width:44px; height:1px; background:linear-gradient(90deg,var(--accent),transparent)}
+  h1{font-size:clamp(30px,4.8vw,54px); font-weight:800; line-height:1.12; letter-spacing:-.01em}
+  h1 .grad{background:linear-gradient(92deg,#14b8a6,#4f46e5 48%,#db2777 80%,#f59e0b);
+    background-size:220% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:hueShift 9s linear infinite}
+  :root[data-theme="dark"] h1 .grad{background:linear-gradient(92deg,#5eead4,#818cf8 48%,#f472b6 80%,#fbbf24);
+    background-size:220% 100%; -webkit-background-clip:text; background-clip:text}
+  @keyframes hueShift{to{background-position:220% 0}}
+  .sub{margin-top:16px; color:var(--mut); font-size:14.5px; line-height:1.85; max-width:840px}
+  .sub b{color:var(--sub-b)}
+  /* 统计 */
+  .stats{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+  .stat{position:relative;border:1px solid var(--line);background:var(--chip-bg);backdrop-filter:blur(8px);
+    border-radius:13px;padding:12px 18px;min-width:118px;overflow:hidden;
+    transition:transform .35s cubic-bezier(.2,.8,.25,1),border-color .35s,box-shadow .35s}
+  .stat::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--accent),var(--accent2))}
+  .stat:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 16px 36px -14px var(--accent)}
+  .stat .num{font-size:24px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+  .stat .num em{font-style:normal;font-size:12.5px;color:var(--mut);margin-left:3px;font-weight:600}
+  .stat .lab{font-size:11px;color:var(--mut);margin-top:7px}
+  .legend{display:flex; flex-wrap:wrap; gap:10px; margin-top:26px}
+  .lg{display:inline-flex; align-items:center; gap:8px; font-size:12.5px; color:var(--chip-txt);
+    border:1px solid var(--line); background:var(--chip-bg);
+    padding:7px 14px; border-radius:999px; transition:.3s}
+  .lg:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 10px 24px -14px var(--accent)}
+  .sw{width:26px; height:0; border-top:2.5px solid}
+  .sw-main{border-color:var(--edge-main)} .sw-amber{border-color:var(--edge-amber)}
+  .sw-green{border-color:var(--edge-green)} .sw-red{border-color:var(--edge-red)}
+  .sw-slate{border-color:var(--edge-slate)}
+  .sw.dashed{border-top-style:dashed}
+  .wrap{position:relative;z-index:1;max-width:1240px; margin:0 auto; padding:42px 24px 70px}
+  .panel{position:relative;background:var(--panel); border:1px solid var(--line); border-radius:22px;
+    backdrop-filter:blur(16px) saturate(1.2); padding:26px 18px 30px;
+    box-shadow:0 40px 100px -50px var(--shadow); transition:.4s;overflow:hidden}
+  .panel::before{content:"";position:absolute;top:0;left:8%;right:8%;height:1px;z-index:2;
+    background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent);opacity:.55}
+  .panel-head{padding:2px 10px 16px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:8px}
+  .panel-head h2{font-size:19.5px; font-weight:800; display:flex; align-items:center; gap:10px}
+  .panel-head h2::before{content:"";width:5px;height:19px;border-radius:3px;
+    background:linear-gradient(180deg,var(--accent),var(--accent2))}
+  .panel-head p{font-size:12.5px; color:var(--mut); margin-top:6px}
+  .live{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:var(--accent);
+    border:1px solid var(--line);border-radius:999px;padding:5px 12px;background:var(--chip-bg);letter-spacing:.08em}
+  .live i{width:7px;height:7px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 0 0 var(--accent);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(94,234,212,.5)}70%{box-shadow:0 0 0 8px rgba(94,234,212,0)}100%{box-shadow:0 0 0 0 rgba(94,234,212,0)}}
+  svg{width:100%; height:auto; display:block}
+  .sec-title{margin:54px 6px 20px; font-size:22px; font-weight:800; display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .sec-title::before{content:"";width:5px;height:22px;border-radius:3px;
+    background:linear-gradient(180deg,var(--accent),var(--accent2))}
+  .sec-title span{font-size:12.5px; color:var(--mut); font-weight:400; margin-left:4px}
+  .reveal{opacity:0;transform:translateY(22px)}
+  .reveal.in{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.2,.8,.25,1),transform .7s cubic-bezier(.2,.8,.25,1)}
+  .ladder{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+  .step{position:relative; background:var(--panel); border:1px solid var(--line); border-radius:18px;
+    padding:24px 24px 22px; overflow:hidden; transition:.3s}
+  .step:hover{transform:translateY(-5px)}
+  .step h3{font-size:17px; margin:9px 0 10px; color:var(--txt)}
+  .step p{font-size:13px; color:var(--card-txt); line-height:1.8}
+  .step p b{color:var(--sub-b)}
+  .step .out{margin-top:12px; font-size:12px; padding-top:10px; border-top:1px dashed var(--line); line-height:1.7}
+  .s1{border-top:3px solid var(--amber)}.s1 .lv{color:var(--amber)}
+  .s2{border-top:3px solid var(--orange)}.s2 .lv{color:var(--orange)}
+  .s3{border-top:3px solid var(--red)}.s3 .lv{color:var(--red)}
+  .s1 .out{color:var(--amber)}.s2 .out{color:var(--orange)}.s3 .out{color:var(--red)}
+  .rules{display:flex; flex-wrap:wrap; gap:10px; margin-top:26px}
+  .rule{font-size:12.5px; color:var(--chip-txt); border:1px solid var(--line); border-radius:10px;
+    padding:9px 15px; background:var(--chip-bg)}
+  .rule b{color:var(--accent)}
+  footer{text-align:center; color:var(--foot); font-size:12px; padding:30px 0 6px; line-height:1.9}
+  footer::before{content:"";display:block;width:120px;height:1px;margin:0 auto 20px;
+    background:linear-gradient(90deg,transparent,var(--foot),transparent);opacity:.6}
+  /* ================= SVG 主题色 ================= */
+  /* 渐变 stop（深色） */
+  .s-actor-a{stop-color:#0e7490}.s-actor-b{stop-color:#155e75}
+  .s-coord-a{stop-color:#6d28d9}.s-coord-b{stop-color:#4338ca}
+  .s-det-a{stop-color:#7c3aed}.s-det-b{stop-color:#6d28d9}
+  .s-node-a{stop-color:#1e3a5f}.s-node-b{stop-color:#16294a}
+  .s-end-a{stop-color:#047857}.s-end-b{stop-color:#065f46}
+  .s-dia-a{stop-color:#5b21b6}.s-dia-b{stop-color:#4c1d95}
+  .s-veto-a{stop-color:#be123c}.s-veto-b{stop-color:#9f1239}
+  .s-l1-a{stop-color:#b45309}.s-l1-b{stop-color:#92400e}
+  .s-l2-a{stop-color:#c2410c}.s-l2-b{stop-color:#9a3412}
+  .s-l3-a{stop-color:#e11d48}.s-l3-b{stop-color:#be123c}
+  .s-data-a{stop-color:#155e75}.s-data-b{stop-color:#164e63}
+  /* 泳道 */
+  .band{stroke-width:1}
+  .b1{fill:rgba(20,184,166,.05);stroke:rgba(94,234,212,.22)}
+  .b2{fill:rgba(139,92,246,.06);stroke:rgba(167,139,250,.25)}
+  .b3{fill:rgba(56,189,248,.035);stroke:rgba(125,155,216,.2)}
+  .b4{fill:rgba(148,163,184,.06);stroke:rgba(148,163,184,.25)}
+  .bt1{fill:#5eead4}.bt2{fill:#c4b5fd}.bt3{fill:#7dd3fc}.bt4{fill:#cbd5e1}
+  /* 边与箭头 */
+  .edge{fill:none; stroke-width:2.2; stroke-linecap:round; opacity:0;
+    animation:edgeIn .7s ease forwards; animation-play-state:paused}
+  @keyframes edgeIn{to{opacity:1}}
+  .edge.flow{stroke-dasharray:8 6;
+    animation:edgeIn .7s ease forwards, dashmove 1.15s linear infinite .8s}
+  @keyframes dashmove{to{stroke-dashoffset:-26}}
+  #flowsvg.playing .edge{animation-play-state:running}
+  .edge.main{stroke:var(--edge-main)} .edge.amber{stroke:var(--edge-amber)}
+  .edge.green{stroke:var(--edge-green)} .edge.red{stroke:var(--edge-red)}
+  .edge.slate{stroke:var(--edge-slate)}
+  /* 沿路径流动的光点（animateMotion） */
+  .flow-dots{opacity:0;transition:opacity .6s ease .3s}
+  #flowsvg.playing .flow-dots{opacity:1}
+  .fd-main{color:var(--edge-main)} .fd-amber{color:var(--edge-amber)}
+  .fd-red{color:var(--edge-red)} .fd-green{color:var(--edge-green)}
+  .flow-dots circle{filter:drop-shadow(0 0 5px currentColor)}
+  #aMain path,#aMainS path{fill:#7d9bd8} #aAmber path{fill:#fbbf24}
+  #aGreen path{fill:#34d399} #aRed path{fill:#ff5d73} #aSlate path{fill:#8fa3c0}
+  /* 节点胶囊标签 */
+  .pill{stroke-width:1}
+  .pt{fill:#9db8dd}.pt-v{fill:#c4b5fd}.pt-c{fill:#7dd3fc}
+  .pt-r{fill:#fda4af}.pt-y{fill:#fcd34d}.pt-o{fill:#fdba74}
+  .pt-g{fill:#6ee7b7}.pt-s{fill:#b6c6dd}
+  /* 节点动效 */
+  .node{opacity:0; animation:nodeIn .65s cubic-bezier(.2,.8,.25,1) forwards; animation-play-state:paused}
+  #flowsvg.playing .node{animation-play-state:running}
+  @keyframes nodeIn{from{opacity:0; transform:translateY(14px)}to{opacity:1; transform:translateY(0)}}
+  .node rect,.node path.dia{transition:filter .25s, stroke-width .25s}
+  .node:hover rect,.node:hover path.dia{filter:brightness(1.18) drop-shadow(0 0 14px rgba(125,155,216,.45)); stroke-width:2.4}
+  .node.veto:hover rect{filter:brightness(1.12) drop-shadow(0 0 16px rgba(255,93,115,.6))}
+  /* ================= 浅色覆盖 ================= */
+  [data-theme="light"] .s-actor-a{stop-color:#0891b2}[data-theme="light"] .s-actor-b{stop-color:#0e7490}
+  [data-theme="light"] .s-coord-a{stop-color:#7c3aed}[data-theme="light"] .s-coord-b{stop-color:#4f46e5}
+  [data-theme="light"] .s-det-a{stop-color:#8b5cf6}[data-theme="light"] .s-det-b{stop-color:#7c3aed}
+  [data-theme="light"] .s-node-a{stop-color:#2f74b8}[data-theme="light"] .s-node-b{stop-color:#1d4e89}
+  [data-theme="light"] .s-end-a{stop-color:#059669}[data-theme="light"] .s-end-b{stop-color:#047857}
+  [data-theme="light"] .s-dia-a{stop-color:#7c3aed}[data-theme="light"] .s-dia-b{stop-color:#6d28d9}
+  [data-theme="light"] .s-l1-a{stop-color:#d97706}[data-theme="light"] .s-l1-b{stop-color:#b45309}
+  [data-theme="light"] .s-l2-a{stop-color:#ea580c}[data-theme="light"] .s-l2-b{stop-color:#c2410c}
+  [data-theme="light"] .s-data-a{stop-color:#0891b2}[data-theme="light"] .s-data-b{stop-color:#0e7490}
+  [data-theme="light"] .b1{fill:rgba(13,148,136,.06);stroke:rgba(13,148,136,.30)}
+  [data-theme="light"] .b2{fill:rgba(124,58,237,.06);stroke:rgba(124,58,237,.28)}
+  [data-theme="light"] .b3{fill:rgba(2,132,199,.05);stroke:rgba(2,132,199,.25)}
+  [data-theme="light"] .b4{fill:rgba(100,116,139,.08);stroke:rgba(100,116,139,.30)}
+  [data-theme="light"] .bt1{fill:#0f766e}[data-theme="light"] .bt2{fill:#6d28d9}
+  [data-theme="light"] .bt3{fill:#0369a1}[data-theme="light"] .bt4{fill:#475569}
+  [data-theme="light"] #aMain path,[data-theme="light"] #aMainS path{fill:#2563eb}
+  [data-theme="light"] #aAmber path{fill:#d97706}
+  [data-theme="light"] #aGreen path{fill:#059669}
+  [data-theme="light"] #aRed path{fill:#e11d48}
+  [data-theme="light"] #aSlate path{fill:#64748b}
+  [data-theme="light"] .pt{fill:#475569}[data-theme="light"] .pt-v{fill:#6d28d9}
+  [data-theme="light"] .pt-c{fill:#0369a1}
+  [data-theme="light"] .pt-r{fill:#be123c}[data-theme="light"] .pt-y{fill:#b45309}
+  [data-theme="light"] .pt-o{fill:#c2410c}
+  [data-theme="light"] .pt-g{fill:#047857}[data-theme="light"] .pt-s{fill:#475569}
+  [data-theme="light"] .node:hover rect,[data-theme="light"] .node:hover path.dia{filter:brightness(1.06) drop-shadow(0 0 14px rgba(37,99,235,.35))}
+  /* 胶囊底色（按主题） */
+  .pill{fill:#0b1426;stroke:rgba(148,163,184,.25)}
+  .pill-r{fill:#2a1020;stroke:rgba(251,113,133,.3)}
+  .pill-y{fill:#241a10;stroke:rgba(251,191,36,.3)}
+  .pill-g{fill:#0c221c;stroke:rgba(52,211,153,.3)}
+  .pill-s{fill:#0f1c2a;stroke:rgba(148,163,184,.3)}
+  [data-theme="light"] .pill{fill:#ffffff;stroke:rgba(30,58,95,.18)}
+  [data-theme="light"] .pill-r{fill:#fff1f2;stroke:rgba(225,29,72,.3)}
+  [data-theme="light"] .pill-y{fill:#fffbeb;stroke:rgba(217,119,6,.3)}
+  [data-theme="light"] .pill-g{fill:#ecfdf5;stroke:rgba(5,150,105,.3)}
+  [data-theme="light"] .pill-s{fill:#f8fafc;stroke:rgba(100,116,139,.3)}
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+<nav class="topnav" id="topnav">
+  <div class="brand">
+    <span class="logo"></span>
+    <div><b>校园二手交易 Multi-Agent</b><small>SYSTEM FLOW · ACL / SSOT</small></div>
+  </div>
+  <div class="nav-right">
+    <span class="nav-range"><b>四层结构</b> · 9 Agent · 三级决策</span>
+    <button id="themeToggle" class="theme-toggle" aria-label="切换主题">
+      <span class="ico" id="themeIco">☀</span><span id="themeTxt">白色模式</span>
+    </button>
+  </div>
+</nav>
+
+<header class="hero">
+  <canvas id="particles"></canvas>
+  <div class="hero-inner">
+    <div class="eyebrow">System Flowchart · Main Chain & Conflict Resolution</div>
+    <h1>交易主链路 × <span class="grad">冲突三级决策</span><br>系统流程图</h1>
+    <p class="sub">蓝色主干为<b>正常交易旅程</b>（发布 → 审核 → 搜索 → 议价 → 锁定下单 → 支付 → 交付 → 评价）；任一环节检出冲突即进入右侧
+      <b>“对等协商 → 协调仲裁 → 人工兜底”</b>升级阶梯；命中违禁 / 欺诈时<b>安全一票否决（veto）</b>直送人工，任何投票与效用均不可覆盖。全部状态经<b>黑板 SSOT</b> 读写。</p>
+    <div class="stats">
+      <div class="stat"><div class="num"><span data-count="9">0</span><em> 类 Agent</em></div><div class="lab">1 协调者 + 8 专家</div></div>
+      <div class="stat"><div class="num"><span data-count="4">0</span><em> 类冲突检测</em></div><div class="lab">资源 · 目标 · 知识 · 决策</div></div>
+      <div class="stat"><div class="num"><span data-count="3">0</span><em> 级处理阶梯</em></div><div class="lab">协商 → 仲裁 → 人工</div></div>
+      <div class="stat"><div class="num"><span data-count="8">0</span><em> 类冲突场景</em></div><div class="lab">C1 – C8 · ≥10 剧本</div></div>
+      <div class="stat"><div class="num"><span data-count="15">0</span><em> 条验收标准</em></div><div class="lab">12 rule + 3 rubric</div></div>
+    </div>
+    <div class="legend">
+      <span class="lg"><i class="sw sw-main"></i>交易主链路 / ACL 消息</span>
+      <span class="lg"><i class="sw sw-amber"></i>协商升级</span>
+      <span class="lg"><i class="sw sw-green dashed"></i>成功恢复主流程</span>
+      <span class="lg"><i class="sw sw-red"></i>安全否决 / 人工终裁</span>
+      <span class="lg"><i class="sw sw-slate dashed"></i>黑板读写 / 规则兜底</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>系统全流程（四层结构 · 四泳道）</h2>
+        <p>用户层 → 协调层 → 专家 Agent 层 → 数据与工具层；编号①–⑧对应主链路推进顺序</p>
+      </div>
+      <span class="live"><i></i>ACL 消息流 · 动态推演</span>
+    </div>
+
+    <svg id="flowsvg" viewBox="0 0 1280 1492" xmlns="http://www.w3.org/2000/svg" font-family="Inter,PingFang SC,Microsoft YaHei,sans-serif">
+      <defs>
+        <linearGradient id="gActor" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" class="s-actor-a"/><stop offset="1" class="s-actor-b"/>
+        </linearGradient>
+        <linearGradient id="gCoord" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" class="s-coord-a"/><stop offset="1" class="s-coord-b"/>
+        </linearGradient>
+        <linearGradient id="gDet" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" class="s-det-a"/><stop offset="1" class="s-det-b"/>
+        </linearGradient>
+        <linearGradient id="gNode" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" class="s-node-a"/><stop offset="1" class="s-node-b"/>
+        </linearGradient>
+        <linearGradient id="gEnd" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" class="s-end-a"/><stop offset="1" class="s-end-b"/>
+        </linearGradient>
+        <linearGradient id="gDia" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" class="s-dia-a"/><stop offset="1" class="s-dia-b"/>
+        </linearGradient>
+        <linearGradient id="gVeto" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" class="s-veto-a"/><stop offset="1" class="s-veto-b"/>
+        </linearGradient>
+        <linearGradient id="gL1" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" class="s-l1-a"/><stop offset="1" class="s-l1-b"/>
+        </linearGradient>
+        <linearGradient id="gL2" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" class="s-l2-a"/><stop offset="1" class="s-l2-b"/>
+        </linearGradient>
+        <linearGradient id="gL3" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" class="s-l3-a"/><stop offset="1" class="s-l3-b"/>
+        </linearGradient>
+        <linearGradient id="gData" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" class="s-data-a"/><stop offset="1" class="s-data-b"/>
+        </linearGradient>
+        <filter id="sh" x="-20%" y="-20%" width="140%" height="150%">
+          <feDropShadow dx="0" dy="6" stdDeviation="9" flood-color="#000" flood-opacity=".45"/>
+        </filter>
+        <marker id="aMain" markerWidth="9" markerHeight="9" refX="7.5" refY="4.5" orient="auto">
+          <path d="M0,0 L9,4.5 L0,9 Z"/></marker>
+        <marker id="aAmber" markerWidth="9" markerHeight="9" refX="7.5" refY="4.5" orient="auto">
+          <path d="M0,0 L9,4.5 L0,9 Z"/></marker>
+        <marker id="aGreen" markerWidth="9" markerHeight="9" refX="7.5" refY="4.5" orient="auto">
+          <path d="M0,0 L9,4.5 L0,9 Z"/></marker>
+        <marker id="aRed" markerWidth="9" markerHeight="9" refX="7.5" refY="4.5" orient="auto">
+          <path d="M0,0 L9,4.5 L0,9 Z"/></marker>
+        <marker id="aSlate" markerWidth="9" markerHeight="9" refX="7.5" refY="4.5" orient="auto">
+          <path d="M0,0 L9,4.5 L0,9 Z"/></marker>
+        <marker id="aMainS" markerWidth="9" markerHeight="9" refX="1.5" refY="4.5" orient="auto">
+          <path d="M9,0 L0,4.5 L9,9 Z"/></marker>
+      </defs>
+
+      <!-- ===== 泳道底色 ===== -->
+      <g id="bands">
+        <rect class="band b1" x="8" y="10" width="1264" height="116" rx="14"/>
+        <rect class="band b2" x="8" y="142" width="1264" height="128" rx="14"/>
+        <rect class="band b3" x="8" y="296" width="1264" height="1022" rx="14"/>
+        <rect class="band b4" x="8" y="1340" width="1264" height="140" rx="14"/>
+        <text class="bt1" x="24" y="34" font-size="13" font-weight="700" letter-spacing="2">① 用 户 层</text>
+        <text class="bt2" x="24" y="166" font-size="13" font-weight="700" letter-spacing="2">② 协 调 层</text>
+        <text class="bt3" x="24" y="320" font-size="13" font-weight="700" letter-spacing="2">③ 专 家 A G E N T 层</text>
+        <text class="bt4" x="24" y="1364" font-size="13" font-weight="700" letter-spacing="2">④ 数 据 与 工 具 层</text>
+      </g>
+
+      <!-- ===== 边 ===== -->
+      <g id="edges" fill="none">
+        <path class="edge flow main" d="M250,100 V150 H360 V162" marker-end="url(#aMain)"/>
+        <path class="edge flow main" d="M640,100 V150 H480 V162" marker-end="url(#aMain)"/>
+        <path class="edge main" d="M610,206 H700" marker-end="url(#aMain)" marker-start="url(#aMainS)"/>
+        <path class="edge flow main" id="pF1" d="M420,250 V316" marker-end="url(#aMain)"/>
+        <path class="edge flow main" d="M420,372 V400" marker-end="url(#aMain)"/>
+        <path class="edge flow main" d="M420,456 V484" marker-end="url(#aMain)"/>
+        <path class="edge flow main" d="M420,568 V592" marker-end="url(#aMain)"/>
+        <path class="edge flow main" d="M420,648 V678" marker-end="url(#aMain)"/>
+        <path class="edge flow main" d="M420,736 V760" marker-end="url(#aMain)"/>
+        <path class="edge flow main" d="M420,836 V860" marker-end="url(#aMain)"/>
+        <path class="edge flow main" d="M420,918 V950" marker-end="url(#aMain)"/>
+        <path class="edge flow main" d="M420,1006 V1038" marker-end="url(#aMain)"/>
+        <path class="edge flow main" d="M420,1094 V1126" marker-end="url(#aMain)"/>
+        <path class="edge flow main" d="M420,1182 V1212" marker-end="url(#aMain)"/>
+        <path class="edge amber" d="M342,526 H104 V68 H160" marker-end="url(#aAmber)"/>
+        <path class="edge red flow" id="pF5" d="M498,526 H880" marker-end="url(#aRed)"/>
+        <path class="edge red" d="M1142,518 H1184 V1062 H1142" marker-end="url(#aRed)"/>
+        <path class="edge amber flow" d="M700,206 H640 V798 H880" marker-end="url(#aAmber)"/>
+        <path class="edge amber flow" id="pF2" d="M490,798 H880" marker-end="url(#aAmber)"/>
+        <path class="edge amber flow" id="pF3" d="M1011,834 V894" marker-end="url(#aAmber)"/>
+        <path class="edge amber flow" id="pF4" d="M1011,966 V1026" marker-end="url(#aAmber)"/>
+        <path class="edge red" id="pF6" d="M1140,66 H1236 V1062 H1142" marker-end="url(#aRed)"/>
+        <path class="edge green" d="M880,782 C760,782 660,742 570,716" marker-end="url(#aGreen)"/>
+        <path class="edge green" d="M880,932 C760,932 680,906 570,896" marker-end="url(#aGreen)"/>
+        <path class="edge green" id="pF7" d="M880,1056 C770,1056 680,1066 570,1068" marker-end="url(#aGreen)"/>
+        <path class="edge slate" d="M750,1360 V732 H570" marker-end="url(#aSlate)"/>
+        <path class="edge slate" d="M360,1270 V1360" marker-end="url(#aSlate)"/>
+        <path class="edge slate" d="M880,1052 H660 V1360 H520" marker-end="url(#aSlate)"/>
+        <path class="edge slate" d="M580,1397 H920" marker-end="url(#aSlate)" marker-start="url(#aSlate)"/>
+      </g>
+
+      <!-- ===== 边标签 ===== -->
+      <g font-size="11" font-weight="600">
+        <g class="node" style="animation-delay:.5s"><rect class="pill" x="262" y="138" width="120" height="20" rx="10"/><text class="pt" x="322" y="152" text-anchor="middle">发布 / 改价 / 申诉</text></g>
+        <g class="node" style="animation-delay:.5s"><rect class="pill" x="528" y="138" width="136" height="20" rx="10"/><text class="pt" x="596" y="152" text-anchor="middle">搜索 / 议价 / 下单</text></g>
+        <g class="node" style="animation-delay:.6s"><rect class="pill" x="624" y="195" width="62" height="20" rx="10"/><text class="pt-v" x="655" y="209" text-anchor="middle">ACL</text></g>
+        <g class="node" style="animation-delay:.65s"><rect class="pill" x="436" y="276" width="150" height="20" rx="10"/><text class="pt" x="511" y="290" text-anchor="middle">编排分派 · ACL 消息</text></g>
+        <g class="node" style="animation-delay:.8s"><rect class="pill" x="428" y="460" width="52" height="19" rx="9"/><text class="pt-c" x="454" y="473.5" text-anchor="middle">通过</text></g>
+        <g class="node" style="animation-delay:.9s"><rect class="pill pill-y" x="104" y="498" width="150" height="20" rx="10"/><text class="pt-y" x="179" y="512" text-anchor="middle">驳回 · 补材料重提一次</text></g>
+        <g class="node" style="animation-delay:.9s"><rect class="pill pill-r" x="610" y="504" width="158" height="20" rx="10"/><text class="pt-r" x="689" y="518" text-anchor="middle">命中违禁 / 欺诈 · veto</text></g>
+        <g class="node" style="animation-delay:1s"><rect class="pill pill-r" x="1188" y="740" width="86" height="34" rx="9"/><text class="pt-r" x="1231" y="754" text-anchor="middle">冻结</text><text class="pt-r" x="1231" y="768" text-anchor="middle">证据直送</text></g>
+        <g class="node" style="animation-delay:.9s"><rect class="pill pill-y" x="648" y="360" width="130" height="20" rx="10"/><text class="pt-y" x="713" y="374" text-anchor="middle">ConflictEvent 上报</text></g>
+        <g class="node" style="animation-delay:1s"><rect class="pill pill-y" x="600" y="780" width="170" height="20" rx="10"/><text class="pt-y" x="685" y="794" text-anchor="middle">僵持 / 破裂 / 意见相左</text></g>
+        <g class="node" style="animation-delay:1.1s"><rect class="pill pill-y" x="1020" y="856" width="66" height="19" rx="9"/><text class="pt-y" x="1053" y="869.5" text-anchor="middle">失败升级</text></g>
+        <g class="node" style="animation-delay:1.2s"><rect class="pill pill-y" x="1020" y="988" width="92" height="19" rx="9"/><text class="pt-o" x="1066" y="1001.5" text-anchor="middle">分歧过大 / 涉安全</text></g>
+        <g class="node" style="animation-delay:1.1s"><rect class="pill pill-r" x="1186" y="540" width="88" height="34" rx="9"/><text class="pt-r" x="1230" y="554" text-anchor="middle">人工终裁</text><text class="pt-r" x="1230" y="568" text-anchor="middle">熔断接管</text></g>
+        <g class="node" style="animation-delay:1.3s"><rect class="pill pill-g" x="668" y="740" width="120" height="19" rx="9"/><text class="pt-g" x="728" y="753.5" text-anchor="middle">成功 → 恢复主流程</text></g>
+        <g class="node" style="animation-delay:1.3s"><rect class="pill pill-g" x="668" y="902" width="120" height="19" rx="9"/><text class="pt-g" x="728" y="915.5" text-anchor="middle">成功 → 恢复执行</text></g>
+        <g class="node" style="animation-delay:1.3s"><rect class="pill pill-g" x="610" y="1074" width="140" height="19" rx="9"/><text class="pt-g" x="680" y="1087.5" text-anchor="middle">裁决写回 · 恢复/终止</text></g>
+        <g class="node" style="animation-delay:1.4s"><rect class="pill pill-s" x="760" y="1000" width="118" height="19" rx="9"/><text class="pt-s" x="819" y="1013.5" text-anchor="middle">无 Key / 超时兜底</text></g>
+        <g class="node" style="animation-delay:1.4s"><rect class="pill pill-s" x="368" y="1300" width="130" height="19" rx="9"/><text class="pt-s" x="433" y="1313.5" text-anchor="middle">状态持久化 · 轨迹</text></g>
+        <g class="node" style="animation-delay:1.4s"><rect class="pill pill-s" x="668" y="1230" width="150" height="19" rx="9"/><text class="pt-s" x="743" y="1243.5" text-anchor="middle">裁决 / 信用联动写回</text></g>
+        <g class="node" style="animation-delay:1.4s"><rect class="pill pill-s" x="690" y="1376" width="120" height="19" rx="9"/><text class="pt-s" x="750" y="1389.5" text-anchor="middle">统一持久化 / 可切换</text></g>
+        <g class="node" style="animation-delay:.85s"><rect class="pill" x="428" y="840" width="40" height="19" rx="9"/><text class="pt-c" x="448" y="853.5" text-anchor="middle">是</text></g>
+      </g>
+
+      <!-- ===== 节点 ===== -->
+      <g class="node" style="animation-delay:.05s">
+        <rect x="160" y="36" width="180" height="64" rx="14" fill="url(#gActor)" stroke="#2dd4bf" stroke-width="1.4" filter="url(#sh)"/>
+        <text x="250" y="63" fill="#fff" font-size="14.5" font-weight="700" text-anchor="middle">卖家学生</text>
+        <text x="250" y="84" fill="#a5f3fc" font-size="11" text-anchor="middle">发布 · 改价 · 交付 · 申诉</text>
+      </g>
+      <g class="node" style="animation-delay:.1s">
+        <rect x="550" y="36" width="180" height="64" rx="14" fill="url(#gActor)" stroke="#2dd4bf" stroke-width="1.4" filter="url(#sh)"/>
+        <text x="640" y="63" fill="#fff" font-size="14.5" font-weight="700" text-anchor="middle">买家学生</text>
+        <text x="640" y="84" fill="#a5f3fc" font-size="11" text-anchor="middle">搜索 · 议价 · 支付 · 评价</text>
+      </g>
+      <g class="node" style="animation-delay:.15s">
+        <rect x="940" y="36" width="200" height="64" rx="14" fill="url(#gActor)" stroke="#fda4af" stroke-width="1.4" filter="url(#sh)"/>
+        <text x="1040" y="63" fill="#fff" font-size="14.5" font-weight="700" text-anchor="middle">平台管理员（校方）</text>
+        <text x="1040" y="84" fill="#fecdd3" font-size="11" text-anchor="middle">复核 · 三级终裁 · 熔断接管</text>
+      </g>
+
+      <g class="node" style="animation-delay:.2s">
+        <rect x="230" y="162" width="380" height="88" rx="16" fill="url(#gCoord)" stroke="#a78bfa" stroke-width="1.6" filter="url(#sh)"/>
+        <text x="420" y="194" fill="#fff" font-size="16" font-weight="800" text-anchor="middle">⬡ 协调管理 Agent（Coordinator）</text>
+        <text x="420" y="217" fill="#ddd6fe" font-size="11.5" text-anchor="middle">任务编排 · Agent 注册发现 · 状态监控 · 冲突终裁</text>
+        <text x="420" y="236" fill="#ddd6fe" font-size="11.5" text-anchor="middle">熔断代管 · 三级人工转接（interrupt）</text>
+      </g>
+      <g class="node" style="animation-delay:.25s">
+        <rect x="700" y="170" width="250" height="72" rx="14" fill="url(#gDet)" stroke="#c084fc" stroke-width="1.5" filter="url(#sh)"/>
+        <text x="825" y="198" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">四类冲突检测</text>
+        <text x="825" y="219" fill="#e9d5ff" font-size="11" text-anchor="middle">资源 · 目标 · 知识 · 决策</text>
+        <text x="825" y="235" fill="#e9d5ff" font-size="10" text-anchor="middle">（状态机 / 锁 / 置信度 / SSOT 比对）</text>
+      </g>
+
+      <g class="node" style="animation-delay:.3s">
+        <rect x="270" y="316" width="300" height="56" rx="12" fill="url(#gNode)" stroke="#38bdf8" stroke-width="1.4" filter="url(#sh)"/>
+        <circle cx="292" cy="344" r="11" fill="#0ea5e9"/><text x="292" y="348" fill="#fff" font-size="11" font-weight="700" text-anchor="middle">1</text>
+        <text x="420" y="340" fill="#eaf2ff" font-size="13.5" font-weight="700" text-anchor="middle">商品管理 Agent</text>
+        <text x="420" y="360" fill="#93b4dd" font-size="10.5" text-anchor="middle">描述结构化 · 自动分类成色 · 建议价区间</text>
+      </g>
+      <g class="node" style="animation-delay:.36s">
+        <rect x="270" y="400" width="300" height="56" rx="12" fill="url(#gNode)" stroke="#38bdf8" stroke-width="1.4" filter="url(#sh)"/>
+        <circle cx="292" cy="428" r="11" fill="#0ea5e9"/><text x="292" y="432" fill="#fff" font-size="11" font-weight="700" text-anchor="middle">2</text>
+        <text x="420" y="424" fill="#eaf2ff" font-size="13.5" font-weight="700" text-anchor="middle">内容审核 Agent</text>
+        <text x="420" y="444" fill="#93b4dd" font-size="10.5" text-anchor="middle">违禁词规则库 + LLM 双判 · 依据 + 置信度</text>
+      </g>
+      <g class="node" style="animation-delay:.42s">
+        <path class="dia" d="M420,484 L498,526 L420,568 L342,526 Z" fill="url(#gDia)" stroke="#a78bfa" stroke-width="1.5" filter="url(#sh)"/>
+        <text x="420" y="522" fill="#fff" font-size="12.5" font-weight="700" text-anchor="middle">审核</text>
+        <text x="420" y="539" fill="#ddd6fe" font-size="12.5" font-weight="700" text-anchor="middle">结果？</text>
+      </g>
+      <g class="node" style="animation-delay:.48s">
+        <rect x="270" y="592" width="300" height="56" rx="12" fill="url(#gNode)" stroke="#38bdf8" stroke-width="1.4" filter="url(#sh)"/>
+        <circle cx="292" cy="620" r="11" fill="#0ea5e9"/><text x="292" y="624" fill="#fff" font-size="11" font-weight="700" text-anchor="middle">3</text>
+        <text x="420" y="616" fill="#eaf2ff" font-size="13.5" font-weight="700" text-anchor="middle">搜索推荐 Agent</text>
+        <text x="420" y="636" fill="#93b4dd" font-size="10.5" text-anchor="middle">仅检索在售 · 多维加权排序 · 逐条匹配理由</text>
+      </g>
+      <g class="node" style="animation-delay:.54s">
+        <rect x="270" y="678" width="300" height="58" rx="12" fill="url(#gNode)" stroke="#38bdf8" stroke-width="1.4" filter="url(#sh)"/>
+        <circle cx="292" cy="707" r="11" fill="#0ea5e9"/><text x="292" y="711" fill="#fff" font-size="11" font-weight="700" text-anchor="middle">4</text>
+        <text x="425" y="703" fill="#eaf2ff" font-size="13.5" font-weight="700" text-anchor="middle">议价谈判 Agent</text>
+        <text x="425" y="723" fill="#93b4dd" font-size="10.5" text-anchor="middle">单调让步 · 纳什参考价 · 最多 5 轮 / 120 秒</text>
+      </g>
+      <g class="node" style="animation-delay:.6s">
+        <path class="dia" d="M420,760 L490,798 L420,836 L350,798 Z" fill="url(#gDia)" stroke="#a78bfa" stroke-width="1.5" filter="url(#sh)"/>
+        <text x="420" y="794" fill="#fff" font-size="12.5" font-weight="700" text-anchor="middle">达成</text>
+        <text x="420" y="811" fill="#ddd6fe" font-size="12.5" font-weight="700" text-anchor="middle">成交？</text>
+      </g>
+      <g class="node" style="animation-delay:.66s">
+        <rect x="270" y="860" width="300" height="58" rx="12" fill="url(#gNode)" stroke="#38bdf8" stroke-width="1.4" filter="url(#sh)"/>
+        <circle cx="292" cy="889" r="11" fill="#0ea5e9"/><text x="292" y="893" fill="#fff" font-size="11" font-weight="700" text-anchor="middle">5</text>
+        <text x="425" y="885" fill="#eaf2ff" font-size="13.5" font-weight="700" text-anchor="middle">交易履约 Agent</text>
+        <text x="425" y="905" fill="#93b4dd" font-size="10.5" text-anchor="middle">预占锁+乐观版本 · 抢单三优先 · 超时回滚</text>
+      </g>
+      <g class="node" style="animation-delay:.72s">
+        <rect x="270" y="950" width="300" height="56" rx="12" fill="url(#gNode)" stroke="#38bdf8" stroke-width="1.4" filter="url(#sh)"/>
+        <circle cx="292" cy="978" r="11" fill="#0ea5e9"/><text x="292" y="982" fill="#fff" font-size="11" font-weight="700" text-anchor="middle">6</text>
+        <text x="420" y="974" fill="#eaf2ff" font-size="13.5" font-weight="700" text-anchor="middle">模拟支付</text>
+        <text x="420" y="994" fill="#93b4dd" font-size="10.5" text-anchor="middle">沙箱支付 · 失败 / 超时释放锁并恢复在售</text>
+      </g>
+      <g class="node" style="animation-delay:.78s">
+        <rect x="270" y="1038" width="300" height="56" rx="12" fill="url(#gNode)" stroke="#38bdf8" stroke-width="1.4" filter="url(#sh)"/>
+        <circle cx="292" cy="1066" r="11" fill="#0ea5e9"/><text x="292" y="1070" fill="#fff" font-size="11" font-weight="700" text-anchor="middle">7</text>
+        <text x="420" y="1062" fill="#eaf2ff" font-size="13.5" font-weight="700" text-anchor="middle">校内交付 · 确认收货</text>
+        <text x="420" y="1082" fill="#93b4dd" font-size="10.5" text-anchor="middle">线下见面交付 · 异常可发起申诉仲裁</text>
+      </g>
+      <g class="node" style="animation-delay:.84s">
+        <rect x="270" y="1126" width="300" height="56" rx="12" fill="url(#gNode)" stroke="#38bdf8" stroke-width="1.4" filter="url(#sh)"/>
+        <circle cx="292" cy="1154" r="11" fill="#0ea5e9"/><text x="292" y="1158" fill="#fff" font-size="11" font-weight="700" text-anchor="middle">8</text>
+        <text x="420" y="1150" fill="#eaf2ff" font-size="13.5" font-weight="700" text-anchor="middle">信用评价 Agent</text>
+        <text x="420" y="1170" fill="#93b4dd" font-size="10.5" text-anchor="middle">一单一次双向评分 · 信用分更新 · 风险标签</text>
+      </g>
+      <g class="node" style="animation-delay:.9s">
+        <rect x="270" y="1212" width="300" height="58" rx="29" fill="url(#gEnd)" stroke="#34d399" stroke-width="1.6" filter="url(#sh)"/>
+        <text x="420" y="1237" fill="#fff" font-size="14.5" font-weight="800" text-anchor="middle">✓ 交易完成</text>
+        <text x="420" y="1257" fill="#a7f3d0" font-size="10.5" text-anchor="middle">订单状态：已评价（终态不可变更）</text>
+      </g>
+
+      <g class="node veto" style="animation-delay:.6s">
+        <rect x="880" y="486" width="262" height="64" rx="14" fill="url(#gVeto)" stroke="#fb7185" stroke-width="1.8" filter="url(#sh)"/>
+        <text x="1011" y="513" fill="#fff" font-size="14.5" font-weight="800" text-anchor="middle">⛒ 安全一票否决 veto</text>
+        <text x="1011" y="534" fill="#fecdd3" font-size="10.5" text-anchor="middle">违禁 / 欺诈即冻结 · 投票与效用不可覆盖</text>
+      </g>
+      <g class="node" style="animation-delay:.8s">
+        <rect x="880" y="762" width="262" height="72" rx="14" fill="url(#gL1)" stroke="#fbbf24" stroke-width="1.5" filter="url(#sh)"/>
+        <text x="1011" y="789" fill="#fff" font-size="14" font-weight="800" text-anchor="middle">一级 · 对等协商</text>
+        <text x="1011" y="810" fill="#fef3c7" font-size="10.5" text-anchor="middle">限时 ≤3 轮自动让步 · 纳什参考价</text>
+        <text x="1011" y="826" fill="#fef3c7" font-size="10.5" text-anchor="middle">规则解释 · 允许补材料</text>
+      </g>
+      <g class="node" style="animation-delay:.95s">
+        <rect x="880" y="894" width="262" height="72" rx="14" fill="url(#gL2)" stroke="#fb923c" stroke-width="1.5" filter="url(#sh)"/>
+        <text x="1011" y="921" fill="#fff" font-size="14" font-weight="800" text-anchor="middle">二级 · 协调仲裁</text>
+        <text x="1011" y="942" fill="#ffedd5" font-size="10.5" text-anchor="middle">全局效用 U 评分 · 相关 Agent 加权投票</text>
+        <text x="1011" y="958" fill="#ffedd5" font-size="10.5" text-anchor="middle">（票权 × 置信度）· 出具裁决书</text>
+      </g>
+      <g class="node veto" style="animation-delay:1.1s">
+        <rect x="880" y="1026" width="262" height="72" rx="14" fill="url(#gL3)" stroke="#ff5d73" stroke-width="1.7" filter="url(#sh)"/>
+        <text x="1011" y="1053" fill="#fff" font-size="14" font-weight="800" text-anchor="middle">三级 · 人工兜底</text>
+        <text x="1011" y="1074" fill="#ffe4e6" font-size="10.5" text-anchor="middle">interrupt 挂起 · 冻结资金/商品操作</text>
+        <text x="1011" y="1090" fill="#ffe4e6" font-size="10.5" text-anchor="middle">证据包提交管理员终裁 · 写回 SSOT</text>
+      </g>
+
+      <g class="node" style="animation-delay:1.2s">
+        <rect x="140" y="1360" width="440" height="74" rx="14" fill="url(#gData)" stroke="#67e8f9" stroke-width="1.4" filter="url(#sh)"/>
+        <text x="360" y="1390" fill="#fff" font-size="14.5" font-weight="800" text-anchor="middle">▦ 黑板 SSOT（单一事实源）</text>
+        <text x="360" y="1411" fill="#cffafe" font-size="10.5" text-anchor="middle">LangGraph State + Checkpointer · 类型化状态 / 检查点</text>
+        <text x="360" y="1427" fill="#cffafe" font-size="10" text-anchor="middle">Agent 不私享可变状态 · 信息冲突以黑板自动纠正</text>
+      </g>
+      <g class="node" style="animation-delay:1.25s">
+        <rect x="620" y="1360" width="260" height="74" rx="14" fill="url(#gData)" stroke="#67e8f9" stroke-width="1.4" filter="url(#sh)"/>
+        <text x="750" y="1390" fill="#fff" font-size="14" font-weight="800" text-anchor="middle">RuleLLM 规则引擎</text>
+        <text x="750" y="1411" fill="#cffafe" font-size="10.5" text-anchor="middle">意图 / 分类 / 审核 / 议价 / 仲裁</text>
+        <text x="750" y="1427" fill="#cffafe" font-size="10" text-anchor="middle">无 Key 全量兜底 · 故障不产生脏状态</text>
+      </g>
+      <g class="node" style="animation-delay:1.3s">
+        <rect x="920" y="1360" width="240" height="74" rx="14" fill="url(#gData)" stroke="#67e8f9" stroke-width="1.4" filter="url(#sh)"/>
+        <text x="1040" y="1390" fill="#fff" font-size="14" font-weight="800" text-anchor="middle">SQLite (WAL)</text>
+        <text x="1040" y="1411" fill="#cffafe" font-size="10.5" text-anchor="middle">业务库 · 锁令牌 · 乐观版本号</text>
+        <text x="1040" y="1427" fill="#cffafe" font-size="10" text-anchor="middle">事务保障 · 可切换 PostgreSQL</text>
+      </g>
+      <!-- ===== 沿关键路径流动的光点（进入视口后随边动画一起点亮） ===== -->
+      <g class="flow-dots">
+        <g class="fd-main">
+          <circle r="3.4" fill="currentColor"><animateMotion dur="2.4s" repeatCount="indefinite"><mpath href="#pF1"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.12;.88;1" dur="2.4s" repeatCount="indefinite"/></circle>
+          <circle r="3.4" fill="currentColor"><animateMotion begin="-1.2s" dur="2.4s" repeatCount="indefinite"><mpath href="#pF1"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.12;.88;1" dur="2.4s" begin="-1.2s" repeatCount="indefinite"/></circle>
+        </g>
+        <g class="fd-amber">
+          <circle r="3.4" fill="currentColor"><animateMotion dur="2.8s" repeatCount="indefinite"><mpath href="#pF2"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.1;.9;1" dur="2.8s" repeatCount="indefinite"/></circle>
+          <circle r="3.2" fill="currentColor"><animateMotion dur="1.5s" repeatCount="indefinite"><mpath href="#pF3"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.15;.85;1" dur="1.5s" repeatCount="indefinite"/></circle>
+          <circle r="3.2" fill="currentColor"><animateMotion begin="-.7s" dur="1.5s" repeatCount="indefinite"><mpath href="#pF4"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.15;.85;1" dur="1.5s" begin="-.7s" repeatCount="indefinite"/></circle>
+        </g>
+        <g class="fd-red">
+          <circle r="3.6" fill="currentColor"><animateMotion dur="2.6s" repeatCount="indefinite"><mpath href="#pF5"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.1;.9;1" dur="2.6s" repeatCount="indefinite"/></circle>
+          <circle r="3.6" fill="currentColor"><animateMotion dur="4.2s" repeatCount="indefinite"><mpath href="#pF6"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.06;.94;1" dur="4.2s" repeatCount="indefinite"/></circle>
+        </g>
+        <g class="fd-green">
+          <circle r="3.2" fill="currentColor"><animateMotion dur="2.8s" repeatCount="indefinite"><mpath href="#pF7"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.1;.9;1" dur="2.8s" repeatCount="indefinite"/></circle>
+        </g>
+      </g>
+    </svg>
+  </section>
+
+  <div class="sec-title reveal">三级处理阶梯<span>冲突一旦检出，按级别自动升级；安全类判定拥有最高优先级</span></div>
+  <div class="ladder">
+    <div class="step s1">
+      <div class="lv" style="font-size:13px;font-weight:800;letter-spacing:.1em">LEVEL 1</div>
+      <h3>对等协商</h3>
+      <p>冲突初发且当事 Agent 可直接谈判：限时 <b>≤3 轮</b>自动让步、给出纳什参考价、解释规则并允许补充材料。覆盖 C1 议价僵持、C3 审核申诉初审。</p>
+      <div class="out">成功 → 留痕并恢复主流程；失败 → 升级二级</div>
+    </div>
+    <div class="step s2">
+      <div class="lv" style="font-size:13px;font-weight:800;letter-spacing:.1em">LEVEL 2</div>
+      <h3>协调仲裁</h3>
+      <p>协调者主持：按全局效用函数 U＝0.25 满意度＋0.20 成功率＋0.30 安全性＋0.15 公平性−0.10 处理成本评分，相关 Agent 以“票权×置信度”加权投票，出具含依据裁决书。覆盖 C4/C5/C6。</p>
+      <div class="out">被拒或分歧过大 → 暂缓操作并升级三级</div>
+    </div>
+    <div class="step s3">
+      <div class="lv" style="font-size:13px;font-weight:800;letter-spacing:.1em">LEVEL 3</div>
+      <h3>人工兜底</h3>
+      <p>涉资金 / 违禁 / 校园安全或超金额阈值：interrupt 立即挂起并冻结相关操作，仲裁 Agent 汇总全链路证据包提交管理员终裁，裁决写回黑板并联动信用处罚。</p>
+      <div class="out">人工裁决 → 恢复或终止流程；动作强制留痕</div>
+    </div>
+  </div>
+
+  <div class="rules reveal">
+    <span class="rule"><b>议价：</b>买价不降、卖价不升，违例拒收</span>
+    <span class="rule"><b>时限：</b>默认 5 轮 / 120 秒，超时破裂并推荐同类商品</span>
+    <span class="rule"><b>抢单：</b>下单时间 → 信用分 → 支付完成 三优先裁决</span>
+    <span class="rule"><b>锁：</b>锁令牌 + 乐观版本号 + 超时点，失败必释放</span>
+    <span class="rule"><b>veto：</b>违禁 / 欺诈冻结，任何裁决不可覆盖</span>
+    <span class="rule"><b>SSOT：</b>信息冲突以黑板为准自动纠正并记录来源</span>
+    <span class="rule"><b>降级：</b>结构化输出 → 校验 → 重试 3 次 → RuleLLM / 转人工</span>
+    <span class="rule"><b>覆盖：</b>C1–C8 八类场景，≥10 个剧本一键回放对照</span>
+  </div>
+
+  <footer>
+    校园二手交易平台 Multi-Agent 系统 · 交易主链路与冲突三级决策流程图<br>
+    依据 SRS-MAS-2026-001 V4.0 第五、六章绘制 · 梁奕琦 · 2026-10-13
+  </footer>
+</main>
+
+<script>
+/* ===== 主题切换（与甘特图共用 localStorage） ===== */
+let theme=(window.self!==window.top)?'light':(localStorage.getItem('mas-theme')||'dark');
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme',theme);
+  document.getElementById('themeIco').textContent=theme==='dark'?'☀':'🌙';
+  document.getElementById('themeTxt').textContent=theme==='dark'?'白色模式':'深色模式';
+}
+document.getElementById('themeToggle').onclick=()=>{
+  theme=theme==='dark'?'light':'dark';
+  localStorage.setItem('mas-theme',theme); applyTheme(); buildParticles();
+};
+window.addEventListener('storage',e=>{if(e.key==='mas-theme'){theme=e.newValue||'dark';applyTheme();buildParticles();}});
+applyTheme();
+
+/* ===== 生成式粒子网络（主题适配，固定种子） ===== */
+const cv=document.getElementById('particles'),ctx=cv.getContext('2d');
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);
+  t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+const PAL_D=['#5eead4','#818cf8','#a78bfa','#f472b6','#38bdf8','#c084fc','#34d399','#fbbf24','#fb923c'];
+const PAL_L=['#0d9488','#4f46e5','#7c3aed','#db2777','#0284c7','#a21caf','#059669','#d97706','#ea580c'];
+let pts=[];
+function buildParticles(){
+  const rnd=mulberry32(20261013),vw=cv.clientWidth,vh=cv.clientHeight,pal=theme==='dark'?PAL_D:PAL_L;
+  pts=[];
+  for(let i=0;i<9;i++)pts.push({x:rnd()*vw,y:rnd()*vh,vx:(rnd()-.5)*.22,vy:(rnd()-.5)*.22,r:3.2+rnd()*2.4,c:pal[i],a:true});
+  for(let i=0;i<42;i++)pts.push({x:rnd()*vw,y:rnd()*vh,vx:(rnd()-.5)*.3,vy:(rnd()-.5)*.3,r:.8+rnd()*1.3,
+    c:theme==='dark'?'#7d93bd':'#9fb0cc',a:false});
+}
+function resize(){
+  const r=cv.parentElement.getBoundingClientRect();
+  cv.width=r.width*devicePixelRatio;cv.height=r.height*devicePixelRatio;
+  cv.style.width=r.width+'px';cv.style.height=r.height+'px';
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  buildParticles();
+}
+function tick(){
+  const vw=cv.clientWidth,vh=cv.clientHeight;
+  ctx.clearRect(0,0,vw,vh);
+  const lineCol=theme==='dark'?'120,150,210':'70,100,150';
+  for(const p of pts){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>vw)p.vx*=-1;if(p.y<0||p.y>vh)p.vy*=-1;}
+  for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+    const a=pts[i],b=pts[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+    if(d<150){ctx.strokeStyle='rgba('+lineCol+','+((1-d/150)*(theme==='dark'?.22:.16))+')';
+      ctx.lineWidth=a.a&&b.a?.9:.5;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}
+  }
+  for(const p of pts){ctx.beginPath();ctx.fillStyle=p.c;ctx.globalAlpha=p.a?.85:.55;
+    ctx.shadowColor=p.c;ctx.shadowBlur=p.a?12:0;ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
+    ctx.shadowBlur=0;ctx.globalAlpha=1;}
+  requestAnimationFrame(tick);
+}
+window.addEventListener('resize',resize);
+resize();tick();
+
+/* ===== 滚动进度 + 导航态 ===== */
+const sp=document.getElementById('scrollProgress'),tn=document.getElementById('topnav');
+function onScroll(){
+  const h=document.documentElement,max=h.scrollHeight-h.clientHeight;
+  sp.style.width=(max>0?(h.scrollTop/max*100):0)+'%';
+  tn.classList.toggle('scrolled',h.scrollTop>24);
+}
+window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+/* ===== 数字滚动 + 滚动揭示 + SVG 动画门控 ===== */
+function countUp(el){
+  const target=+el.dataset.count,t0=performance.now(),D=1100;
+  (function s(now){const t=Math.min(1,(now-t0)/D);
+    el.textContent=Math.round(target*(1-Math.pow(1-t,3)));
+    if(t<1)requestAnimationFrame(s);})(t0);
+}
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;
+  if(e.target.id==='flowsvg')e.target.classList.add('playing');
+  e.target.classList.add('in');
+  e.target.querySelectorAll('[data-count]').forEach(countUp);
+  io.unobserve(e.target);
+}),{threshold:.12});
+io.observe(document.querySelector('.hero'));
+io.observe(document.getElementById('flowsvg'));
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+document.querySelectorAll('.ladder .step').forEach((el,i)=>{
+  el.classList.add('reveal');el.style.transitionDelay=(i*90)+'ms';io.observe(el);
+});
+</script>
+</body>
+</html>

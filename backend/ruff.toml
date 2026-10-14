@@ -1,0 +1,19 @@
+# Ruff 配置（校园二手 MAS 后端）
+# 选择对 FastAPI/SQLModel/Pydantic 工程有实际价值且全量清零的规则：
+# - E：pycodestyle 格式类（E501 行长放宽到 120）
+# - F：pyflakes（未用导入/未定义名/重定义等真实问题）
+# - I：import 排序
+# - SIM：可简化写法
+# - RUF059：解包未使用变量（迁移代码常见笔误）
+# 刻意不启用：B008（FastAPI Depends 惯用写法）、RUF012（Agent/Pydantic 类属性）、
+# UP/DTZ（全库既有 datetime.utcnow/Optional 风格，统一改造超出本次范围）、S110（清理期 except pass）。
+target-version = "py311"
+line-length = 140
+
+[lint]
+select = ["E", "F", "I", "SIM", "RUF059"]
+ignore = ["SIM117"]
+
+[lint.per-file-ignores]
+"tests/*" = ["F401"]
+"app/scenarios/*" = ["F401"]

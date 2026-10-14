@@ -1,0 +1,168 @@
+// =============================================================
+// 浅色主题（业务页面默认）
+// 1. 应用级语义变量 --app-*
+// 2. Element Plus CSS 变量深度重写（拒绝毛坯观感）
+// =============================================================
+
+@use 'tokens' as *;
+
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  // -------- 应用语义变量 --------
+  --app-brand: #{$brand-500};
+  --app-brand-strong: #{$brand-600};
+  --app-brand-soft: #{$brand-50};
+  --app-accent: #{$accent-400};
+  --app-gradient: #{$gradient-brand};
+  --app-gradient-deep: #{$gradient-brand-deep};
+
+  --app-success: #{$success-500};
+  --app-success-soft: #{$success-50};
+  --app-warning: #{$warning-500};
+  --app-warning-soft: #{$warning-50};
+  --app-danger: #{$danger-500};
+  --app-danger-soft: #{$danger-50};
+  --app-info: #{$info-500};
+  --app-info-soft: #{$info-50};
+
+  --app-bg-page: #f4f6fd;
+  --app-bg-page-gradient:
+    radial-gradient(1200px 600px at 85% -10%, rgba(34, 211, 238, 0.1), transparent 60%),
+    radial-gradient(1000px 560px at -10% 0%, rgba(99, 102, 241, 0.12), transparent 55%),
+    linear-gradient(180deg, #f6f8ff 0%, #eef2fb 100%);
+  --app-bg: #ffffff;
+  --app-card-bg: rgba(255, 255, 255, 0.78);
+  --app-card-bg-solid: #ffffff;
+  --app-card-border: rgba(99, 102, 241, 0.1);
+  --app-card-border-strong: rgba(99, 102, 241, 0.22);
+  --app-glass-blur: 20px;
+
+  --app-text-primary: #{$neutral-800};
+  --app-text-regular: #{$neutral-700};
+  --app-text-secondary: #{$neutral-500};
+  --app-text-placeholder: #{$neutral-400};
+  --app-text-inverse: #ffffff;
+
+  --app-divider: rgba(15, 23, 42, 0.08);
+  --app-mask: rgba(15, 23, 42, 0.45);
+
+  --app-shadow-card: #{$shadow-md};
+  --app-shadow-card-hover: #{$shadow-lg};
+  --app-shadow-pop: #{$shadow-xl};
+  --app-shadow-glow: #{$shadow-glow-brand};
+
+  --app-header-bg: rgba(255, 255, 255, 0.72);
+  --app-nav-item-hover: rgba(99, 102, 241, 0.08);
+  --app-nav-item-active: linear-gradient(135deg, rgba(99, 102, 241, 0.14), rgba(34, 211, 238, 0.14));
+
+  // =============================================================
+  // Element Plus 变量重写
+  // =============================================================
+  --el-font-family: #{$font-family};
+  --el-font-size-base: 14px;
+
+  --el-border-radius-small: #{$radius-sm};
+  --el-border-radius-base: #{$radius-base};
+  --el-border-radius-round: #{$radius-pill};
+
+  // 主色及其阶梯（color-mix 实时派生 hover / 禁用底色）
+  --el-color-primary: #{$brand-500};
+  --el-color-primary-light-3: color-mix(in srgb, #{$brand-500} 70%, #fff);
+  --el-color-primary-light-5: color-mix(in srgb, #{$brand-500} 50%, #fff);
+  --el-color-primary-light-7: color-mix(in srgb, #{$brand-500} 28%, #fff);
+  --el-color-primary-light-8: color-mix(in srgb, #{$brand-500} 18%, #fff);
+  --el-color-primary-light-9: color-mix(in srgb, #{$brand-500} 10%, #fff);
+  --el-color-primary-dark-2: color-mix(in srgb, #{$brand-500} 80%, #000);
+
+  --el-color-success: #{$success-500};
+  --el-color-success-light-3: color-mix(in srgb, #{$success-500} 70%, #fff);
+  --el-color-success-light-5: color-mix(in srgb, #{$success-500} 50%, #fff);
+  --el-color-success-light-7: color-mix(in srgb, #{$success-500} 28%, #fff);
+  --el-color-success-light-8: color-mix(in srgb, #{$success-500} 18%, #fff);
+  --el-color-success-light-9: color-mix(in srgb, #{$success-500} 10%, #fff);
+  --el-color-success-dark-2: color-mix(in srgb, #{$success-500} 80%, #000);
+
+  --el-color-warning: #{$warning-500};
+  --el-color-warning-light-3: color-mix(in srgb, #{$warning-500} 70%, #fff);
+  --el-color-warning-light-5: color-mix(in srgb, #{$warning-500} 50%, #fff);
+  --el-color-warning-light-7: color-mix(in srgb, #{$warning-500} 28%, #fff);
+  --el-color-warning-light-8: color-mix(in srgb, #{$warning-500} 18%, #fff);
+  --el-color-warning-light-9: color-mix(in srgb, #{$warning-500} 10%, #fff);
+  --el-color-warning-dark-2: color-mix(in srgb, #{$warning-500} 82%, #000);
+
+  --el-color-danger: #{$danger-500};
+  --el-color-error: #{$danger-500};
+  --el-color-danger-light-3: color-mix(in srgb, #{$danger-500} 70%, #fff);
+  --el-color-danger-light-5: color-mix(in srgb, #{$danger-500} 50%, #fff);
+  --el-color-danger-light-7: color-mix(in srgb, #{$danger-500} 28%, #fff);
+  --el-color-danger-light-8: color-mix(in srgb, #{$danger-500} 18%, #fff);
+  --el-color-danger-light-9: color-mix(in srgb, #{$danger-500} 10%, #fff);
+  --el-color-danger-dark-2: color-mix(in srgb, #{$danger-500} 82%, #000);
+  --el-color-error-light-3: color-mix(in srgb, #{$danger-500} 70%, #fff);
+  --el-color-error-light-5: color-mix(in srgb, #{$danger-500} 50%, #fff);
+  --el-color-error-light-7: color-mix(in srgb, #{$danger-500} 28%, #fff);
+  --el-color-error-light-8: color-mix(in srgb, #{$danger-500} 18%, #fff);
+  --el-color-error-light-9: color-mix(in srgb, #{$danger-500} 10%, #fff);
+  --el-color-error-dark-2: color-mix(in srgb, #{$danger-500} 82%, #000);
+
+  --el-color-info: #{$info-500};
+  --el-color-info-light-3: color-mix(in srgb, #{$info-500} 70%, #fff);
+  --el-color-info-light-5: color-mix(in srgb, #{$info-500} 50%, #fff);
+  --el-color-info-light-7: color-mix(in srgb, #{$info-500} 28%, #fff);
+  --el-color-info-light-8: color-mix(in srgb, #{$info-500} 18%, #fff);
+  --el-color-info-light-9: color-mix(in srgb, #{$info-500} 10%, #fff);
+  --el-color-info-dark-2: color-mix(in srgb, #{$info-500} 82%, #000);
+
+  // 文本
+  --el-text-color-primary: #{$neutral-800};
+  --el-text-color-regular: #{$neutral-700};
+  --el-text-color-secondary: #{$neutral-500};
+  --el-text-color-placeholder: #{$neutral-400};
+  --el-text-color-disabled: #b6c0d4;
+
+  // 边框
+  --el-border-color: #dbe2f0;
+  --el-border-color-light: #e4eaf6;
+  --el-border-color-lighter: #ebf0f9;
+  --el-border-color-extra-light: #f2f5fb;
+  --el-border-color-dark: #c3cde2;
+  --el-border-color-darker: #94a3b8;
+  --el-border-color-hover: #{$brand-400};
+
+  // 填充
+  --el-fill-color: #f1f4fb;
+  --el-fill-color-light: #f5f8fd;
+  --el-fill-color-lighter: #f9fbff;
+  --el-fill-color-extra-light: #fcfdff;
+  --el-fill-color-dark: #e6ecf7;
+  --el-fill-color-darker: #d6dfef;
+  --el-fill-color-blank: #ffffff;
+
+  // 背景
+  --el-bg-color: #ffffff;
+  --el-bg-color-page: #f4f6fd;
+  --el-bg-color-overlay: #ffffff;
+
+  // 遮罩 / 阴影
+  --el-mask-color: rgba(15, 23, 42, 0.5);
+  --el-mask-color-extra-light: rgba(15, 23, 42, 0.25);
+  --el-box-shadow: #{$shadow-md};
+  --el-box-shadow-light: #{$shadow-sm};
+  --el-box-shadow-lighter: 0 1px 4px rgba(15, 23, 42, 0.05);
+  --el-box-shadow-dark: #{$shadow-lg};
+
+  --el-disabled-bg-color: #f1f4fb;
+  --el-disabled-text-color: #b6c0d4;
+}
+
+// 主题切换时 Element 容器平滑过渡
+body[data-theme='light'],
+body[data-theme='light'] .el-card,
+body[data-theme='light'] .el-input__wrapper,
+body[data-theme='light'] .el-select__wrapper {
+  transition:
+    background-color $duration-slow $ease-standard,
+    border-color $duration-slow $ease-standard;
+}

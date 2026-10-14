@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>/* 被演示 deck 以 iframe 嵌入时默认白色主题，单独打开仍为深色 */
+if(window.self!==window.top){document.documentElement.dataset.theme='light';}</script>
+<title>项目进度甘特图（W1–W8）· 校园二手交易平台 Multi-Agent 系统</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+  /* ===================== 双主题 Token ===================== */
+  :root{
+    --bg:#060b16; --bg2:#0a1224;
+    --hero-a:rgba(94,234,212,.15); --hero-b:rgba(129,140,248,.18); --hero-c:rgba(244,114,182,.10);
+    --hero-l1:#0b1428; --hero-l2:#060b16;
+    --panel:rgba(15,24,44,.78); --panel-solid:#0d1628;
+    --line:rgba(148,163,184,.17); --txt:#e9f0fb; --mut:#8ba0c2;
+    --sub-b:#d4def0; --chip-txt:#c2d0e6; --chip-bg:rgba(12,20,38,.66);
+    --card-txt:#a6b8d4; --note-bg:rgba(12,20,38,.5); --note-line:rgba(148,163,184,.32);
+    --accent:#5eead4; --accent2:#818cf8; --gold:#fbbf24; --green:#34d399; --red:#ff5d73;
+    --p0:#fca5a5; --p1:#94a3b8; --foot:#56688a;
+    --nav-bg:rgba(10,17,33,.72);
+    --btn-bg:rgba(16,26,48,.85); --btn-hover:rgba(94,234,212,.16);
+    --shadow:rgba(0,0,0,.82);
+    --grid-glow:rgba(94,234,212,.06);
+  }
+  [data-theme="light"]{
+    --bg:#edf2fa;
+    --hero-a:rgba(13,148,136,.13); --hero-b:rgba(79,70,229,.14); --hero-c:rgba(219,39,119,.08);
+    --hero-l1:#f7faff; --hero-l2:#e9f0fa;
+    --panel:rgba(255,255,255,.92); --panel-solid:#ffffff;
+    --line:rgba(30,58,95,.15); --txt:#14223a; --mut:#5b6d8a;
+    --sub-b:#29405f; --chip-txt:#314563; --chip-bg:rgba(255,255,255,.82);
+    --card-txt:#51617c; --note-bg:rgba(255,255,255,.82); --note-line:rgba(30,58,95,.3);
+    --accent:#0d9488; --accent2:#4f46e5; --gold:#d97706; --green:#059669; --red:#e11d48;
+    --p0:#dc2626; --p1:#64748b; --foot:#7b8aa3;
+    --nav-bg:rgba(255,255,255,.78);
+    --btn-bg:rgba(255,255,255,.9); --btn-hover:rgba(13,148,136,.12);
+    --shadow:rgba(35,65,110,.22);
+    --grid-glow:rgba(13,148,136,.05);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--txt);
+    font-family:"Inter","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden; transition:background .45s ease,color .45s;
+  }
+  body::before{content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(700px 380px at 88% -6%, var(--grid-glow), transparent 70%),
+      radial-gradient(600px 340px at -6% 30%, rgba(129,140,248,.07), transparent 70%);}
+  ::selection{background:rgba(94,234,212,.3)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:rgba(120,140,180,.35);border-radius:8px;border:2px solid var(--bg)}
+  ::-webkit-scrollbar-track{background:transparent}
+
+  /* ===================== 顶部玻璃导航 ===================== */
+  .topnav{position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:12px 26px; background:transparent; backdrop-filter:blur(0);
+    border-bottom:1px solid transparent; transition:padding .4s,background .4s,border-color .4s,box-shadow .4s}
+  .topnav.scrolled{padding:9px 26px;background:var(--nav-bg);backdrop-filter:blur(16px) saturate(1.4);
+    border-bottom-color:var(--line);box-shadow:0 10px 30px -18px var(--shadow)}
+  /* 顶部滚动进度条 */
+  .scroll-progress{position:fixed;top:0;left:0;height:2.5px;width:0;z-index:101;
+    background:linear-gradient(90deg,var(--accent),var(--accent2),#f472b6);
+    box-shadow:0 0 10px rgba(94,234,212,.7);border-radius:0 2px 2px 0;transition:width .12s linear}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .brand .logo{width:34px;height:34px;border-radius:10px;flex:none; position:relative;
+    background:conic-gradient(from 210deg,#5eead4,#818cf8,#f472b6,#5eead4);
+    box-shadow:0 6px 18px -6px rgba(94,234,212,.7)}
+  .brand .logo::after{content:"";position:absolute;inset:3px;border-radius:8px;background:var(--panel-solid)}
+  .brand .logo::before{content:"";position:absolute;inset:0;z-index:2;border-radius:10px;
+    background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.55),transparent 45%)}
+  .brand b{font-size:14px;letter-spacing:.02em;white-space:nowrap}
+  .brand small{display:block;font-size:10.5px;color:var(--mut);font-weight:500;letter-spacing:.14em}
+  .nav-right{display:flex;align-items:center;gap:12px}
+  .nav-range{font-size:12px;color:var(--mut); padding:7px 13px;border:1px solid var(--line);border-radius:999px;
+    background:var(--chip-bg); white-space:nowrap}
+  .nav-range b{color:var(--accent);font-weight:700}
+  .theme-toggle{display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+    border:1px solid var(--line); background:var(--btn-bg); color:var(--txt);
+    padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:600;font-family:inherit;
+    box-shadow:0 6px 20px -10px var(--shadow); transition:.3s;white-space:nowrap}
+  .theme-toggle:hover{border-color:var(--accent);background:var(--btn-hover);transform:translateY(-1px)}
+  .theme-toggle .ico{font-size:14px;line-height:1;transition:transform .5s}
+  .theme-toggle:hover .ico{transform:rotate(30deg)}
+
+  /* ===================== Hero ===================== */
+  .hero{position:relative; min-height:460px; display:flex; align-items:center; padding-top:56px;
+    background:
+      radial-gradient(1200px 620px at 80% -12%, var(--hero-a), transparent 60%),
+      radial-gradient(900px 520px at 6% 108%, var(--hero-b), transparent 62%),
+      radial-gradient(700px 400px at 50% 130%, var(--hero-c), transparent 70%),
+      linear-gradient(180deg,var(--hero-l1) 0%, var(--hero-l2) 100%);
+    border-bottom:1px solid var(--line); overflow:hidden}
+  /* 网格底纹 */
+  .hero::after{content:"";position:absolute;inset:0;opacity:.5;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:56px 56px;
+    mask-image:radial-gradient(ellipse 90% 80% at 50% 30%,#000 30%,transparent 75%);
+    -webkit-mask-image:radial-gradient(ellipse 90% 80% at 50% 30%,#000 30%,transparent 75%)}
+  #particles{position:absolute; inset:0; width:100%; height:100%}
+  .hero-inner{position:relative; z-index:2; max-width:1200px; margin:0 auto; padding:64px 32px 54px; width:100%}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11.5px;letter-spacing:.3em;
+    color:var(--accent);font-weight:700;margin-bottom:20px}
+  .eyebrow::before{content:"";width:28px;height:1px;background:linear-gradient(90deg,transparent,var(--accent))}
+  .eyebrow::after{content:"";width:44px;height:1px;background:linear-gradient(90deg,var(--accent),transparent)}
+  h1{font-size:clamp(34px,5.2vw,60px);font-weight:800;line-height:1.1;letter-spacing:-.015em}
+  h1 .grad{background:linear-gradient(92deg,#14b8a6 0%,#6366f1 42%,#ec4899 78%,#f59e0b 100%);
+    background-size:220% 100%; -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:hueShift 9s linear infinite}
+  :root[data-theme="dark"] h1 .grad{background:linear-gradient(92deg,#5eead4,#818cf8 42%,#f472b6 78%,#fbbf24 100%);
+    background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
+  @keyframes hueShift{to{background-position:220% 0}}
+  .sub{margin-top:18px;color:var(--mut);font-size:15px;line-height:1.85;max-width:820px}
+  .sub b{color:var(--sub-b);font-weight:600}
+  .stats{display:flex;flex-wrap:wrap;gap:13px;margin-top:30px}
+  .stat{position:relative; border:1px solid var(--line);background:var(--chip-bg);backdrop-filter:blur(8px);
+    border-radius:14px;padding:14px 20px 13px;min-width:130px;overflow:hidden;
+    transition:transform .35s cubic-bezier(.2,.8,.25,1),border-color .35s,box-shadow .35s}
+  .stat::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:.8}
+  .stat:hover{transform:translateY(-4px);border-color:var(--accent);
+    box-shadow:0 16px 36px -14px var(--accent)}
+  .stat .num{font-size:27px;font-weight:800;color:var(--txt);line-height:1;
+    font-variant-numeric:tabular-nums}
+  .stat .num em{font-style:normal;font-size:13.5px;color:var(--mut);margin-left:3px;font-weight:600}
+  .stat .lab{font-size:11.5px;color:var(--mut);margin-top:8px;letter-spacing:.04em}
+
+  /* ===================== 主区域 ===================== */
+  .wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:40px 32px 70px}
+  .panel{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:22px;
+    backdrop-filter:blur(16px) saturate(1.2); padding:26px 22px 14px;
+    box-shadow:0 40px 100px -50px var(--shadow); transition:.4s;overflow:hidden}
+  .panel::before{content:"";position:absolute;top:0;left:8%;right:8%;height:1px;
+    background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent);opacity:.55}
+  .panel-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px;padding:2px 6px 18px}
+  .panel-head h2{font-size:19.5px;font-weight:800;letter-spacing:.01em;display:flex;align-items:center;gap:10px}
+  .panel-head h2::before{content:"";width:5px;height:19px;border-radius:3px;
+    background:linear-gradient(180deg,var(--accent),var(--accent2))}
+  .panel-head p{font-size:12.5px;color:var(--mut);margin-top:6px}
+  .legend{display:flex;flex-wrap:wrap;gap:7px;max-width:680px;justify-content:flex-end}
+  .chip{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;color:var(--chip-txt);
+    border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;
+    background:var(--chip-bg);user-select:none;transition:.25s}
+  .chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .chip .dot{width:9px;height:9px;border-radius:50%;transition:.25s}
+  .chip.off{opacity:.3}
+  .chip.off .dot{filter:grayscale(.7)}
+  .chip .cnt{color:var(--mut);font-size:10.5px;font-variant-numeric:tabular-nums}
+  #gantt{width:100%;height:1520px}
+
+  /* ===================== 里程碑卡 ===================== */
+  .sec-title{margin:58px 4px 20px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  .sec-title h2{font-size:23px;font-weight:800;letter-spacing:.01em}
+  .sec-title span{font-size:12.5px;color:var(--mut)}
+  .ms-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+  .ms{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    padding:17px 17px 15px 19px;overflow:hidden;
+    transition:transform .35s cubic-bezier(.2,.8,.25,1),border-color .35s,box-shadow .35s,opacity .7s}
+  .ms::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,var(--gold),transparent)}
+  .ms.done::before{background:linear-gradient(180deg,var(--green),transparent)}
+  .ms:hover{transform:translateY(-5px);border-color:var(--gold);box-shadow:0 22px 50px -24px var(--gold)}
+  .ms.done:hover{border-color:var(--green);box-shadow:0 22px 50px -24px var(--green)}
+  .ms .mid{font-size:12px;font-weight:800;color:var(--gold);letter-spacing:.1em}
+  .ms.done .mid{color:var(--green)}
+  .ms .mdate{font-size:11.5px;color:var(--mut);margin-top:3px;font-variant-numeric:tabular-nums}
+  .ms .mname{font-size:14.5px;font-weight:700;margin:9px 0 6px;line-height:1.45;color:var(--txt)}
+  .ms .mgate{font-size:11.5px;color:var(--card-txt);line-height:1.65}
+  .reveal{opacity:0;transform:translateY(22px)}
+  .reveal.in{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.2,.8,.25,1),transform .7s cubic-bezier(.2,.8,.25,1)}
+  .note{margin-top:26px;border:1px dashed var(--note-line);border-radius:16px;
+    padding:19px 23px;font-size:13px;color:var(--card-txt);line-height:1.95;background:var(--note-bg)}
+  .note b{color:var(--sub-b)}
+  .tag-p0{color:var(--p0);font-weight:700}.tag-p1{color:var(--p1);font-weight:700}
+  footer{position:relative;z-index:1;text-align:center;color:var(--foot);font-size:12px;padding:34px 0 10px;line-height:1.9}
+  footer::before{content:"";display:block;width:120px;height:1px;margin:0 auto 22px;
+    background:linear-gradient(90deg,transparent,var(--mut),transparent);opacity:.6}
+  @media(max-width:1000px){.ms-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:900px){
+    .ms-grid{grid-template-columns:1fr}
+    #gantt{height:1300px}
+    .legend{justify-content:flex-start}
+    .nav-range{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+<nav class="topnav" id="topnav">
+  <div class="brand">
+    <span class="logo"></span>
+    <div><b>校园二手交易 Multi-Agent</b><small>SCHEDULE INTELLIGENCE</small></div>
+  </div>
+  <div class="nav-right">
+    <span class="nav-range"><b>W1–W8</b> · 2026.09.14 – 11.08</span>
+    <button id="themeToggle" class="theme-toggle" aria-label="切换主题">
+      <span class="ico" id="themeIco">☀</span><span id="themeTxt">白色模式</span>
+    </button>
+  </div>
+</nav>
+
+<header class="hero">
+  <canvas id="particles"></canvas>
+  <div class="hero-inner">
+    <div class="eyebrow">PROJECT SCHEDULE · GANTT CHART · W1 – W8</div>
+    <h1>校园二手交易平台 <span class="grad">Multi-Agent 系统</span><br>项目进度甘特图</h1>
+    <p class="sub">项目自 <b>2026 年 9 月 14 日（W1 周一）</b>启动，依据《软件需求规格说明书 <b>V4.0</b>》基线与 WBS 任务队列 <b>T1–T32</b>，
+      按 <b>8 个项目周</b>推进。采用<b>前置攻坚</b>排程：详细设计、通信内核、九大 Agent、冲突引擎与接口脚手架等
+      <b>28 项任务（68%）在 W1–W4 完成</b>，W5 需求基线冻结后进入三端页面长周期联调、测试与交付期。</p>
+    <div class="stats">
+      <div class="stat"><div class="num"><span data-count="8">0</span><em> 项目周</em></div><div class="lab">W1–W8 · 09.14 – 11.08</div></div>
+      <div class="stat"><div class="num"><span data-count="41">0</span><em> 项任务</em></div><div class="lab">含调研 / V1–V4 / T1–T32</div></div>
+      <div class="stat"><div class="num"><span data-count="28">0</span><em>/41 前置</em></div><div class="lab">W1–W4 排布 · 占比 68%</div></div>
+      <div class="stat"><div class="num"><span data-count="8">0</span><em> 个里程碑</em></div><div class="lab">M1 – M8 风险评审门</div></div>
+      <div class="stat"><div class="num"><span data-count="9">0</span><em> 类 Agent</em></div><div class="lab">1 协调者 + 8 专家</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>总体进度计划（W1 – W8 · 按任务波次）</h2>
+        <p>悬停查看工期与所属周；点击图例筛选分组；滑块缩放；◆ 里程碑，浅色周末带；W1–W4 为前置攻坚区</p>
+      </div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div id="gantt"></div>
+  </section>
+
+  <div class="sec-title">
+    <h2>里程碑门</h2><span>每个里程碑同时是风险评审门，未达退出标准不进入下一周</span>
+  </div>
+  <div class="ms-grid" id="msGrid"></div>
+
+  <div class="note reveal">
+    <b>读图说明：</b>时间轴以 <b>W1–W8 共 8 个项目周</b>（<b>2026-09-14（周一）启动</b>，至 11-08）组织，周界虚线分隔、周末浅色带。
+    <b style="color:var(--accent)">W1–W4 前置攻坚区共排布 28 项任务（占 41 项的 68%，超过 3/5）</b>：调研与需求 V1→V4 四轮迭代的同时，
+    详细设计、工程骨架、黑板/内核、九大 Agent、冲突检测引擎及 API / 前端脚手架并行推进；
+    买卖家三端页面（T24/T25）自 10.10 起长周期开发（9 天 / 8 天），W5 需求基线冻结后进入联调与剧本测试期。
+    <span class="tag-p0">P0 任务</span>覆盖 9 类 Agent、三级冲突机制、8 类冲突场景与全部 15 条验收标准，任何风险情况下不裁剪；
+    <span class="tag-p1">P1 任务</span>（T27／T30／T32）不进关键路径，受冲击时按 T32 → T30 → T27 顺序裁剪；
+    <b>W6 内置 2 个工作日集成联调缓冲</b>（10.22–10.23）。
+  </div>
+
+  <footer>
+    校园二手交易平台 Multi-Agent 系统 · 项目进度甘特图（W1–W8）<br>
+    依据 SRS-MAS-2026-001 V4.0 与 WBS（T1–T32）编制 · 梁奕琦 · 2026-10-13
+  </footer>
+</main>
+
+<script>
+/* ===================== 主题 ===================== */
+let theme=(window.self!==window.top)?'light':(localStorage.getItem('mas-theme')||'dark');
+const THEMES={
+  dark:{
+    groups:{done:'#34d399',design:'#38bdf8',infra:'#818cf8',kernel:'#a78bfa',agent:'#c084fc',
+      conflict:'#f472b6',app:'#fb923c',qa:'#facc15',p1:'#94a3b8',delivery:'#2dd4bf'},
+    axis:'#8ba0c2',axisLine:'rgba(148,163,184,.32)',ylabel:'#c4d2e8',split:'rgba(148,163,184,.09)',
+    bandA:'rgba(148,163,184,.00)',bandB:'rgba(148,163,184,.07)',bandLine:'rgba(148,163,184,.25)',
+    weekend:'rgba(251,191,36,.05)',
+    frontZone:'rgba(94,234,212,.055)',frontLine:'rgba(94,234,212,.55)',
+    week:'#9fb2d0',weekBg:'rgba(8,15,30,.82)',
+    mileDone:'#34d399',mileWait:'#fbbf24',today:'#ff5d73',
+    tipBg:'rgba(9,16,32,.95)',tipLine:'rgba(148,163,184,.32)',tipTxt:'#e9f0fb',tipMut:'#8ba0c2',
+    dzBg:'rgba(13,22,42,.65)',dzFill:'rgba(129,140,248,.2)',dzHandle:'#818cf8',dzTxt:'#8ba0c2',
+    dzLine:'#5eead4',dzArea:'rgba(94,234,212,.12)',shine:'rgba(255,255,255,.28)'
+  },
+  light:{
+    groups:{done:'#059669',design:'#0284c7',infra:'#4f46e5',kernel:'#7c3aed',agent:'#a21caf',
+      conflict:'#db2777',app:'#ea580c',qa:'#a16207',p1:'#64748b',delivery:'#0d9488'},
+    axis:'#64748b',axisLine:'rgba(30,58,95,.25)',ylabel:'#314563',split:'rgba(30,58,95,.1)',
+    bandA:'rgba(30,58,95,.00)',bandB:'rgba(30,58,95,.055)',bandLine:'rgba(30,58,95,.2)',
+    weekend:'rgba(217,119,6,.05)',
+    frontZone:'rgba(13,148,136,.07)',frontLine:'rgba(13,148,136,.6)',
+    week:'#5a6b85',weekBg:'rgba(255,255,255,.94)',
+    mileDone:'#059669',mileWait:'#d97706',today:'#e11d48',
+    tipBg:'rgba(255,255,255,.98)',tipLine:'rgba(30,58,95,.22)',tipTxt:'#1e293b',tipMut:'#64748b',
+    dzBg:'rgba(226,232,240,.9)',dzFill:'rgba(79,70,229,.16)',dzHandle:'#4f46e5',dzTxt:'#64748b',
+    dzLine:'#0d9488',dzArea:'rgba(13,148,136,.12)',shine:'rgba(255,255,255,.5)'
+  }
+};
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme',theme);
+  document.getElementById('themeIco').textContent=theme==='dark'?'☀':'🌙';
+  document.getElementById('themeTxt').textContent=theme==='dark'?'白色模式':'深色模式';
+}
+document.getElementById('themeToggle').onclick=()=>{
+  theme=theme==='dark'?'light':'dark';
+  localStorage.setItem('mas-theme',theme);applyTheme();grow=1;render();buildParticles();
+};
+window.addEventListener('storage',e=>{if(e.key==='mas-theme'){theme=e.newValue||'dark';applyTheme();grow=1;render();buildParticles();}});
+applyTheme();
+
+/* ===================== 粒子网络（9 Agent） ===================== */
+const cv=document.getElementById('particles'),ctx=cv.getContext('2d');
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);
+  t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+const PAL_D=['#5eead4','#818cf8','#a78bfa','#f472b6','#38bdf8','#c084fc','#34d399','#fbbf24','#fb923c'];
+const PAL_L=['#0d9488','#4f46e5','#7c3aed','#db2777','#0284c7','#a21caf','#059669','#d97706','#ea580c'];
+let pts=[];
+function buildParticles(){
+  const rnd=mulberry32(20260914),vw=cv.clientWidth,vh=cv.clientHeight,pal=theme==='dark'?PAL_D:PAL_L;pts=[];
+  for(let i=0;i<9;i++)pts.push({x:rnd()*vw,y:rnd()*vh,vx:(rnd()-.5)*.22,vy:(rnd()-.5)*.22,r:3.2+rnd()*2.4,c:pal[i],a:true});
+  for(let i=0;i<46;i++)pts.push({x:rnd()*vw,y:rnd()*vh,vx:(rnd()-.5)*.3,vy:(rnd()-.5)*.3,r:.8+rnd()*1.3,
+    c:theme==='dark'?'#7d93bd':'#9fb0cc',a:false});
+}
+function resize(){
+  const r=cv.parentElement.getBoundingClientRect();
+  cv.width=r.width*devicePixelRatio;cv.height=r.height*devicePixelRatio;
+  cv.style.width=r.width+'px';cv.style.height=r.height+'px';
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);buildParticles();
+}
+function tick(){
+  const vw=cv.clientWidth,vh=cv.clientHeight;ctx.clearRect(0,0,vw,vh);
+  const lc=theme==='dark'?'120,150,210':'70,100,150';
+  for(const p of pts){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>vw)p.vx*=-1;if(p.y<0||p.y>vh)p.vy*=-1;}
+  for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+    const a=pts[i],b=pts[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+    if(d<150){ctx.strokeStyle='rgba('+lc+','+((1-d/150)*(theme==='dark'?.2:.15))+')';
+      ctx.lineWidth=a.a&&b.a?.9:.5;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}}
+  for(const p of pts){ctx.beginPath();ctx.fillStyle=p.c;ctx.globalAlpha=p.a?.85:.5;
+    ctx.shadowColor=p.c;ctx.shadowBlur=p.a?12:0;ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
+    ctx.shadowBlur=0;ctx.globalAlpha=1;}
+  requestAnimationFrame(tick);
+}
+window.addEventListener('resize',resize);
+
+/* ===================== 数据：W1–W8（2026-09-14 启动） ===================== */
+const T=s=>Date.UTC(...s.split('-').map((v,i)=>i===1?+v-1:+v)), DAY=864e5;
+const GROUPS_META={
+  done:{name:'调研 / 需求（已完成）'},design:{name:'详细设计'},infra:{name:'工程骨架 / 数据层'},
+  kernel:{name:'Agent 通信内核'},agent:{name:'编排与九大 Agent'},conflict:{name:'冲突三级决策（研究核心）'},
+  app:{name:'API / WebSocket / 前端'},qa:{name:'剧本 / 测试 / 联调'},
+  p1:{name:'P1 增强（可裁剪）'},delivery:{name:'交付 / 答辩'}
+};
+const TASKS=[
+  /* ===== W1–W4 前置攻坚（25 项，占 61% > 3/5） ===== */
+  ['项目调研：业务链路与四大痛点（第 1 周周报）','2026-09-14','2026-09-20','done',1,'调研'],
+  ['调研深化：异常链路 / FIPA 规范 / 资料整理','2026-09-21','2026-09-27','done',1,'调研'],
+  ['T1 详细设计：9 角色卡 / ACL / 状态机 / ER','2026-09-23','2026-09-27','design',0,'T1'],
+  ['T2 前后端工程骨架与配置（FastAPI / Vue3）','2026-09-28','2026-09-30','infra',0,'T2'],
+  ['T3 数据模型与种子数据（含 2400320321）','2026-09-29','2026-10-02','infra',0,'T3'],
+  ['需求 V1.0–V1.1：业务调研初稿与异常链路补充','2026-10-01','2026-10-03','done',1,'V1'],
+  ['T5 黑板 SSOT / ACL 总线 / 注册表','2026-09-30','2026-10-04','kernel',0,'T5'],
+  ['T4 认证与角色鉴权（bcrypt / JWT）','2026-10-03','2026-10-05','infra',0,'T4'],
+  ['需求 V2.0：9 类 Agent 角色 + 黑板四层结构','2026-10-04','2026-10-06','done',1,'V2'],
+  ['T6 LLM 适配层 + RuleLLM 确定性兜底','2026-10-03','2026-10-06','kernel',0,'T6'],
+  ['T7 Checkpointer 检查点与决策轨迹','2026-10-05','2026-10-07','kernel',0,'T7'],
+  ['需求 V3.0：四类冲突检测 + 三级阶梯 + 八场景','2026-10-07','2026-10-09','done',1,'V3'],
+  ['T8 协调管理 Agent 与 LangGraph 主编排图','2026-10-06','2026-10-08','agent',0,'T8'],
+  ['T9 用户代理 Agent（意图 / 保留价 / 确认）','2026-10-07','2026-10-08','agent',0,'T9'],
+  ['T10 商品管理 Agent 与发布服务','2026-10-07','2026-10-09','agent',0,'T10'],
+  ['T11 内容审核 Agent（规则+LLM 双判 / veto）','2026-10-08','2026-10-10','agent',0,'T11'],
+  ['T13 议价谈判 Agent（单调让步 / 纳什参考价）','2026-10-08','2026-10-10','agent',0,'T13'],
+  ['T12 搜索推荐 Agent（排序 + 匹配理由）','2026-10-09','2026-10-10','agent',0,'T12'],
+  ['T14 交易履约 Agent（预占锁 / 三优先 / 回滚）','2026-10-09','2026-10-11','agent',0,'T14'],
+  ['T17 冲突检测引擎（资源 / 目标 / 知识 / 决策）','2026-10-09','2026-10-11','conflict',0,'T17'],
+  ['需求 V3.1：2026 技术选型核查（LangGraph 1.x）','2026-10-10','2026-10-11','done',1,'V3.1'],
+  ['T15 信用评价 Agent（信用分 / 风险标签）','2026-10-10','2026-10-11','agent',0,'T15'],
+  ['T16 纠纷仲裁 Agent（证据包 / 裁决书）','2026-10-10','2026-10-11','agent',0,'T16'],
+  ['T18 一级对等协商策略（≤3 轮 / 补材料）','2026-10-10','2026-10-11','conflict',0,'T18'],
+  ['T19 二级协调仲裁（效用函数 + 加权投票）','2026-10-11','2026-10-11','conflict',0,'T19'],
+  ['T21 REST API 全量接口与统一错误码','2026-10-09','2026-10-11','app',0,'T21'],
+  ['T23 前端脚手架 / 登录 / 三角色主布局','2026-10-09','2026-10-11','app',0,'T23'],
+  ['T22 议价 WebSocket 实时通道（断线重连）','2026-10-10','2026-10-11','app',0,'T22'],
+  /* ===== W5 10/12-10/18：基线冻结，三端页面长周期开发与联调 ===== */
+  ['需求 V4.0：P0/P1 范围 · 15 FR · 15 AC 基线冻结','2026-10-12','2026-10-13','done',1,'V4'],
+  ['T20 三级人工兜底 / interrupt / 熔断 / veto','2026-10-12','2026-10-14','conflict',0,'T20'],
+  ['T24 卖家端页面（发布/议价/交付/申诉）','2026-10-10','2026-10-18','app',0,'T24'],
+  ['T25 买家端页面（市场/议价室/支付/评价）','2026-10-10','2026-10-17','app',0,'T25'],
+  /* ===== W6 10/19-10/25：剧本、测试与集成缓冲 ===== */
+  ['T28 冲突剧本库与一键运行器（≥10 / C1–C8）','2026-10-19','2026-10-21','qa',0,'T28'],
+  ['T27 黑板监控大屏（ECharts 实时状态）','2026-10-19','2026-10-21','p1',0,'T27 P1'],
+  ['T26 管理员人工工作台（终裁/熔断/回放）','2026-10-20','2026-10-22','app',0,'T26'],
+  ['T29 测试与质量门禁（并发 / 故障注入 / 无Key）','2026-10-21','2026-10-23','qa',0,'T29'],
+  ['集成联调与缺陷修复（W6 风险缓冲）','2026-10-22','2026-10-23','qa',0,'缓冲'],
+  /* ===== W7 10/26-11/01：P1 增强与一键启动 ===== */
+  ['T30 效用权重对比实验工具','2026-10-26','2026-10-30','p1',0,'T30 P1'],
+  ['T31 一键启动 / README / 演示资产','2026-10-26','2026-11-01','delivery',0,'T31'],
+  /* ===== W8 11/02-11/08：部署与结题答辩 ===== */
+  ['T32 Docker Compose 部署','2026-10-29','2026-11-04','p1',0,'T32 P1'],
+  ['文档定稿 / 答辩 PPT / 结题答辩','2026-11-05','2026-11-08','delivery',0,'答辩']
+];
+const MILES=[
+  ['M1','2026-10-13','需求基线 V4 冻结',true],
+  ['M2','2026-10-16','API / WebSocket 联调贯通',false],
+  ['M3','2026-10-19','交易主链路 E2E 贯通',false],
+  ['M4','2026-10-21','三端前端 + 剧本就位',false],
+  ['M5','2026-10-23','全量测试门禁通过',false],
+  ['M6','2026-10-30','P0 冻结 · 一键启动',false],
+  ['M7','2026-11-04','离线彩排完成',false],
+  ['M8','2026-11-08','结题答辩',false]
+];
+/* W1 周一 = 2026-09-14 */
+const WEEK0=T('2026-09-14');
+const WEEKS=Array.from({length:8},(_,i)=>({
+  n:i+1,s:new Date(WEEK0+i*7*DAY),e:new Date(WEEK0+(i+1)*7*DAY)
+}));
+const md=d=>String(d.getUTCMonth()+1).padStart(2,'0')+'/'+String(d.getUTCDate()).padStart(2,'0');
+const MS_ROW='★ 里程碑';
+const cats=[MS_ROW,'','',''].concat(TASKS.map(d=>d[0])); // 三行里程碑标签预留带
+const hidden=new Set();
+
+/* ===================== 图例 ===================== */
+const legend=document.getElementById('legend');
+function buildLegend(){
+  const g=THEMES[theme].groups;legend.innerHTML='';
+  Object.entries(GROUPS_META).forEach(([key,meta])=>{
+    const n=TASKS.filter(t=>t[3]===key).length;
+    const el=document.createElement('span');
+    el.className='chip'+(hidden.has(key)?' off':'');
+    el.innerHTML='<span class="dot" style="background:'+g[key]+';box-shadow:0 0 8px '+g[key]+'"></span>'+
+      meta.name+' <span class="cnt">'+n+'</span>';
+    el.onclick=()=>{hidden.has(key)?hidden.delete(key):hidden.add(key);grow=1;render();};
+    legend.appendChild(el);
+  });
+}
+
+/* ===================== 图表 ===================== */
+const chart=echarts.init(document.getElementById('gantt'),null,{renderer:'canvas'});
+let grow=0, rafGrow=null;
+function easeOutCubic(t){return 1-Math.pow(1-t,3)}
+function startGrow(){
+  cancelAnimationFrame(rafGrow);
+  const t0=performance.now(),DUR=1100;
+  (function step(now){
+    const t=Math.min(1,(now-t0)/DUR);grow=easeOutCubic(t);render();
+    if(t<1)rafGrow=requestAnimationFrame(step);
+  })(t0);
+}
+function taskData(TT){
+  const out=[];
+  TASKS.forEach(d=>{
+    if(hidden.has(d[3]))return;
+    out.push({value:[cats.indexOf(d[0]),T(d[1]),T(d[2]),d[3],d[4]],
+      name:d[0],taskId:d[5],grp:GROUPS_META[d[3]].name,
+      s:d[1],e:d[2],prog:d[4]});
+  });
+  return out;
+}
+function render(){
+  const TT=THEMES[theme];buildLegend();
+  /* 周带（顶部 W 标签） + 周末带 */
+  const weekAreas=WEEKS.map((w,i)=>([
+    {xAxis:w.s.getTime(),itemStyle:{color:i%2?TT.bandB:TT.bandA},
+     label:{show:true,position:'top',distance:4,
+       formatter:'W'+w.n+'\n'+md(w.s)+'–'+md(new Date(w.e.getTime()-DAY)),
+       lineHeight:15,color:TT.week,fontSize:11,fontWeight:700,
+       backgroundColor:TT.weekBg,padding:[4,9],borderRadius:5,
+       borderColor:TT.bandLine,borderWidth:1}},
+    {xAxis:w.e.getTime()-1}
+  ]));
+  const weekendAreas=WEEKS.map(w=>[[
+    {xAxis:w.s.getTime()+5*DAY,itemStyle:{color:TT.weekend}},
+    {xAxis:w.s.getTime()+7*DAY-1}
+  ]][0]);
+  /* W1–W4 前置攻坚区高亮（25/41 · 61%） */
+  const frontZone=[[{
+    xAxis:WEEKS[0].s.getTime(),
+    itemStyle:{color:TT.frontZone,borderColor:TT.frontLine,borderWidth:0,borderRadius:0,
+      shadowBlur:0},
+    label:{show:true,position:'insideTopLeft',distance:[12,150],
+      formatter:'◈ 前置攻坚区 W1–W4 · 28/41 项任务（68%）',
+      color:TT.week,fontSize:11.5,fontWeight:800,padding:[5,11],borderRadius:6,
+      backgroundColor:TT.weekBg,borderColor:TT.frontLine,borderWidth:1}
+  },{xAxis:WEEKS[4].s.getTime()-1}]];
+  chart.setOption({
+    backgroundColor:'transparent',
+    animationDuration:400,
+    grid:{left:300,right:66,top:64,bottom:58},
+    xAxis:[
+      {type:'time',min:WEEK0,max:WEEK0+8*7*DAY,
+       axisLabel:{show:false},axisLine:{show:false},axisTick:{show:false},
+       splitLine:{show:true,lineStyle:{color:TT.bandLine,type:'dashed',width:1}}},
+      {type:'time',gridIndex:0,min:WEEK0,max:WEEK0+8*7*DAY,
+       axisLabel:{show:false},axisLine:{lineStyle:{color:TT.axisLine}},
+       axisTick:{show:false},splitLine:{show:false}}
+    ],
+    yAxis:{type:'category',data:cats,inverse:true,
+      axisTick:{show:false},axisLine:{show:false},
+      axisLabel:{color:TT.ylabel,fontSize:11,width:284,overflow:'truncate',
+        formatter:v=>v===MS_ROW?'{a|★ 里程碑}':v,
+        rich:{a:{color:TT.mileWait,fontWeight:800,fontSize:12}}},
+      splitLine:{show:true,lineStyle:{color:TT.split}},splitArea:{show:false}},
+    tooltip:{trigger:'item',backgroundColor:TT.tipBg,borderColor:TT.tipLine,borderWidth:1,
+      textStyle:{color:TT.tipTxt,fontSize:12,lineHeight:19},padding:[11,15],
+      extraCssText:'box-shadow:0 18px 50px -12px rgba(0,0,0,.55);border-radius:12px;backdrop-filter:blur(8px);max-width:340px;',
+      formatter:p=>{
+        if(p.seriesName==='mile'){
+          return '<b style="color:'+p.data.color+'">'+p.data.name+'</b> 里程碑<br>'+p.data.date+
+            '　'+p.data.label+'<br><span style="color:'+TT.tipMut+'">'+(p.data.done?'状态：已达成':'状态：待达成')+'</span>';
+        }
+        const d=p.data,days=Math.round((d.value[2]-d.value[1])/DAY)+1;
+        const wi=date=>WEEKS.findIndex(w=>date>=w.s.getTime()&&date<w.e.getTime())+1;
+        const w1=wi(d.value[1]),w2=wi(d.value[2]-1);
+        const st=d.prog>=1
+          ? '<span style="color:'+TT.mileDone+'">● 已完成</span>'
+          : '<span style="color:'+TT.mileWait+'">○ 计划中</span>';
+        return '<b>'+d.name+'</b><br><span style="color:'+TT.tipMut+'">分组：</span>'+d.grp+
+          '（'+d.taskId+'）<br><span style="color:'+TT.tipMut+'">工期：</span>'+d.s+' → '+d.e+
+          '（'+days+' 天 · W'+w1+(w1===w2?'':'–W'+w2)+'）<br><span style="color:'+TT.tipMut+'">状态：</span>'+st+
+          ' · 完成度 '+(d.prog*100)+'%';
+      }},
+    series:[
+      {name:'tasks',type:'custom',clip:true,
+        renderItem:(params,api)=>{
+          const cat=api.value(0),idx=api.value(0);
+          const p1=api.coord([api.value(1),cat]),p2=api.coord([api.value(2),cat]);
+          const rowH=api.size([0,1])[1],bh=Math.min(19,rowH*.58);
+          /* 生长动画：逐条延迟展开 */
+          const local=Math.max(0,Math.min(1,grow-(idx-4)*.012));
+          const full=Math.max(3,p2[0]-p1[0]),w=Math.max(2.5,full*local),x=p1[0];
+          const y=p1[1]-bh/2,col=TT.groups[api.value(3)],prog=api.value(4);
+          const grad=new echarts.graphic.LinearGradient(0,0,1,0,[
+            {offset:0,color:col+'4d'},{offset:.2,color:col+'d9'},{offset:1,color:col}]);
+          const kids=[{type:'rect',shape:{x,y,width:w,height:bh,r:[5,5,5,5]},
+            style:{fill:grad,shadowBlur:10,shadowColor:col+'66'}}];
+          if(local>=.35)kids.push({type:'rect',
+            shape:{x:x+1,y:y+1.5,width:Math.max(2,w-2),height:Math.max(1,bh*.28),r:[3,3,0,0]},
+            style:{fill:TT.shine,opacity:.55}});
+          if(prog>0)kids.push({type:'rect',shape:{x:x+1,y:y+1,width:Math.max(2,w-2),height:bh-2,r:[4,4,4,4]},
+            style:{fill:'rgba(255,255,255,.22)'}});
+          return {type:'group',children:kids};
+        },
+        encode:{x:[1,2],y:0},data:taskData(TT),
+        markArea:{silent:true,data:frontZone.concat(weekendAreas).concat(weekAreas)},
+        markLine:{symbol:'none',data:[{
+          xAxis:WEEKS[4].s.getTime(),silent:true,
+          lineStyle:{color:TT.frontLine,width:1.6,type:'solid'},
+          label:{show:true,rotate:0,position:'insideEndBottom',distance:36,align:'right',
+            formatter:'W5 起 · 联调 / 测试 / 交付期',color:TT.week,fontSize:10.5,fontWeight:700,
+            padding:[4,9],borderRadius:5,backgroundColor:TT.weekBg,
+            borderColor:TT.frontLine,borderWidth:1}
+        }].concat(WEEKS.map(w=>({
+          xAxis:w.s.getTime(),silent:true,lineStyle:{color:'rgba(0,0,0,0)',width:0},
+          label:{show:true,position:'end',distance:10,color:TT.axis,fontSize:11,
+            formatter:md(w.s),padding:[2,4]}
+        })))}
+      },
+      {name:'mile',type:'custom',z:10,
+        renderItem:(params,api)=>{
+          const p=api.coord([api.value(1),0]);
+          const s=8,x=p[0],y=p[1]+8,col=api.value(2);
+          const pop=Math.max(0,Math.min(1,grow*1.1-api.value(6)*.04));
+          const ss=s*(.4+.6*pop);
+          const d='M'+x+','+(y-ss)+' L'+(x+ss)+','+y+' L'+x+','+(y+ss)+' L'+(x-ss)+','+y+' Z';
+          const lane=api.value(5); // 三层预留带交错，防 W8 密集重叠
+          const offs={'-1':[22,37],'1':[58,73],'2':[94,109]}[String(lane)];
+          const codeY=y+offs[0],dateY=y+offs[1];
+          if(pop<=0)return{type:'group',children:[]};
+          return{type:'group',children:[
+            {type:'circle',shape:{cx:x,cy:y,r:17},style:{fill:col,opacity:.08}},
+            {type:'circle',shape:{cx:x,cy:y,r:12.5},style:{fill:col,opacity:.16}},
+            {type:'path',shape:{d},style:{fill:col,shadowBlur:18,shadowColor:col}},
+            {type:'circle',shape:{cx:x,cy:y,r:3.2},style:{fill:'#fff',opacity:.95}},
+            {type:'text',style:{text:api.value(3),x,y:codeY,textAlign:'center',fill:col,fontSize:11,fontWeight:800}},
+            {type:'text',style:{text:api.value(4),x,y:dateY,textAlign:'center',fill:TT.axis,fontSize:9.5}}
+          ]};
+        },
+        encode:{x:1,y:0},
+        data:MILES.map((m,i)=>({
+          value:[0,T(m[1]),m[3]?THEMES[theme].mileDone:THEMES[theme].mileWait,m[0],m[1].slice(5),
+            [-1,1,-1,1,2,-1,1,2][i],i*.6],
+          name:m[0],date:m[1],label:m[2],done:m[3],
+          color:m[3]?THEMES[theme].mileDone:THEMES[theme].mileWait}))
+      }
+    ],
+    dataZoom:[
+      {type:'slider',xAxisIndex:[0,1],height:16,bottom:14,borderColor:TT.axisLine,
+       backgroundColor:TT.dzBg,fillerColor:TT.dzFill,
+       handleStyle:{color:TT.dzHandle,borderColor:TT.dzHandle},textStyle:{color:TT.dzTxt,fontSize:10},
+       dataBackground:{lineStyle:{color:TT.dzLine},areaStyle:{color:TT.dzArea}}},
+      {type:'inside',xAxisIndex:[0,1],zoomOnMouseWheel:true,moveOnMouseMove:true}
+    ]
+  },true);
+}
+render();startGrow();
+window.addEventListener('resize',()=>chart.resize());
+
+/* ===================== 滚动进度 + 导航态 ===================== */
+const sp=document.getElementById('scrollProgress'),tn=document.getElementById('topnav');
+function onScroll(){
+  const h=document.documentElement;
+  const max=h.scrollHeight-h.clientHeight;
+  sp.style.width=(max>0?(h.scrollTop/max*100):0)+'%';
+  tn.classList.toggle('scrolled',h.scrollTop>24);
+}
+window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+/* ===================== 里程碑卡片 ===================== */
+const GATES={
+  M1:'范围与 Open Questions 均有默认方案；前置 28 项任务已排布，基线发布',
+  M2:'T21/T22 接口与 WS 联调通过；三级人工链路 interrupt 可恢复',
+  M3:'发布→评价全旅程可操作；并发抢单恰一成功、0 超卖；veto 不可覆盖',
+  M4:'卖家/买家/管理员三端页面完成；C1–C8 ≥10 剧本就位',
+  M5:'pytest 全绿；剧本对照表通过；无 Key 故障注入回归通过',
+  M6:'P0 全量冻结；干净环境一键启动走查通过；README 齐备',
+  M7:'离线彩排两轮通过；录屏 / 截图 / PPT 素材就位',
+  M8:'结题答辩完成；交付资产与决策轨迹归档可回放'
+};
+const grid=document.getElementById('msGrid');
+MILES.forEach(m=>{
+  const wk=WEEKS.findIndex(w=>T(m[1])>=w.s.getTime()&&T(m[1])<w.e.getTime())+1;
+  const el=document.createElement('div');
+  el.className='ms reveal'+(m[3]?' done':'');
+  el.innerHTML='<div class="mid">'+m[0]+'</div><div class="mdate">'+m[1]+'（W'+(wk||'?')+'）</div>'+
+    '<div class="mname">'+m[2]+'</div><div class="mgate">退出标准：'+GATES[m[0]]+'</div>';
+  grid.appendChild(el);
+});
+
+/* ===================== 数字滚动 + 滚动揭示 ===================== */
+function countUp(el){
+  const target=+el.dataset.count,t0=performance.now(),D=1200;
+  (function s(now){const t=Math.min(1,(now-t0)/D);
+    el.textContent=Math.round(target*(1-Math.pow(1-t,3)));
+    if(t<1)requestAnimationFrame(s);})(t0);
+}
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;
+  e.target.classList.add('in');
+  e.target.querySelectorAll('[data-count]').forEach(countUp);
+  io.unobserve(e.target);
+}),{threshold:.25});
+io.observe(document.querySelector('.hero'));
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+resize();tick();
+</script>
+</body>
+</html>

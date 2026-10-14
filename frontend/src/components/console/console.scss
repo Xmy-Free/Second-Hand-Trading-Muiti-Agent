@@ -1,0 +1,152 @@
+// =============================================================
+// Mission Control 共享样式片段（mixin-only，@use 不产出 CSS）
+// =============================================================
+
+@mixin panel {
+  position: relative;
+  background: var(--cc-panel);
+  border: 1px solid var(--cc-border);
+  border-radius: 16px;
+  box-shadow: var(--cc-shadow-panel);
+  backdrop-filter: blur(14px) saturate(1.35);
+  -webkit-backdrop-filter: blur(14px) saturate(1.35);
+}
+
+@mixin panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--cc-divider);
+
+  .panel-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    color: var(--cc-text-1);
+
+      svg {
+        color: var(--c-accent, var(--cc-indigo));
+      }
+  }
+}
+
+@mixin chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 22px;
+  padding: 0 9px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--cc-text-2);
+  border-radius: 999px;
+  background: var(--cc-raise);
+  border: 1px solid var(--cc-border);
+  white-space: nowrap;
+}
+
+@mixin mono {
+  font-family: 'JetBrains Mono', 'SFMono-Regular', ui-monospace, Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+@mixin thin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--cc-scroll) transparent;
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--cc-scroll);
+    border-radius: 999px;
+    &:hover {
+      background: var(--cc-scroll-hover);
+    }
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+// 数字跳动
+@keyframes console-num-bump {
+  0% {
+    transform: translateY(0) scale(1);
+    color: inherit;
+    text-shadow: none;
+  }
+  35% {
+    transform: translateY(-2px) scale(1.18);
+    color: var(--bump-color, #818cf8);
+    text-shadow: 0 0 14px var(--bump-color, #818cf8);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+// 消息新行滑入
+@keyframes console-row-in {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// SVG 连线流光
+@keyframes console-dash-flow {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+
+// 等待节点呼吸
+@keyframes console-node-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes console-node-ring {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.92);
+    transform-origin: center;
+  }
+  70% {
+    opacity: 0;
+    transform: scale(1.35);
+    transform-origin: center;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+    transform-origin: center;
+  }
+}
+
+// 实时点闪烁
+@keyframes console-live-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}

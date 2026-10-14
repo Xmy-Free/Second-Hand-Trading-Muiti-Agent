@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>核心算法详解 · 校园二手交易 Multi-Agent</title>
+<style>
+:root{
+  --ink:#0f1c33; --ink-2:#3a4a66; --ink-3:#6b7a94;
+  --blue:#2563eb; --cyan:#0891b2; --gold:#b8860b; --orange:#ea580c; --green:#059669; --red:#dc2626;
+  --line:rgba(21,40,74,.14);
+  --card:rgba(255,255,255,.66);
+  --card-2:rgba(255,255,255,.82);
+  --shadow:0 18px 50px -18px rgba(15,28,51,.28);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;
+  color:var(--ink);background:#dfe7f2;
+  -webkit-font-smoothing:antialiased;
+}
+.deck{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth}
+.slide{
+  position:relative;height:100vh;scroll-snap-align:start;overflow:hidden;
+  display:flex;flex-direction:column;
+  padding:46px 64px 58px;
+}
+/* ---------- 背景层 ---------- */
+.bg{position:absolute;inset:-4%;z-index:0;background-size:cover;background-position:center bottom;
+  animation:kenburns 26s ease-in-out infinite alternate;}
+@keyframes kenburns{from{transform:scale(1.02)}to{transform:scale(1.09) translate(-.6%,-.4%)}}
+.veil{position:absolute;inset:0;z-index:1;
+  background:
+    radial-gradient(1200px 620px at 78% -10%,rgba(255,255,255,.5),rgba(255,255,255,.05) 60%,transparent 82%),
+    linear-gradient(180deg,rgba(247,250,255,.78) 0%,rgba(247,250,255,.62) 42%,rgba(244,248,253,.34) 78%,rgba(240,246,252,.22) 100%);
+}
+.grain{position:absolute;inset:0;z-index:2;opacity:.5;mix-blend-mode:overlay;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.16'/%3E%3C/svg%3E");}
+.slide>*{position:relative;z-index:3}
+.slide>.bg{position:absolute;z-index:0}
+.slide>.veil{position:absolute;z-index:1}
+.slide>.grain{position:absolute;z-index:2}
+/* ---------- 头部 ---------- */
+.top{display:flex;align-items:center;gap:14px;font-size:13px;letter-spacing:.22em;color:var(--ink-3);text-transform:uppercase}
+.top .bar{width:34px;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:2px}
+.top .en{margin-left:auto;font-family:Georgia,serif;letter-spacing:.18em;font-style:italic;opacity:.7}
+.body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:20px;min-height:0}
+.foot{display:flex;align-items:center;gap:14px;font-size:12.5px;color:var(--ink-3)}
+.foot .src{margin-left:auto;font-family:Consolas,monospace;opacity:.8}
+/* ---------- 标题 ---------- */
+.kicker{display:inline-flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600;color:var(--blue);letter-spacing:.14em}
+.kicker .no{font-family:Georgia,serif;font-size:40px;font-style:italic;color:var(--blue);opacity:.32;line-height:1}
+h1{font-size:46px;line-height:1.16;letter-spacing:.01em;font-weight:800}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--blue),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:34px;line-height:1.2;font-weight:800;letter-spacing:.01em}
+.sub{font-size:15.5px;color:var(--ink-2);line-height:1.75;max-width:760px}
+/* ---------- 卡片 / 玻璃 ---------- */
+.glass{background:var(--card);border:1px solid rgba(255,255,255,.75);border-radius:16px;
+  box-shadow:var(--shadow);backdrop-filter:blur(14px) saturate(1.15);-webkit-backdrop-filter:blur(14px) saturate(1.15)}
+/* ---------- S1 总览 ---------- */
+.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:30px}
+.hero .meta{display:flex;gap:22px;margin-top:14px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;font-size:13px;
+  background:rgba(255,255,255,.78);border:1px solid var(--line);color:var(--ink-2);box-shadow:0 4px 14px -8px rgba(15,28,51,.3)}
+.chip b{color:var(--blue)}
+.seal{text-align:center;padding:14px 22px;border-radius:18px;background:var(--card-2);border:1px solid rgba(255,255,255,.8);box-shadow:var(--shadow);min-width:148px}
+.seal .n{font-family:Georgia,serif;font-size:34px;font-weight:700;color:var(--blue);line-height:1.1}
+.seal .t{font-size:12px;color:var(--ink-3);letter-spacing:.1em;margin-top:3px}
+.algo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.algo{padding:18px 18px 16px;position:relative;overflow:hidden;transition:transform .3s ease}
+.algo:hover{transform:translateY(-4px)}
+.algo::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+.algo .tag{font-family:Georgia,serif;font-size:13px;font-weight:700;letter-spacing:.14em;color:var(--c)}
+.algo h3{font-size:18.5px;margin:8px 0 7px;font-weight:800}
+.algo p{font-size:12.8px;line-height:1.65;color:var(--ink-2)}
+.algo .f{margin-top:10px;font-family:Consolas,monospace;font-size:11.5px;color:var(--ink-3);
+  background:rgba(15,28,51,.05);border-radius:8px;padding:6px 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.base-row{display:flex;gap:14px}
+.base{flex:1;display:flex;gap:12px;align-items:center;padding:12px 16px;border-radius:14px;background:rgba(255,255,255,.7);border:1px solid var(--line)}
+.base .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;font-size:15px;flex:none;background:linear-gradient(135deg,var(--blue),var(--cyan))}
+.base b{font-size:13.5px}.base span{display:block;font-size:11.8px;color:var(--ink-3);margin-top:2px;line-height:1.5}
+/* ---------- 通用双栏 ---------- */
+.split{display:grid;grid-template-columns:1.05fr .95fr;gap:20px;flex:1;min-height:0}
+.panel{padding:22px 24px;display:flex;flex-direction:column;gap:14px;min-height:0}
+.panel h4{font-size:14px;letter-spacing:.12em;color:var(--ink-3);text-transform:uppercase;font-weight:700;display:flex;align-items:center;gap:8px}
+.panel h4::after{content:"";flex:1;height:1px;background:var(--line)}
+/* ---------- 三级决策 ---------- */
+.lvl{display:flex;gap:14px;align-items:stretch}
+.lvl+.lvl{margin-top:12px}
+.lvl .badge{width:52px;flex:none;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;
+  font-family:Georgia,serif;font-weight:700;box-shadow:0 8px 20px -10px rgba(15,28,51,.5)}
+.lvl .badge .L{font-size:11px;letter-spacing:.16em;opacity:.85}
+.lvl .badge .n{font-size:21px;line-height:1}
+.l1 .badge{background:linear-gradient(160deg,#0ea5e9,#0369a1)}
+.l2 .badge{background:linear-gradient(160deg,#d97706,#b45309)}
+.l3 .badge{background:linear-gradient(160deg,#dc2626,#991b1b)}
+.lvl .txt{background:rgba(255,255,255,.72);border:1px solid var(--line);border-radius:14px;padding:11px 15px;flex:1}
+.lvl .txt b{font-size:14.5px}
+.lvl .txt p{font-size:12.6px;color:var(--ink-2);line-height:1.6;margin-top:3px}
+.lvl .txt code{font-family:Consolas,monospace;font-size:11.5px;background:rgba(37,99,235,.08);color:var(--blue);padding:1px 6px;border-radius:5px}
+.arrow{text-align:center;color:var(--ink-3);font-size:15px;line-height:.6;margin:-2px 0 -2px 60px}
+pre.code{background:#0e1a2f;color:#dbe7ff;border-radius:14px;padding:18px 20px;font-family:Consolas,"Courier New",monospace;
+  font-size:12.7px;line-height:1.72;overflow:auto;flex:1;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+pre.code .kw{color:#7dd3fc}pre.code .fn{color:#fcd34d}pre.code .num{color:#fca5a5}
+pre.code .cm{color:#7a8aa8;font-style:italic}pre.code .st{color:#86efac}
+.veto{display:flex;gap:12px;align-items:center;padding:12px 16px;border-radius:14px;
+  background:linear-gradient(100deg,rgba(220,38,38,.1),rgba(220,38,38,.03));border:1px solid rgba(220,38,38,.25)}
+.veto .ic{width:34px;height:34px;border-radius:10px;background:var(--red);color:#fff;display:grid;place-items:center;font-size:17px;flex:none}
+.veto b{font-size:14px}.veto p{font-size:12.3px;color:var(--ink-2);margin-top:2px;line-height:1.55}
+/* ---------- 公式 ---------- */
+.formula{background:linear-gradient(135deg,#0f1c33,#16315c);color:#fff;border-radius:16px;padding:22px 26px;text-align:center;box-shadow:var(--shadow)}
+.formula .lab{font-size:11.5px;letter-spacing:.22em;color:#9fc0ff;text-transform:uppercase;margin-bottom:10px}
+.formula .f{font-family:Georgia,"Times New Roman",serif;font-size:25px;letter-spacing:.02em;line-height:1.5}
+.formula .f .hl{color:#fbbf24}
+.formula .f .mi{color:#7dd3fc}
+.formula .note{font-size:12px;color:#a9c0e6;margin-top:9px;font-family:Consolas,monospace}
+.steps{display:flex;flex-direction:column;gap:10px}
+.step{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,.72);border:1px solid var(--line);border-radius:13px;padding:11px 15px}
+.step .k{font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--blue);min-width:24px}
+.step .d b{font-size:13.6px}.step .d p{font-size:12.4px;color:var(--ink-2);line-height:1.58;margin-top:2px}
+.step .d code{font-family:Consolas,monospace;font-size:11.5px;background:rgba(37,99,235,.08);color:var(--blue);padding:1px 6px;border-radius:5px}
+/* 表格 */
+table{width:100%;border-collapse:collapse;font-size:12.8px;overflow:hidden;border-radius:12px}
+th{background:rgba(15,28,51,.86);color:#dbe7ff;font-weight:600;padding:9px 10px;text-align:left;font-size:12px;letter-spacing:.04em}
+td{padding:9px 10px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.62)}
+tr:last-child td{border-bottom:none}
+td code{font-family:Consolas,monospace;font-size:11.5px;color:var(--blue)}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11.5px;font-weight:700}
+.pill.g{background:rgba(5,150,105,.14);color:var(--green)}
+.pill.r{background:rgba(220,38,38,.12);color:var(--red)}
+.pill.a{background:rgba(217,119,6,.15);color:var(--orange)}
+/* 效用条 */
+.ubar{display:flex;flex-direction:column;gap:9px}
+.ubar .row{display:grid;grid-template-columns:86px 1fr 52px;align-items:center;gap:10px;font-size:12.5px}
+.ubar .track{height:13px;border-radius:99px;background:rgba(15,28,51,.08);overflow:hidden}
+.ubar .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--c1),var(--c2))}
+.ubar .val{font-family:Consolas,monospace;text-align:right;color:var(--ink-2)}
+.case{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.case .box{border-radius:14px;padding:13px 16px;border:1px solid var(--line)}
+.case .bad{background:rgba(220,38,38,.07)}
+.case .good{background:rgba(5,150,105,.08)}
+.case h5{font-size:13px;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.case .bad h5{color:var(--red)}.case .good h5{color:var(--green)}
+.case p{font-size:12.2px;line-height:1.6;color:var(--ink-2)}
+.case p+p{margin-top:5px}
+/* 投票可视化 */
+.vote-vis{display:flex;flex-direction:column;gap:10px}
+.vrow{display:grid;grid-template-columns:120px 1fr 64px;gap:10px;align-items:center;font-size:12.6px}
+.vrow .nm{font-weight:700}.vrow .ex{font-family:Consolas,monospace;font-size:11.5px;color:var(--ink-3)}
+.vbar{position:relative;height:22px;background:linear-gradient(90deg,rgba(220,38,38,.12),rgba(15,28,51,.06) 50%,rgba(5,150,105,.12));border-radius:7px}
+.vbar .mid{position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--ink-3);opacity:.5}
+.vbar .pt{position:absolute;top:50%;width:10px;height:10px;border-radius:50%;transform:translate(-50%,-50%);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.gauge{display:flex;align-items:center;justify-content:center;gap:16px;padding:14px;border-radius:14px;background:rgba(255,255,255,.72);border:1px solid var(--line)}
+.gauge .big{font-family:Georgia,serif;font-size:40px;font-weight:700;color:var(--red);line-height:1}
+.gauge .gt{font-size:12.6px;color:var(--ink-2);line-height:1.6}
+.gauge .gt b{color:var(--ink)}
+/* 导航 */
+.dots{position:fixed;right:26px;top:50%;transform:translateY(-50%);z-index:20;display:flex;flex-direction:column;gap:11px}
+.dots a{width:9px;height:9px;border-radius:50%;background:rgba(15,28,51,.22);transition:all .25s;display:block}
+.dots a.on{background:var(--blue);transform:scale(1.35);box-shadow:0 0 0 4px rgba(37,99,235,.15)}
+.progress{position:fixed;left:0;top:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--cyan));z-index:21;width:0;transition:width .3s}
+.hint{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:20;font-size:11.5px;color:var(--ink-3);
+  background:rgba(255,255,255,.7);padding:5px 14px;border-radius:999px;border:1px solid var(--line);backdrop-filter:blur(8px)}
+@media (max-width:1100px){.algo-grid{grid-template-columns:repeat(2,1fr)}.split{grid-template-columns:1fr;overflow:auto}.slide{padding:36px 40px}}
+@media (max-height:820px){
+  .slide{padding:26px 50px 36px}
+  .body{gap:12px}
+  h1{font-size:34px}h2{font-size:26px}
+  .top{font-size:12px}.foot{font-size:11.5px}
+  .panel{padding:15px 18px;gap:9px}
+  .formula{padding:15px 20px}.formula .f{font-size:21px}
+  .lvl+.lvl{margin-top:8px}.lvl .badge{width:44px;border-radius:12px}.lvl .txt{padding:8px 13px}
+  .lvl .txt p{font-size:11.8px;line-height:1.5}
+  pre.code{font-size:11.3px;line-height:1.58;padding:14px 16px}
+  .veto{padding:9px 14px}.veto p{font-size:11.6px;line-height:1.45}
+  .step{padding:8px 13px}.step .d p{font-size:11.8px;line-height:1.5}
+  th,td{padding:7px 9px;font-size:12px}
+  .algo{padding:14px}.algo h3{font-size:17px;margin:6px 0}
+  .algo p{font-size:12px;line-height:1.55}.base{padding:9px 13px}
+  .case .box{padding:10px 13px}.case p{font-size:11.6px;line-height:1.5}
+  .gauge{padding:10px}.gauge .big{font-size:32px}.gauge .gt{font-size:11.8px;line-height:1.5}
+  .seal .n{font-size:28px}.chip{font-size:12px;padding:6px 12px}
+  .arrow{margin:-4px 0 -4px 52px}
+}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint">滚轮 / ↑↓ / 点击右侧圆点 翻页</div>
+
+<div class="deck" id="deck">
+
+<!-- ============ S1 总览 ============ -->
+<section class="slide">
+  <div class="bg" style="background-image:url('images/琉璃金蓝海.jpg')"></div><div class="veil"></div><div class="grain"></div>
+  <div class="top"><span class="bar"></span>核心算法详解 · CORE ALGORITHMS<span class="en">Multi-Agent Decision Engine</span></div>
+  <div class="body">
+    <div class="hero">
+      <div>
+        <div class="kicker">校园二手交易平台 · 多智能体协作与冲突消解</div>
+        <h1 style="margin-top:10px">九个 Agent，如何在一块<em>黑板</em>上<br>把交易冲突算成确定结果</h1>
+        <div class="meta">
+          <span class="chip">架构 <b>1 协调者 + 8 专家</b></span>
+          <span class="chip">事实来源 <b>Blackboard SSOT</b></span>
+          <span class="chip">编排 <b>LangGraph 1.x 状态机</b></span>
+          <span class="chip">通信 <b>FIPA ACL</b></span>
+        </div>
+      </div>
+      <div class="seal"><div class="n">4</div><div class="t">核心算法</div></div>
+    </div>
+
+    <div class="algo-grid">
+      <div class="algo glass" style="--c:#0ea5e9">
+        <div class="tag">A · 01</div><h3>三级冲突决策</h3>
+        <p>对等协商 → 协调仲裁 → 人工兜底，逐级升级；内容审核持有一票否决。</p>
+        <div class="f">negotiate → arbitrate → interrupt</div>
+      </div>
+      <div class="algo glass" style="--c:#2563eb">
+        <div class="tag">A · 02</div><h3>纳什议价 · 梯度让步</h3>
+        <p>对称纳什解给出参考价，双方按 50% 梯度向保留价收敛，五轮无交集即破裂。</p>
+        <div class="f">P* = (P_buyer + P_seller)/2</div>
+      </div>
+      <div class="algo glass" style="--c:#b8860b">
+        <div class="tag">A · 03</div><h3>全局效用函数 U</h3>
+        <p>五维加权评估推荐方案，安全权重最高；佣金偏向方案效用不达标强制重排。</p>
+        <div class="f">U = Σ wᵢ·xᵢ − 0.10·cost</div>
+      </div>
+      <div class="algo glass" style="--c:#ea580c">
+        <div class="tag">A · 04</div><h3>三方加权投票</h3>
+        <p>信用 / 审核 / 协调者按「票权 × 置信度 × 票值」求和，±0.5 双阈值裁决。</p>
+        <div class="f">S = Σ wᵢ · cᵢ · vᵢ</div>
+      </div>
+    </div>
+
+    <div class="base-row">
+      <div class="base"><div class="ic">⛓</div><div><b>双引擎 LLM 层</b><span>DeepSeek V4 语义判定，异常/无 Key 自动降级 RuleLLM 确定性规则</span></div></div>
+      <div class="base"><div class="ic">💾</div><div><b>Checkpointer 持久化</b><span>SqliteSaver 快照状态，interrupt 挂起、Command(resume) 恢复</span></div></div>
+      <div class="base"><div class="ic">✓</div><div><b>可验证</b><span>62 用例全绿 · C1–C8 冲突剧本 · LangSmith 全链路 trace</span></div></div>
+    </div>
+  </div>
+  <div class="foot"><span>梁奕琦 · 2400320321 · 指导教师 曾志新</span><span class="src">app/agents · app/graph · app/kernel</span></div>
+</section>
+
+<!-- ============ S2 A1 三级冲突决策 ============ -->
+<section class="slide">
+  <div class="bg" style="background-image:url('images/科技校园.jpg')"></div><div class="veil"></div><div class="grain"></div>
+  <div class="top"><span class="bar"></span>算法 01 · CONFLICT RESOLUTION<span class="en">Level-3 escalation state machine</span></div>
+  <div class="body">
+    <div>
+      <div class="kicker"><span class="no">01</span>三级冲突决策 + 一票否决</div>
+      <h2 style="margin-top:6px">能自己谈的不仲裁，能规则裁的不打扰人</h2>
+    </div>
+    <div class="split">
+      <div class="panel glass">
+        <h4>逐级升级路径</h4>
+        <div class="lvl l1"><div class="badge"><span class="L">LV</span><span class="n">1</span></div>
+          <div class="txt"><b>对等协商（Agent ↔ Agent）</b><p>议价 Agent 五轮出价、申诉先由仲裁 Agent 向卖家「解释 + 补材料」，最多 <code>consult_max_rounds = 3</code> 轮；达成一致即收敛。</p></div></div>
+        <div class="arrow">▲ 协商失败 / 意见冲突</div>
+        <div class="lvl l2"><div class="badge"><span class="L">LV</span><span class="n">2</span></div>
+          <div class="txt"><b>协调仲裁（规则 · 效用 · 投票）</b><p>金额 ≤ <code>¥50</code> 且关键词命中 → 仲裁 Agent 规则直裁（置信度 0.82）；推荐偏向 → 效用比较（A3）；风险分歧 → 三方加权投票（A4）。</p></div></div>
+        <div class="arrow">▲ 超阈值 / 灰区 / 高风险</div>
+        <div class="lvl l3"><div class="badge"><span class="L">LV</span><span class="n">3</span></div>
+          <div class="txt"><b>人工兜底（interrupt 挂起 / resume 终裁）</b><p>图在人工门处 <code>interrupt()</code> 冻结并持久化，管理员证据审阅后 <code>Command(resume=decision)</code> 恢复，全程审计留痕。</p></div></div>
+        <div class="veto"><div class="ic">⛔</div><div><b>一票否决（Veto）· 不可被任何级别覆盖</b><p>审核命中违禁词（confidence 0.98）→ 商品 frozen，直送人工复核台；下架、上架等业务路径全部拒绝。</p></div></div>
+      </div>
+      <div class="panel" style="padding:0;background:transparent;box-shadow:none">
+        <h4 style="padding:0 4px">LangGraph 状态机（trade_flow 节选）</h4>
+<pre class="code"><span class="cm"># 节点 = Agent 能力，条件边 = 仲裁结论路由</span>
+<span class="kw">def</span> <span class="fn">route_vote</span>(state):
+    <span class="kw">return</span> {
+      <span class="st">"vote_allowed"</span>: <span class="st">"wait_payment_gate"</span>,   <span class="cm"># 放行 → 人工支付门</span>
+      <span class="st">"vote_blocked"</span>: <span class="st">"cancel_order"</span>,       <span class="cm"># 拦截 → 释放预占锁</span>
+      <span class="st">"vote_manual"</span> : <span class="st">"risk_human_gate"</span>,     <span class="cm"># 灰区 → 三级人工</span>
+    }[state[<span class="st">"stage"</span>]]
+
+b.add_conditional_edges(<span class="st">"weighted_vote"</span>, route_vote, {...})
+b.add_conditional_edges(<span class="st">"goods_moderate"</span>, route_moderate, {
+    <span class="st">"approve"</span>: END, <span class="st">"reject"</span>: END,
+    <span class="st">"manual"</span> : <span class="st">"human_review_gate"</span>,
+    <span class="st">"veto"</span>   : <span class="st">"veto_gate"</span>,          <span class="cm"># 安全否决专用门</span>
+})
+
+<span class="cm"># 三级人工：挂起 → 持久化 → 恢复</span>
+decision = <span class="kw">interrupt</span>({<span class="st">"prompt"</span>: <span class="st">"等待人工终裁"</span>,
+                        <span class="st">"evidence"</span>: evidence_pack})
+<span class="kw">if</span> decision.action == <span class="st">"approve"</span>: ...   <span class="cm"># resume 后继续执行</span>
+</pre>
+        <div class="case">
+          <div class="box good"><h5>● 确定性收敛</h5><p>三条流（publish / trade / appeal）共 14 个条件分支，每个冲突结论都有唯一后继节点。</p></div>
+          <div class="box bad"><h5>● 安全短路</h5><p>veto 路径绕开协商与投票，从源头冻结，杜绝违禁品「带病闯关」。</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>对应剧本：C1 议价僵持 · C3 驳回申诉 · C4 金额分级 · C6 风险投票 · C8 违禁否决</span><span class="src">graph/flows/*.py · agents/arbitrator.py</span></div>
+</section>
+
+<!-- ============ S3 A2 纳什议价 ============ -->
+<section class="slide">
+  <div class="bg" style="background-image:url('images/科技办公室.jpg')"></div><div class="veil"></div><div class="grain"></div>
+  <div class="top"><span class="bar"></span>算法 02 · NEGOTIATION<span class="en">Nash bargaining solution</span></div>
+  <div class="body">
+    <div>
+      <div class="kicker"><span class="no">02</span>纳什议价参考价 + 50% 梯度让步</div>
+      <h2 style="margin-top:6px">让买卖双方朝同一个均衡点收敛，而不是乱砍价</h2>
+    </div>
+    <div class="split">
+      <div class="panel glass">
+        <h4>参考价与让步规则</h4>
+        <div class="formula">
+          <div class="lab">对称纳什议价解（议价能力 1 : 1）</div>
+          <div class="f">P<sup>*</sup><sub class="mi">nash</sub> = ( <span class="mi">P</span><sub>buyer</sub> + <span class="mi">P</span><sub>seller</sub> ) / 2</div>
+          <div class="note">P_seller = 挂牌价 × 0.85 （卖家保留价）</div>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="k">①</div><div class="d"><b>梯度让步 50%</b>
+            <p>买家：<code>target = last + (min(卖家要价) − last) × 0.5</code><br>卖家：<code>target = start − (start − 保留价) × 0.5</code>，且不低于保留价。</p></div></div>
+          <div class="step"><div class="k">②</div><div class="d"><b>成交判定</b>
+            <p>本轮目标价 ≥ 对方最优出价 → <code>would_deal = true</code>，按对方价格成交并建单预占锁。</p></div></div>
+          <div class="step"><div class="k">③</div><div class="d"><b>僵持破裂（C1）</b>
+            <p>连续 <code>5</code> 轮出价区间无交集 → 会话 terminated，纳什价留痕，并向买家推送同类商品推荐。</p></div></div>
+        </div>
+      </div>
+      <div class="panel glass">
+        <h4>C1 实测：保留价无交集的五轮收敛</h4>
+        <table>
+          <thead><tr><th>轮次</th><th>买家出价</th><th>卖家要价</th><th>区间</th><th>纳什参考</th></tr></thead>
+          <tbody>
+            <tr><td>r1</td><td>¥5</td><td>¥100</td><td><span class="pill r">无交集</span></td><td rowspan="5"><code>P* = (10 + 标价×0.85) / 2<br>（nash_price 已持久化）</code></td></tr>
+            <tr><td>r2</td><td>¥7</td><td>¥90</td><td><span class="pill r">无交集</span></td></tr>
+            <tr><td>r3</td><td>¥8</td><td>¥80</td><td><span class="pill r">无交集</span></td></tr>
+            <tr><td>r4</td><td>¥9</td><td>¥70</td><td><span class="pill r">无交集</span></td></tr>
+            <tr><td>r5</td><td>¥10</td><td>¥60</td><td><span class="pill r">破裂</span></td></tr>
+          </tbody>
+        </table>
+        <div class="case">
+          <div class="box bad"><h5>↓ 谈判结果</h5><p>买家保留价 ¥10，卖家实际底线 ¥60，五轮后无交集 → 终止会话。</p></div>
+          <div class="box good"><h5>↑ 平台兜底</h5><p>记录纳什价与僵持原因（C1 冲突事件），推荐同类商品，把「谈崩」转化为新交易机会。</p></div>
+        </div>
+        <p class="sub" style="font-size:12.5px">实时通道：议价室基于 WebSocket，每轮出价携带 <code style="font-family:Consolas,monospace;color:var(--blue)">basis</code> 议价理由；LLM 拟人回复不可用时由 RuleLLM 生成确定性话术。</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>对应剧本：C1 议价僵持 · 纳什参考价计算 / 超时破裂 / 同类推荐</span><span class="src">agents/negotiation.py</span></div>
+</section>
+
+<!-- ============ S4 A3 全局效用 ============ -->
+<section class="slide">
+  <div class="bg" style="background-image:url('images/星空城市.jpg')"></div><div class="veil"></div><div class="grain"></div>
+  <div class="top"><span class="bar"></span>算法 03 · UTILITY FUNCTION<span class="en">Global objective U(x)</span></div>
+  <div class="body">
+    <div>
+      <div class="kicker"><span class="no">03</span>全局效用函数 U · 五维可分解</div>
+      <h2 style="margin-top:6px">当推荐「更赚钱」和「更合适」打架时，用 U 说了算</h2>
+    </div>
+    <div class="split">
+      <div class="panel glass">
+        <h4>效用公式与权重（可配置）</h4>
+        <div class="formula">
+          <div class="lab">U ∈ [−0.10, 0.90]，成本为负向项</div>
+          <div class="f" style="font-size:21px">U = <span class="hl">0.25</span>·满意度 + <span class="hl">0.20</span>·成交率 + <span class="hl">0.30</span>·安全<br>+ <span class="hl">0.15</span>·公平 − <span class="hl">0.10</span>·成本</div>
+          <div class="note">各维度归一化至 [0,1]；安全权重最高，体现平台治理优先级</div>
+        </div>
+        <div class="ubar">
+          <div class="row"><span class="nm">满意度</span><div class="track"><div class="fill" style="width:25%;--c1:#60a5fa;--c2:#2563eb"></div></div><span class="val">0.25</span></div>
+          <div class="row"><span class="nm">成交率</span><div class="track"><div class="fill" style="width:20%;--c1:#38bdf8;--c2:#0284c7"></div></div><span class="val">0.20</span></div>
+          <div class="row"><span class="nm">安全</span><div class="track"><div class="fill" style="width:30%;--c1:#fbbf24;--c2:#d97706"></div></div><span class="val">0.30</span></div>
+          <div class="row"><span class="nm">公平</span><div class="track"><div class="fill" style="width:15%;--c1:#34d399;--c2:#059669"></div></div><span class="val">0.15</span></div>
+          <div class="row"><span class="nm">成本 (−)</span><div class="track"><div class="fill" style="width:10%;--c1:#f87171;--c2:#dc2626"></div></div><span class="val">0.10</span></div>
+        </div>
+        <div class="step"><div class="k">∑</div><div class="d"><b>可复现数值快照</b><p>每次裁决同时输出 <code>contributions</code> 各维贡献值，审计时可逐维复盘「为什么是这个结论」。</p></div></div>
+      </div>
+      <div class="panel glass">
+        <h4>C5 实战：识别搜索 Agent 的佣金偏向</h4>
+        <p class="sub" style="font-size:13px">搜索 Agent 倾向推荐高佣金、高价位商品（满意度被牺牲）。协调者分别计算两个方案的 U：</p>
+        <div class="case">
+          <div class="box bad">
+            <h5>✗ 偏向方案（高佣金排序）</h5>
+            <p>成交率 / 客单价贡献略高，但<b>买家满意度仅 0.62</b>，与买家目标不相容。</p>
+            <p>U 中满意度与公平贡献明显偏低。</p>
+          </div>
+          <div class="box good">
+            <h5>✓ 中立方案（相关性重排）</h5>
+            <p>按真实相关度重排，<b>满意度回升至 0.85</b>，安全 / 公平不降级。</p>
+            <p>综合 U 反超偏向方案。</p>
+          </div>
+        </div>
+        <div class="gauge">
+          <div class="big" style="color:var(--orange)">&lt; 0.80</div>
+          <div class="gt"><b>重排阈值 util_reorder_min_satisfaction</b><br>方案满意度低于 0.80 → 协调者<b>否决该排序</b>，要求搜索 Agent 重新排列后再返回结果。</div>
+        </div>
+        <table>
+          <thead><tr><th>裁决环节</th><th>比较对象</th><th>动作</th></tr></thead>
+          <tbody>
+            <tr><td>目标相容性</td><td><code>U_biased vs U_neutral</code></td><td><span class="pill a">要求重排</span></td></tr>
+            <tr><td>冲突等级</td><td>Search ↔ Coordinator</td><td>L2 效用仲裁</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>对应剧本：C5 推荐佣金偏向 · 效用比较不达标 → 恢复相关性排序</span><span class="src">agents/coordinator.py · do_utility_score()</span></div>
+</section>
+
+<!-- ============ S5 A4 加权投票 ============ -->
+<section class="slide">
+  <div class="bg" style="background-image:url('images/科技校园.jpg')"></div><div class="veil"></div><div class="grain"></div>
+  <div class="top"><span class="bar"></span>算法 04 · WEIGHTED VOTING<span class="en">Confidence-weighted arbitration</span></div>
+  <div class="body">
+    <div>
+      <div class="kicker"><span class="no">04</span>三方加权投票 · ±0.5 双阈值裁决</div>
+      <h2 style="margin-top:6px">风险意见打架时，让「票权 × 置信度」而不是嗓门决定</h2>
+    </div>
+    <div class="split">
+      <div class="panel glass">
+        <h4>计票公式</h4>
+        <div class="formula">
+          <div class="lab">信用 / 审核 / 协调者 三方求和</div>
+          <div class="f">S = <span class="hl">Σ</span> w<sub>i</sub> · c<sub>i</sub> · v<sub>i</sub></div>
+          <div class="note">vᵢ ∈ {−1 反对, 0 弃权, +1 赞成}　cᵢ ∈ [0,1] 置信度</div>
+        </div>
+        <table>
+          <thead><tr><th>投票方</th><th>票权 w</th><th>票值规则</th></tr></thead>
+          <tbody>
+            <tr><td>信用评价 Agent</td><td><code>0.50</code></td><td>风险 high/med/low → −1/0/+1</td></tr>
+            <tr><td>内容审核 Agent</td><td><code>0.20</code></td><td>订单维度风险投票；不可用则弃权 (0, 0.5)</td></tr>
+            <tr><td>协调管理 Agent</td><td><code>0.30</code></td><td>买家信用 &lt;70 / &lt;80 / 否则 → −1/0/+1</td></tr>
+          </tbody>
+        </table>
+        <div class="steps">
+          <div class="step"><div class="k" style="color:var(--green)">≥</div><div class="d"><b>S ≥ +0.50　放行</b><p>进入等待支付人工门，沙箱支付后订单完成。</p></div></div>
+          <div class="step"><div class="k" style="color:var(--red)">≤</div><div class="d"><b>S ≤ −0.50　拦截</b><p>取消订单并释放预占锁，冲突事件转人工备案。</p></div></div>
+          <div class="step"><div class="k" style="color:var(--orange)">≈</div><div class="d"><b>−0.50 &lt; S &lt; +0.50　灰区</b><p>证据不足以下定论，升级三级人工终裁，避免机器误杀 / 误放。</p></div></div>
+        </div>
+      </div>
+      <div class="panel glass">
+        <h4>C6 实测：高风险买家触发拦截</h4>
+        <div class="vote-vis">
+          <div class="vrow"><span class="nm">信用评价</span>
+            <div class="vbar"><span class="mid"></span><span class="pt" style="left:5%;background:#dc2626"></span></div>
+            <span class="ex">.50·.9·(−1) = −.45</span></div>
+          <div class="vrow"><span class="nm">内容审核</span>
+            <div class="vbar"><span class="mid"></span><span class="pt" style="left:40%;background:#f97316"></span></div>
+            <span class="ex">.20·.5·(−1) = −.10</span></div>
+          <div class="vrow"><span class="nm">协调者</span>
+            <div class="vbar"><span class="mid"></span><span class="pt" style="left:50%;background:#94a3b8"></span></div>
+            <span class="ex">.30·.7·(0) = 0 弃权</span></div>
+        </div>
+        <div class="gauge">
+          <div class="big">−0.55</div>
+          <div class="gt"><b>S = −0.45 − 0.10 + 0 = −0.55（LangSmith 实测值）</b><br>S ≤ −0.50 → <b>decision = block</b>，route_vote 路由至 <code style="font-family:Consolas,monospace">cancel_order</code>，释放预占锁。</div>
+        </div>
+        <div class="case">
+          <div class="box good"><h5>● 容错设计</h5><p>审核 Agent 暂停 / 超时不卡死流程：该票按弃权处理，仍可由其余两方产出结论。</p></div>
+          <div class="box bad"><h5>● 留痕可审</h3><p>每票的 weight / confidence / vote / 加权值 / 依据全部写入冲突事件与 LangSmith trace。</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>对应剧本：C6 风险拦截（10/10 断言）· LangSmith trace: weighted_vote → route_vote → cancel_order</span><span class="src">agents/coordinator.py · do_risk_vote()</span></div>
+</section>
+
+</div>
+
+<script>
+const deck=document.getElementById('deck');
+const slides=[...document.querySelectorAll('.slide')];
+const dotsBox=document.getElementById('dots');
+const progress=document.getElementById('progress');
+slides.forEach((s,i)=>{
+  const a=document.createElement('a');a.href='#';a.title=`第 ${i+1} 页`;
+  a.onclick=e=>{e.preventDefault();s.scrollIntoView({behavior:'smooth'});};
+  dotsBox.appendChild(a);
+});
+const dots=[...dotsBox.children];
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(!e.isIntersecting)return;
+    const i=slides.indexOf(e.target);
+    dots.forEach((d,j)=>d.classList.toggle('on',j===i));
+    progress.style.width=((i+1)/slides.length*100)+'%';
+    history.replaceState(null,'','#'+['overview','a1','a2','a3','a4'][i]);
+  });
+},{threshold:.55});
+slides.forEach(s=>io.observe(s));
+dots[0].classList.add('on');progress.style.width=(100/slides.length)+'%';
+document.addEventListener('keydown',e=>{
+  const cur=dots.findIndex(d=>d.classList.contains('on'));
+  if(e.key==='ArrowDown'||e.key==='PageDown'||e.key==='ArrowRight'){e.preventDefault();slides[Math.min(cur+1,slides.length-1)].scrollIntoView({behavior:'smooth'});}
+  if(e.key==='ArrowUp'||e.key==='PageUp'||e.key==='ArrowLeft'){e.preventDefault();slides[Math.max(cur-1,0)].scrollIntoView({behavior:'smooth'});}
+  if(e.key==='Home'){slides[0].scrollIntoView();} if(e.key==='End'){slides[slides.length-1].scrollIntoView();}
+});
+</script>
+</body>
+</html>

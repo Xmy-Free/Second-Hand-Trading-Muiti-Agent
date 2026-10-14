@@ -1,0 +1,218 @@
+/* docx-view.css — WPS 网页版 + A4 连续白纸阅读质感（用于 pandoc 转出的自包含 HTML） */
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+/* 浅灰工作台 */
+html {
+  background: #e9edf3;
+}
+
+/* body 本身即一张连续 A4 长纸（WPS 连续页视图） */
+body {
+  background: #fff;
+  width: 820px;
+  max-width: 94%;
+  margin: 24px auto 44px;
+  padding: 68px 76px 92px;
+  border-radius: 3px;
+  box-shadow: 0 8px 30px rgba(20, 48, 92, .14);
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+  font-size: 15px;
+  line-height: 1.8;
+  color: #1f2937;
+}
+
+/* 标题块 */
+#title-block-header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #16407e;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 24px;
+  text-align: center;
+  margin: 0 0 18px;
+}
+
+h1.title {
+  border-bottom: 2px solid #2E6BE6;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+}
+
+#title-block-header .subtitle {
+  font-size: 15px;
+  font-weight: 400;
+  color: #4b5563;
+  text-align: center;
+}
+
+#title-block-header .author,
+#title-block-header .date {
+  font-size: 13.5px;
+  color: #6b7280;
+  text-align: center;
+  margin: 4px 0;
+}
+
+h2 {
+  font-size: 19px;
+  padding-left: 10px;
+  border-left: 4px solid #2E6BE6;
+  margin: 26px 0 12px;
+}
+
+h3 {
+  font-size: 16px;
+  margin: 20px 0 10px;
+}
+
+h4 { font-size: 15px; }
+
+p { margin: 8px 0; }
+
+a {
+  color: #2E6BE6;
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+/* 表格 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  font-size: 13.5px;
+}
+
+th, td {
+  border: 1px solid #c9d3e0;
+  padding: 7px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: #eef4ff;
+  color: #16407e;
+  font-weight: 700;
+}
+
+tr:nth-child(even) td { background: #fafcff; }
+
+/* 图片 */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 12px auto;
+  border-radius: 4px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+figure {
+  margin: 14px 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  text-align: center;
+}
+figcaption {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 6px;
+}
+
+/* 引用块 */
+blockquote {
+  margin: 12px 0;
+  padding: 10px 16px;
+  background: #f2f7ff;
+  border-left: 4px solid #2E6BE6;
+  color: #374151;
+  border-radius: 0 4px 4px 0;
+}
+blockquote p { margin: 4px 0; }
+
+/* 列表 */
+ul, ol { padding-left: 28px; }
+li { margin: 4px 0; }
+
+/* 代码 */
+code, pre, kbd, samp {
+  font-family: Consolas, "JetBrains Mono", "Courier New", monospace;
+}
+
+code {
+  background: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13.5px;
+}
+
+pre {
+  background: #f3f4f6;
+  padding: 14px 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+pre code {
+  background: none;
+  padding: 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #d5dde8;
+  margin: 22px 0;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #eef1f6;
+}
+::-webkit-scrollbar-thumb {
+  background: #c3ccd9;
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a7b3c4;
+}
+
+/* 打印：还原 A4 纸面 */
+@media print {
+  html { background: #fff; }
+  body {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+  a { color: #16407e; text-decoration: none; }
+  tr, img, figure { break-inside: avoid; page-break-inside: avoid; }
+  h1, h2, h3 { break-after: avoid; page-break-after: avoid; }
+}
+
+@page {
+  size: A4;
+  margin: 20mm 18mm;
+}

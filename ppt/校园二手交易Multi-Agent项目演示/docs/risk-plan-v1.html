@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>项目风险计划 V1</title>
+  <style>
+
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+/* docx-view.css — WPS 网页版 + A4 连续白纸阅读质感（用于 pandoc 转出的自包含 HTML） */
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+/* 浅灰工作台 */
+html {
+  background: #e9edf3;
+}
+
+/* body 本身即一张连续 A4 长纸（WPS 连续页视图） */
+body {
+  background: #fff;
+  width: 820px;
+  max-width: 94%;
+  margin: 24px auto 44px;
+  padding: 68px 76px 92px;
+  border-radius: 3px;
+  box-shadow: 0 8px 30px rgba(20, 48, 92, .14);
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+  font-size: 15px;
+  line-height: 1.8;
+  color: #1f2937;
+}
+
+/* 标题块 */
+#title-block-header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #16407e;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 24px;
+  text-align: center;
+  margin: 0 0 18px;
+}
+
+h1.title {
+  border-bottom: 2px solid #2E6BE6;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+}
+
+#title-block-header .subtitle {
+  font-size: 15px;
+  font-weight: 400;
+  color: #4b5563;
+  text-align: center;
+}
+
+#title-block-header .author,
+#title-block-header .date {
+  font-size: 13.5px;
+  color: #6b7280;
+  text-align: center;
+  margin: 4px 0;
+}
+
+h2 {
+  font-size: 19px;
+  padding-left: 10px;
+  border-left: 4px solid #2E6BE6;
+  margin: 26px 0 12px;
+}
+
+h3 {
+  font-size: 16px;
+  margin: 20px 0 10px;
+}
+
+h4 { font-size: 15px; }
+
+p { margin: 8px 0; }
+
+a {
+  color: #2E6BE6;
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+/* 表格 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  font-size: 13.5px;
+}
+
+th, td {
+  border: 1px solid #c9d3e0;
+  padding: 7px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: #eef4ff;
+  color: #16407e;
+  font-weight: 700;
+}
+
+tr:nth-child(even) td { background: #fafcff; }
+
+/* 图片 */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 12px auto;
+  border-radius: 4px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+figure {
+  margin: 14px 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  text-align: center;
+}
+figcaption {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 6px;
+}
+
+/* 引用块 */
+blockquote {
+  margin: 12px 0;
+  padding: 10px 16px;
+  background: #f2f7ff;
+  border-left: 4px solid #2E6BE6;
+  color: #374151;
+  border-radius: 0 4px 4px 0;
+}
+blockquote p { margin: 4px 0; }
+
+/* 列表 */
+ul, ol { padding-left: 28px; }
+li { margin: 4px 0; }
+
+/* 代码 */
+code, pre, kbd, samp {
+  font-family: Consolas, "JetBrains Mono", "Courier New", monospace;
+}
+
+code {
+  background: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13.5px;
+}
+
+pre {
+  background: #f3f4f6;
+  padding: 14px 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+pre code {
+  background: none;
+  padding: 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #d5dde8;
+  margin: 22px 0;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #eef1f6;
+}
+::-webkit-scrollbar-thumb {
+  background: #c3ccd9;
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a7b3c4;
+}
+
+/* 打印：还原 A4 纸面 */
+@media print {
+  html { background: #fff; }
+  body {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+  a { color: #16407e; text-decoration: none; }
+  tr, img, figure { break-inside: avoid; page-break-inside: avoid; }
+  h1, h2, h3 { break-after: avoid; page-break-after: avoid; }
+}
+
+@page {
+  size: A4;
+  margin: 20mm 18mm;
+}
+
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">项目风险计划 V1</h1>
+</header>
+<p><strong>校园二手交易平台 Multi-Agent 系统</strong></p>
+<p><strong>项 目 风 险 计 划</strong></p>
+<p>Project Risk Management Plan</p>
+<p>—— 1 个协调管理 Agent ＋ 8 个专家 Agent ——</p>
+<table style="width:93%;">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 67%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>项目</strong></th>
+<th style="text-align: center;"><strong>内容</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">文 档 编 号</td>
+<td>RMP-MAS-2026-001</td>
+</tr>
+<tr>
+<td style="text-align: center;">当 前 版 本</td>
+<td>V1.0</td>
+</tr>
+<tr>
+<td style="text-align: center;">密　　　级</td>
+<td>内部 · 项目组</td>
+</tr>
+<tr>
+<td style="text-align: center;">编 制 人</td>
+<td>梁奕琦（学号 2400320321）</td>
+</tr>
+<tr>
+<td style="text-align: center;">审 核 人</td>
+<td>梁奕琦</td>
+</tr>
+<tr>
+<td style="text-align: center;">指 导 教 师</td>
+<td>曾志新</td>
+</tr>
+<tr>
+<td style="text-align: center;">依 据 文 档</td>
+<td>《软件需求规格说明书》SRS-MAS-2026-001 V4.0（2026-10-13 基线）</td>
+</tr>
+<tr>
+<td style="text-align: center;">项 目 周 期</td>
+<td>2026-09-14 — 2027-01-10（共 17 个教学周）</td>
+</tr>
+<tr>
+<td style="text-align: center;">编 制 日 期</td>
+<td>2026 年 10 月 13 日</td>
+</tr>
+</tbody>
+</table>
+<p><strong>文档控制信息</strong></p>
+<p><strong>▍版本修订历史</strong></p>
+<table style="width:94%;">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 13%" />
+<col style="width: 46%" />
+<col style="width: 11%" />
+<col style="width: 12%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>版本</strong></th>
+<th style="text-align: center;"><strong>日期</strong></th>
+<th style="text-align: center;"><strong>修订内容</strong></th>
+<th style="text-align: center;"><strong>修订人</strong></th>
+<th style="text-align: center;"><strong>状态</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">V1.0</td>
+<td>2026-10-13</td>
+<td>依据 SRS V4.0 基线与 WBS（T1–T32）首次编制：风险流程、评估标准、18 项风险登记册、TOP5 专项预案、里程碑监控点与应急储备</td>
+<td>梁奕琦</td>
+<td>★ 当前生效</td>
+</tr>
+</tbody>
+</table>
+<p><strong>▍评审与签署</strong></p>
+<table style="width:94%;">
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 11%" />
+<col style="width: 39%" />
+<col style="width: 14%" />
+<col style="width: 17%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>角色</strong></th>
+<th style="text-align: center;"><strong>姓名</strong></th>
+<th style="text-align: center;"><strong>职责</strong></th>
+<th style="text-align: center;"><strong>签署日期</strong></th>
+<th style="text-align: center;"><strong>意见</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">编制人</td>
+<td>梁奕琦</td>
+<td>风险识别、评估、应对规划与登记册维护</td>
+<td>2026-10-13</td>
+<td>同意发布</td>
+</tr>
+<tr>
+<td style="text-align: center;">审核人</td>
+<td>梁奕琦</td>
+<td>风险覆盖完整性、预案可执行性审核</td>
+<td>2026-10-13</td>
+<td>审核通过</td>
+</tr>
+<tr>
+<td style="text-align: center;">指导教师</td>
+<td>曾志新</td>
+<td>重大风险（高风险项）升级评审与方向指导</td>
+<td>2026-10-13</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>一 引言</strong></p>
+<p><strong>▍1.1 编写目的</strong></p>
+<p>本计划是“校园二手交易平台 Multi-Agent 系统”项目的风险管理基准文件，依据《软件需求规格说明书 V4.0》（以下简称 SRS V4）确定的范围、技术选型、验收标准与 WBS 任务队列（T1–T32）编制，目的在于：系统识别项目全周期可能影响 P0 目标（完整交易旅程、9 类 Agent、三级冲突机制、8 类冲突场景、≥10 个剧本、15 条验收标准）达成的不确定性；给出统一的概率—影响评估标准与风险等级；对每项风险预先安排预防措施、应急计划、责任人和触发指标；建立周度监控与升级机制，确保风险被尽早发现、按级响应、闭环留痕。</p>
+<p><strong>▍1.2 项目概述</strong></p>
+<table style="width:94%;">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>要素</strong></th>
+<th style="text-align: center;"><strong>内容</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">系统定位</td>
+<td>可运行、可演示、可解释、可复现实验的校园二手交易 Web 平台原型</td>
+</tr>
+<tr>
+<td style="text-align: center;">核心架构</td>
+<td>1 个协调管理 Agent ＋ 8 个专家 Agent；类型化黑板 SSOT ＋ FIPA ACL 风格消息</td>
+</tr>
+<tr>
+<td style="text-align: center;">研究核心</td>
+<td>四类冲突检测（资源 / 目标 / 知识 / 决策）与三级处理阶梯（对等协商 → 协调仲裁 → 人工兜底）；安全一票否决不可覆盖</td>
+</tr>
+<tr>
+<td style="text-align: center;">技术栈</td>
+<td>Python 3.11 / LangGraph 1.x / FastAPI / SQLModel + SQLite(WAL) / DeepSeek + RuleLLM 兜底 / Vue3 + TS + Element Plus / ECharts / pytest</td>
+</tr>
+<tr>
+<td style="text-align: center;">范围分级</td>
+<td>P0 本期必须（AC-1～AC-15 全量支撑）；P1 资源允许（监控大屏、权重调参实验、Docker Compose）</td>
+</tr>
+<tr>
+<td style="text-align: center;">团队构成</td>
+<td>单人开发（梁奕琦，承担项目经理/设计/编码/测试）；指导教师曾志新负责方向与评审</td>
+</tr>
+<tr>
+<td style="text-align: center;">关键约束</td>
+<td>单机 Windows 开发演示；模拟支付、无真实物流与真实支付；规则库与权重为经验初值；无 API Key 须可完整跑通 P0 与全部剧本</td>
+</tr>
+</tbody>
+</table>
+<p><strong>▍1.3 参考资料</strong></p>
+<table style="width:94%;">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 65%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>序号</strong></th>
+<th style="text-align: center;"><strong>资料名称</strong></th>
+<th style="text-align: center;"><strong>版本/日期</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td>《校园二手交易平台 Multi-Agent 软件需求规格说明书》SRS-MAS-2026-001</td>
+<td>V4.0 / 2026-10-13</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td>实施任务队列 WBS（T1–T32，含 AC 覆盖索引）</td>
+<td>v1.0 / 2026-10-11</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td>《校园二手交易平台 Multi-Agent 设计与实现 · 周报（第 1 周）》</td>
+<td>2026.09.14–09.20</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td>项目验收标准 AC-1 ～ AC-15（12 rule + 3 rubric）</td>
+<td>SRS V4 第九章</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td>非功能需求 NFR-1 ～ NFR-9</td>
+<td>SRS V4 第七章</td>
+</tr>
+</tbody>
+</table>
+<p><strong>二 风险管理组织与职责</strong></p>
+<p>本项目为单人团队，风险管理实行“开发者首责、导师升级”的精简模式：风险责任人统一为开发者本人；高等级风险及跨范畴决策在周报中专题上报指导教师评审。</p>
+<table style="width:94%;">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 10%" />
+<col style="width: 64%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>角色</strong></th>
+<th style="text-align: center;"><strong>人员</strong></th>
+<th style="text-align: center;"><strong>风险管理职责</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">项目经理 / 开发者</td>
+<td>梁奕琦</td>
+<td>维护风险登记册；执行风险识别、概率影响评估、应对措施落地与周度复盘；监控触发指标；风险发生时启动应急预案并记录闭环结果</td>
+</tr>
+<tr>
+<td style="text-align: center;">指导教师</td>
+<td>曾志新</td>
+<td>评审高风险项与研究核心相关风险（R-04 等）；对进度裁剪、方案降级等重大权衡做方向裁决；提供技术与资源咨询</td>
+</tr>
+<tr>
+<td style="text-align: center;">评审机制</td>
+<td>—</td>
+<td>每周周报固定检查“风险状态”小节；里程碑节点（M1–M9）进行专项风险评审并决定是否进入下一阶段</td>
+</tr>
+</tbody>
+</table>
+<p><strong>三 风险管理流程</strong></p>
+<p>项目采用五阶段闭环流程，覆盖从识别到闭环的全过程，并与周报、里程碑评审节奏绑定：</p>
+<table style="width:94%;">
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 33%" />
+<col style="width: 30%" />
+<col style="width: 18%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>阶段</strong></th>
+<th style="text-align: center;"><strong>活动</strong></th>
+<th style="text-align: center;"><strong>输入 / 输出</strong></th>
+<th style="text-align: center;"><strong>频率 / 时点</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">① 风险识别</td>
+<td>对照 SRS 功能/非功能需求、WBS 任务依赖、技术选型假设，按技术、进度、质量、安全、研究、环境、管理七类枚举风险</td>
+<td>SRS V4、WBS、周报 → 风险登记册新增条目</td>
+<td>计划期集中识别；每周增补</td>
+</tr>
+<tr>
+<td style="text-align: center;">② 风险评估</td>
+<td>按第四章标准打分：风险值 = 概率 P × 影响 I（各 1–5 级），确定高/中/低等级</td>
+<td>风险描述 → P、I、等级、近因与征兆</td>
+<td>识别即评估；状态变化时重评</td>
+</tr>
+<tr>
+<td style="text-align: center;">③ 应对规划</td>
+<td>从规避 / 减轻 / 转移 / 接受四种策略中择策；编写预防措施、应急计划、触发指标与关闭标准</td>
+<td>等级 → 应对策略 + 预案 + 责任人</td>
+<td>评估后 2 日内</td>
+</tr>
+<tr>
+<td style="text-align: center;">④ 风险监控</td>
+<td>跟踪触发指标与任务进展；中风险周查、高风险每三天关注；检查缓冲消耗</td>
+<td>指标数据 → 登记册状态更新</td>
+<td>持续；周报固定复盘</td>
+</tr>
+<tr>
+<td style="text-align: center;">⑤ 响应与闭环</td>
+<td>风险触发即执行应急预案；高风险同步上报导师；处置后验证效果、归档经验并关闭条目</td>
+<td>触发事件 → 应急记录 → 闭环结论</td>
+<td>触发即启动</td>
+</tr>
+</tbody>
+</table>
+<p>应对策略定义：规避＝改变方案使其不发生（如调整范围、更换技术）；减轻＝降低概率或影响（本项目主要策略）；转移＝将影响交由外部承担（本项目仅适用于选择成熟框架/库）；接受＝对低风险或无更优手段者预留储备、自行承担。</p>
+<p><strong>四 风险评估标准</strong></p>
+<p><strong>▍4.1 概率分级（P）</strong></p>
+<table style="width:94%;">
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 15%" />
+<col style="width: 14%" />
+<col style="width: 53%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>等级</strong></th>
+<th style="text-align: center;"><strong>定性描述</strong></th>
+<th style="text-align: center;"><strong>参考概率</strong></th>
+<th style="text-align: center;"><strong>本项目判据示例</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>5</strong></td>
+<td>几乎必然</td>
+<td>≥80%</td>
+<td>单人承担、历史项目同类问题反复出现</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>4</strong></td>
+<td>很可能</td>
+<td>60%–80%</td>
+<td>依赖不成熟能力或外部不稳定服务，无现成实践</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>3</strong></td>
+<td>可能</td>
+<td>30%–60%</td>
+<td>技术可行但复杂度较高、首次实现</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>2</strong></td>
+<td>不太可能</td>
+<td>10%–30%</td>
+<td>有成熟方案或已做预研，仅剩执行偏差</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>1</strong></td>
+<td>罕见</td>
+<td>&lt;10%</td>
+<td>常规工程问题，工具链完善</td>
+</tr>
+</tbody>
+</table>
+<p><strong>▍4.2 影响分级（I）</strong></p>
+<table style="width:94%;">
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 25%" />
+<col style="width: 30%" />
+<col style="width: 28%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>等级</strong></th>
+<th style="text-align: center;"><strong>进度</strong></th>
+<th style="text-align: center;"><strong>质量 / 验收</strong></th>
+<th style="text-align: center;"><strong>演示与研究目标</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>5</strong></td>
+<td>关键路径延期 &gt;5 天</td>
+<td>AC 验收不通过 / P0 范围缺失</td>
+<td>现场无法演示或研究核心结论不成立</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>4</strong></td>
+<td>延期 3–5 天</td>
+<td>关键 rubric 评分 &lt;4</td>
+<td>核心剧本失败、需大幅临场解释</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>3</strong></td>
+<td>延期 1–3 天</td>
+<td>非关键功能缺陷，可绕行</td>
+<td>部分 P1 效果受损</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>2</strong></td>
+<td>延期 &lt;1 天</td>
+<td>表面缺陷，不影响功能</td>
+<td>素材/体验小瑕疵</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>1</strong></td>
+<td>无影响</td>
+<td>当天可修复</td>
+<td>几乎不可感知</td>
+</tr>
+</tbody>
+</table>
+<p><strong>▍4.3 风险矩阵与响应级别（R = P × I）</strong></p>
+<table style="width:93%;">
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>影响 I ＼ 概率 P</strong></th>
+<th style="text-align: center;"><strong>P=1</strong></th>
+<th style="text-align: center;"><strong>P=2</strong></th>
+<th style="text-align: center;"><strong>P=3</strong></th>
+<th style="text-align: center;"><strong>P=4</strong></th>
+<th style="text-align: center;"><strong>P=5</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>I=5</strong></td>
+<td style="text-align: center;"><p><strong>5</strong></p>
+<p><strong>低</strong></p></td>
+<td style="text-align: center;"><p><strong>10</strong></p>
+<p><strong>中</strong></p></td>
+<td style="text-align: center;"><p><strong>15</strong></p>
+<p><strong>高</strong></p></td>
+<td style="text-align: center;"><p><strong>20</strong></p>
+<p><strong>高</strong></p></td>
+<td style="text-align: center;"><p><strong>25</strong></p>
+<p><strong>高</strong></p></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>I=4</strong></td>
+<td style="text-align: center;"><p><strong>4</strong></p>
+<p><strong>低</strong></p></td>
+<td style="text-align: center;"><p><strong>8</strong></p>
+<p><strong>中</strong></p></td>
+<td style="text-align: center;"><p><strong>12</strong></p>
+<p><strong>中</strong></p></td>
+<td style="text-align: center;"><p><strong>16</strong></p>
+<p><strong>高</strong></p></td>
+<td style="text-align: center;"><p><strong>20</strong></p>
+<p><strong>高</strong></p></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>I=3</strong></td>
+<td style="text-align: center;"><p><strong>3</strong></p>
+<p><strong>低</strong></p></td>
+<td style="text-align: center;"><p><strong>6</strong></p>
+<p><strong>低</strong></p></td>
+<td style="text-align: center;"><p><strong>9</strong></p>
+<p><strong>中</strong></p></td>
+<td style="text-align: center;"><p><strong>12</strong></p>
+<p><strong>中</strong></p></td>
+<td style="text-align: center;"><p><strong>15</strong></p>
+<p><strong>高</strong></p></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>I=2</strong></td>
+<td style="text-align: center;"><p><strong>2</strong></p>
+<p><strong>低</strong></p></td>
+<td style="text-align: center;"><p><strong>4</strong></p>
+<p><strong>低</strong></p></td>
+<td style="text-align: center;"><p><strong>6</strong></p>
+<p><strong>低</strong></p></td>
+<td style="text-align: center;"><p><strong>8</strong></p>
+<p><strong>中</strong></p></td>
+<td style="text-align: center;"><p><strong>10</strong></p>
+<p><strong>中</strong></p></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>I=1</strong></td>
+<td style="text-align: center;"><p><strong>1</strong></p>
+<p><strong>低</strong></p></td>
+<td style="text-align: center;"><p><strong>2</strong></p>
+<p><strong>低</strong></p></td>
+<td style="text-align: center;"><p><strong>3</strong></p>
+<p><strong>低</strong></p></td>
+<td style="text-align: center;"><p><strong>4</strong></p>
+<p><strong>低</strong></p></td>
+<td style="text-align: center;"><p><strong>5</strong></p>
+<p><strong>低</strong></p></td>
+</tr>
+</tbody>
+</table>
+<p>分级与响应要求：低风险（1–6）＝接受，登记并周度观察；中风险（7–14）＝主动减轻，须有明确预防措施与责任人，周度检查；高风险（15–25）＝重点管控，须同时具备预防措施与应急预案，每三天检查一次并在最近一次周报向指导教师专题报告。</p>
+<p><strong>五 风险登记册（共 18 项）</strong></p>
+<p>风险编号规则 R-XX；“关联”列引用 SRS 的 FR/NFR/AC 编号与 WBS 任务号；等级颜色：红＝高、黄＝中、绿＝低。风险值截至 2026-10-13 的事前评估，将在每周复盘中动态更新。</p>
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 7%" />
+<col style="width: 22%" />
+<col style="width: 4%" />
+<col style="width: 4%" />
+<col style="width: 5%" />
+<col style="width: 6%" />
+<col style="width: 31%" />
+<col style="width: 12%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>编号</strong></th>
+<th style="text-align: center;"><strong>类别</strong></th>
+<th style="text-align: center;"><strong>风险描述（含关联项）</strong></th>
+<th style="text-align: center;"><strong>P</strong></th>
+<th style="text-align: center;"><strong>I</strong></th>
+<th style="text-align: center;"><strong>等级</strong></th>
+<th style="text-align: center;"><strong>策略</strong></th>
+<th style="text-align: center;"><strong>预防措施 / 应急预案</strong></th>
+<th style="text-align: center;"><strong>监控触发指标</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">R-01</td>
+<td style="text-align: center;">技术</td>
+<td style="text-align: center;"><p>大模型依赖风险：DeepSeek API Key 缺失、限流、超时或返回非法 JSON，导致意图/审核/议价/仲裁链路中断</p>
+<p>关联：NFR-6 AC-8/12；T6</p></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;"><strong>中</strong></td>
+<td style="text-align: center;">减轻</td>
+<td style="text-align: center;"><p>预防：①结构化输出→Pydantic 校验→最多 3 次重试→RuleLLM 确定性兜底；②单轮超时 3 秒；③默认 Mock 模式，界面可切换 LLM；④关键动作强制人工确认</p>
+<p>应急：立即切 RuleLLM 全量兜底保证演示不中断；记录故障样本，事后补跑；必要时转人工处理</p></td>
+<td style="text-align: center;">LLM 调用失败率&gt;10% 或 P95&gt;3s；连续 2 次非法 JSON</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-02</td>
+<td style="text-align: center;">技术</td>
+<td style="text-align: center;"><p>LangGraph 1.x 新版本学习曲线与 API 变动风险：Checkpointer/interrupt/条件边为研究核心依赖，理解偏差会拖垮内核</p>
+<p>关联：T5/T7/T8/T20</p></td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;"><strong>中</strong></td>
+<td style="text-align: center;">减轻</td>
+<td style="text-align: center;"><p>预防：①锁定 langgraph 1.2.x 并写入 requirements 锁定文件；②编码前做最小 Spike 验证图编排+检查点+人工回环；③仅使用官方文档稳定特性</p>
+<p>应急：回退到已验证版本；用最小复现用例定位问题并向导师/社区求助；极端情况下以手写状态机承载主图</p></td>
+<td style="text-align: center;">Spike 超时未通；版本升级出现破坏性变更</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-03</td>
+<td style="text-align: center;">技术·质量</td>
+<td style="text-align: center;"><p>并发抢单一致性风险：预占锁/乐观版本/超时回滚实现缺陷，出现超卖或脏状态（AC-3 硬性二元验收）</p>
+<p>关联：NFR-2 AC-3；T14</p></td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;"><strong>高</strong></td>
+<td style="text-align: center;">减轻</td>
+<td style="text-align: center;"><p>预防：①锁令牌+乐观版本号+超时点三件套先于业务实现；②SQLite WAL；③asyncio 并发测试用例先行（两路并发恰一成功）；④非法状态迁移一律拒绝</p>
+<p>应急：对下单临界段串行化兜底；立即回滚释放锁并恢复商品“在售”；用种子数据重建受影响订单</p></td>
+<td style="text-align: center;">并发测试出现任何超卖/双成交；锁超时未释放</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-04</td>
+<td style="text-align: center;">研究核心</td>
+<td style="text-align: center;"><p>冲突决策机制效果不达预期：效用权重（0.25/0.20/0.30/0.15/−0.10）、纳什参考价与票权均为经验初值，剧本裁决可能不合理</p>
+<p>关联：第六章；T18–T20/T30；AC-4/5</p></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;"><strong>高</strong></td>
+<td style="text-align: center;">减轻</td>
+<td style="text-align: center;"><p>预防：①全部参数配置化并保证同输入同输出可复现；②≥10 个剧本含期望对照表逐案校准；③T30 权重对比实验支撑取值论证；④指导教师参与参数评审</p>
+<p>应急：按剧本结果回调权重并留档；对争议场景降级为确定性规则裁决；在论文中如实说明参数局限性与敏感性</p></td>
+<td style="text-align: center;">剧本断言通过率&lt;90%；同一冲突两次裁决不一致</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-05</td>
+<td style="text-align: center;">进度</td>
+<td style="text-align: center;"><p>单人开发进度风险：32 项任务、前后端+内核+测试全栈，且与期末其他课程考试冲突，关键路径无冗余人力</p>
+<p>关联：全局；M3–M8</p></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;"><strong>高</strong></td>
+<td style="text-align: center;">减轻</td>
+<td style="text-align: center;"><p>预防：①WBS 拆成可独立交付的纵向切片，严格按依赖波次推进；②P0/P1 物理隔离，P1 不进关键路径；③每周预留 1 天缓冲；④每波设定退出标准，不通不扩面</p>
+<p>应急：按 P1（T27/T30/T32）→非关键 FR 的顺序裁剪；启用 12/24–12/30 集成缓冲；向导师申请延期演示彩排</p></td>
+<td style="text-align: center;">任一里程碑实际偏差&gt;3 个工作日；缓冲累计消耗&gt;50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-06</td>
+<td style="text-align: center;">管理</td>
+<td style="text-align: center;"><p>需求蔓延风险：开发中临时增加功能（真实图片审核、更多 Agent、新页面），侵蚀 P0 工期</p>
+<p>关联：SRS 3.4；Q1–Q5</p></td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;"><strong>中</strong></td>
+<td style="text-align: center;">规避</td>
+<td style="text-align: center;"><p>预防：①以 SRS V4 为冻结基线，新增想法一律记入“变更候选”不当场开发；②坚持明确不做清单（真实支付/物流/统一认证/App/集群）</p>
+<p>应急：变更走简易评审：评估对 AC 与关键路径影响，默认排入下学期，至多以配置项形式预留</p></td>
+<td style="text-align: center;">出现未经评估即动工的新需求；周计划外工时占比&gt;15%</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-07</td>
+<td style="text-align: center;">技术</td>
+<td style="text-align: center;"><p>三级人工回环实现风险：LangGraph interrupt 挂起/恢复、冻结订单商品、裁决写回 SSOT 链路复杂，易产生悬挂状态</p>
+<p>关联：AC-5；T20/T26</p></td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;"><strong>中</strong></td>
+<td style="text-align: center;">减轻</td>
+<td style="text-align: center;"><p>预防：①在 T8 主图阶段即引入最小 interrupt 演练；②冻结/恢复动作配套检查点轨迹测试；③工作台终裁写回采用幂等设计</p>
+<p>应急：工作台增加轮询补偿与“手工恢复”入口；编写悬挂事务核查脚本；极端情况按检查点重建图状态</p></td>
+<td style="text-align: center;">挂起事件无法恢复；终裁后状态未流转</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-08</td>
+<td style="text-align: center;">技术</td>
+<td style="text-align: center;"><p>议价 WebSocket 实时一致性风险：出价乱序、倒计时漂移、断线重连后会话丢失</p>
+<p>关联：FR-6 NFR-3；T22</p></td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;"><strong>中</strong></td>
+<td style="text-align: center;">减轻</td>
+<td style="text-align: center;"><p>预防：①会话状态以服务端为权威，客户端只渲染；②单调让步违例拒收、轮次/时间服务端计时；③断线重连拉取全量出价序列</p>
+<p>应急：WS 异常时降级为 HTTP 短轮询；保留议价记录事后重放</p></td>
+<td style="text-align: center;">WS 测试出现乱序/重复消息；重连后序列缺失</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-09</td>
+<td style="text-align: center;">安全</td>
+<td style="text-align: center;"><p>安全机制被绕过风险：JWT/角色守卫配置疏漏、数据未按用户隔离、veto 被投票或效用逻辑覆盖</p>
+<p>关联：NFR-4 AC-1；T4/T11</p></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;"><strong>中</strong></td>
+<td style="text-align: center;">规避</td>
+<td style="text-align: center;"><p>预防：①bcrypt 哈希+JWT 校验+买家/卖家/管理员三级守卫+冻结拦截；②veto 在服务端硬判定，任何上游放行不可覆盖并编写对抗调用测试；③接口级越权测试全覆盖</p>
+<p>应急：发现绕过立即修复并回归全部安全剧本；冻结可疑账号；审计日志回溯影响面</p></td>
+<td style="text-align: center;">对抗测试出现 veto 放行；越权接口返回 200</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-10</td>
+<td style="text-align: center;">进度·质量</td>
+<td style="text-align: center;"><p>前端工程量风险：卖家/买家/管理员三端页面众多，联调滞后可能导致 AC-13 rubric 与 E2E 演示不达标</p>
+<p>关联：AC-13/2；T23–T26</p></td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;"><strong>中</strong></td>
+<td style="text-align: center;">减轻</td>
+<td style="text-align: center;"><p>预防：①Element Plus 统一布局与组件复用；②API 契约先行，前端基于 Mock 并行开发；③按用户旅程逐页走查截图</p>
+<p>应急：优先保三端主流程完整，视觉效果做减法；P1 大屏资源不足时直接裁剪</p></td>
+<td style="text-align: center;">T24/T25 启动时 API 仍不可用；走查缺陷&gt;15 个</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-11</td>
+<td style="text-align: center;">环境·可复现</td>
+<td style="text-align: center;"><p>干净环境一键启动失败风险：Windows + Python/Node 版本差异、依赖安装失败，导致 NFR-7 与现场演示翻车</p>
+<p>关联：NFR-7；T31</p></td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;"><strong>中</strong></td>
+<td style="text-align: center;">减轻</td>
+<td style="text-align: center;"><p>预防：①提供 Windows 一键启动脚本（后端+前端+初始化+播种）；②依赖版本锁定；③在全新目录按 README 做第三方视角走查</p>
+<p>应急：准备第二套已验证环境（笔记本）；离线录屏与截图兜底；现场优先使用无 Key Mock 模式</p></td>
+<td style="text-align: center;">全新环境走查任一步骤失败；演示彩排启动超时</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-12</td>
+<td style="text-align: center;">质量</td>
+<td style="text-align: center;"><p>剧本与故障注入覆盖不足风险：C1–C8 映射遗漏、≥10 剧本数量不足或断言不严，AC-7/AC-12 无法取证</p>
+<p>关联：AC-7/12；T28/T29</p></td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;"><strong>中</strong></td>
+<td style="text-align: center;">减轻</td>
+<td style="text-align: center;"><p>预防：①建立 C1–C8→剧本→断言映射表，剧本随功能任务同步编写；②非法 JSON/超时/无 Key 三类故障注入用例化；③纳入回归集</p>
+<p>应急：缺口用手工演示脚本与录屏补充证据；冻结期集中补齐剧本</p></td>
+<td style="text-align: center;">中期盘点剧本&lt;8 个；任一 C 类场景无映射</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-13</td>
+<td style="text-align: center;">质量·研究</td>
+<td style="text-align: center;"><p>内容审核误判/漏判与可解释性不足：规则库覆盖有限，审核结论依据不充分导致 TR-11.2 rubric&lt;4</p>
+<p>关联：FR-4；T11；TR-11.2</p></td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;"><strong>中</strong></td>
+<td style="text-align: center;">减轻</td>
+<td style="text-align: center;"><p>预防：①违禁词规则库+LLM 双判定、置信度融合；②结论强制输出逐条依据；③10 条典型样本评审校准</p>
+<p>应急：低置信度一律转人工复核；扩充违禁词表并重跑样本评审</p></td>
+<td style="text-align: center;">样本评审 rubric&lt;4；出现违禁漏判</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-14</td>
+<td style="text-align: center;">研究</td>
+<td style="text-align: center;"><p>数据代表性风险：无真实交易数据，种子数据与历史成交价为人工构造，实验结论说服力受限</p>
+<p>关联：SRS 8.2；T3/T30</p></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;"><strong>中</strong></td>
+<td style="text-align: center;">接受</td>
+<td style="text-align: center;"><p>预防：①构造多类目、多价位、多信用梯度的种子集；②论文中明确数据为演示用途、结论定性化；③权重实验聚焦机制可复现性而非统计显著</p>
+<p>应急：以机制演示与案例分析替代大样本结论；补充构造边界案例增强说服力</p></td>
+<td style="text-align: center;">评审质疑结论普适性</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-15</td>
+<td style="text-align: center;">技术</td>
+<td style="text-align: center;"><p>第三方生态变动风险：重蹈 AutoGen 进入维护模式的覆辙，所选依赖出现弃用/破坏性升级</p>
+<p>关联：SRS 8.1；全局</p></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;"><strong>中</strong></td>
+<td style="text-align: center;">减轻</td>
+<td style="text-align: center;"><p>预防：①LLM 与编排均经适配层隔离，可切 Qwen/GLM 或替换框架；②版本锁定、不追新；③优先活跃维护依赖</p>
+<p>应急：在适配层内替换实现，业务 Agent 零改动；RuleLLM 保证无外部依赖也可运行</p></td>
+<td style="text-align: center;">依赖发布弃用公告或锁版本出现漏洞预警</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-16</td>
+<td style="text-align: center;">演示</td>
+<td style="text-align: center;"><p>答辩当日故障风险：现场网络不通、设备兼容问题、投影效果差</p>
+<p>关联：T31；答辩</p></td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;"><strong>中</strong></td>
+<td style="text-align: center;">减轻</td>
+<td style="text-align: center;"><p>预防：①答辩前完成至少 2 次全流程离线彩排（无 Key）；②录屏+截图+本地数据三套备份；③双设备（台式+笔记本）待命</p>
+<p>应急：断网即切 Mock 离线模式；设备故障改用笔记本播放录屏并口述机制</p></td>
+<td style="text-align: center;">彩排中出现启动/网络异常</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-17</td>
+<td style="text-align: center;">技术</td>
+<td style="text-align: center;"><p>SQLite 单机局限风险：WAL 锁竞争或数据库文件损坏影响演示稳定性</p>
+<p>关联：NFR；数据层</p></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;"><strong>低</strong></td>
+<td style="text-align: center;">减轻</td>
+<td style="text-align: center;"><p>预防：①WAL 模式+短事务+异常即回滚；②每日备份 db 文件；③SQLModel 设计保持可切换 PostgreSQL</p>
+<p>应急：用种子脚本快速重建库；从备份恢复；必要时切内存库演示</p></td>
+<td style="text-align: center;">出现 database is locked；响应明显劣化</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-18</td>
+<td style="text-align: center;">管理</td>
+<td style="text-align: center;"><p>交付资产滞后风险：文档、截图、PPT、演示剧本堆积到收尾期，与考试周冲突</p>
+<p>关联：T31；第九章交付</p></td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;"><strong>低</strong></td>
+<td style="text-align: center;">减轻</td>
+<td style="text-align: center;"><p>预防：①延续周报机制每周沉淀进展素材；②每完成一个端到端任务即截图归档；③风险计划、设计文档随开发滚动更新</p>
+<p>应急：冻结期（12/30 起）集中处理资产，必要时裁剪 P1 换取 3 个工作日</p></td>
+<td style="text-align: center;">里程碑时素材缺失；收尾期待办堆积&gt;10 项</td>
+</tr>
+</tbody>
+</table>
+<p><strong>六 TOP 5 高风险专项预案</strong></p>
+<p>风险值 ≥15 的高风险共 3 项（R-03、R-04、R-05），并将影响最重的中风险 R-02、R-11 纳入专项管控，形成 TOP5。五项风险均要求：责任人为梁奕琦，指导教师知情；每三天检查一次指标；在对应里程碑评审会上逐项过点。</p>
+<table style="width:94%;">
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 15%" />
+<col style="width: 24%" />
+<col style="width: 22%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>专项风险</strong></th>
+<th style="text-align: center;"><strong>关键时点</strong></th>
+<th style="text-align: center;"><strong>预防措施（事前）</strong></th>
+<th style="text-align: center;"><strong>应急预案（事后）</strong></th>
+<th style="text-align: center;"><strong>核心监控指标</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">R-05 单人全栈进度（16，高）</td>
+<td>M3 内核贯通、M5 三级冲突贯通</td>
+<td>按波次串行交付、P0 优先；每周 1 天缓冲；每日对照任务队列核对实际工时</td>
+<td>偏差&gt;3 天即重排关键路径；按 T32→T30→T27 顺序裁剪 P1；启用 12/24–12/30 集成缓冲；必要时与导师确认降级非关键 FR</td>
+<td>里程碑偏差天数、缓冲消耗率、周计划完成率</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-04 冲突机制效果（16，高）</td>
+<td>M5（12-11）、M7（12-26）</td>
+<td>参数配置化；剧本对照表逐案校准；权重对比实验；导师参与参数评审</td>
+<td>回调权重并留档；争议场景降级确定性规则；论文如实说明经验初值与敏感性分析</td>
+<td>剧本通过率、裁决一致性（同输入同输出）、导师评审意见</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-03 并发抢单一致性（15，高）</td>
+<td>M6（12-20），T14 完成即验</td>
+<td>锁三件套先行；并发测试用例先行；WAL+非法迁移拒绝</td>
+<td>临界段串行化；回滚释放、恢复在售；重建受影响订单数据</td>
+<td>并发测试结果（必须 0 超卖）、锁等待/超时日志</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-02 LangGraph 关键技术（12，中）</td>
+<td>M2 详设评审后、M3 前</td>
+<td>锁定 1.2.x；T8 前完成 Checkpointer+interrupt 最小 Spike；仅用稳定 API</td>
+<td>回退已验证版本；最小复现求助；手写状态机承载主图兜底</td>
+<td>Spike 完成情况、依赖变更公告</td>
+</tr>
+<tr>
+<td style="text-align: center;">R-11 一键启动与演示环境（12，中）</td>
+<td>M8（12-30），答辩前两周</td>
+<td>一键脚本+版本锁定；全新目录走查 README；双环境离线彩排</td>
+<td>切换备用笔记本；播放录屏；全程使用无 Key Mock 模式</td>
+<td>干净环境走查结果、彩排启动耗时</td>
+</tr>
+</tbody>
+</table>
+<p><strong>七 里程碑与风险监控点</strong></p>
+<p>里程碑日期与 WBS 波次、甘特图保持一致；每个里程碑同时是风险评审门，未通过退出标准则不进入下一阶段。</p>
+<table style="width:94%;">
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 9%" />
+<col style="width: 28%" />
+<col style="width: 24%" />
+<col style="width: 24%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>里程碑</strong></th>
+<th style="text-align: center;"><strong>日期</strong></th>
+<th style="text-align: center;"><strong>退出标准（门）</strong></th>
+<th style="text-align: center;"><strong>重点检查风险</strong></th>
+<th style="text-align: center;"><strong>通过证据</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">M1</td>
+<td>10-13</td>
+<td>需求基线 V4 冻结</td>
+<td>R-06 需求蔓延、R-14 数据代表性</td>
+<td>范围、Open Questions 均有默认方案</td>
+</tr>
+<tr>
+<td style="text-align: center;">M2</td>
+<td>10-22</td>
+<td>详细设计评审通过（9 角色卡/ACL/ER/状态机）</td>
+<td>R-02 LangGraph 预研、R-04 参数合理性</td>
+<td>TR-1.1/TR-1.2 证据齐备；Spike 结论可行</td>
+</tr>
+<tr>
+<td style="text-align: center;">M3</td>
+<td>11-10</td>
+<td>通信内核+主编排 happy path 贯通</td>
+<td>R-02、R-03 锁方案、R-05 进度</td>
+<td>桩节点走通主图；无 Key 正常启动</td>
+</tr>
+<tr>
+<td style="text-align: center;">M4</td>
+<td>12-05</td>
+<td>9 类 Agent 全部就绪</td>
+<td>R-01 LLM 兜底、R-13 审核质量、R-05</td>
+<td>T9–T16 单测全绿；RuleLLM 输出合法</td>
+</tr>
+<tr>
+<td style="text-align: center;">M5</td>
+<td>12-11</td>
+<td>四级检测+三级决策全链路贯通</td>
+<td>R-04 机制效果、R-07 interrupt、R-09 veto</td>
+<td>C1/C3/C5/C6/C8 剧本断言通过</td>
+</tr>
+<tr>
+<td style="text-align: center;">M6</td>
+<td>12-20</td>
+<td>前后端联调、交易主链路 E2E 贯通（AC-2）</td>
+<td>R-03 并发、R-08 WS、R-10 前端</td>
+<td>发布→评价全旅程可操作；并发恰一成交</td>
+</tr>
+<tr>
+<td style="text-align: center;">M7</td>
+<td>12-26</td>
+<td>≥10 剧本+全量测试通过、无 Key 回归</td>
+<td>R-12 覆盖、R-01 故障注入</td>
+<td>pytest 全绿；C1–C8 对照表通过</td>
+</tr>
+<tr>
+<td style="text-align: center;">M8</td>
+<td>12-30</td>
+<td>P0 冻结、一键启动交付、集成缓冲关闭</td>
+<td>R-11 可复现、R-16 演示、R-18 资产</td>
+<td>干净环境走查通过；素材归档完成</td>
+</tr>
+<tr>
+<td style="text-align: center;">M9</td>
+<td>01-10</td>
+<td>结题答辩</td>
+<td>R-16 现场风险</td>
+<td>两次离线彩排成功；录屏备份就位</td>
+</tr>
+</tbody>
+</table>
+<p><strong>八 应急储备与降级策略</strong></p>
+<p><strong>▍8.1 进度与范围储备</strong></p>
+<ul>
+<li><p>时间缓冲：12-24 — 12-30 设置 5 个工作日集成联调缓冲（约占开发工期 15%），仅用于高风险触发与缺陷修复，不得提前占用。</p></li>
+<li><p>范围储备（裁剪顺序）：T32 Docker Compose → T30 权重实验工具 → T27 监控大屏 → 非关键页面美化；P0（FR-1～FR-14、AC-1～AC-12）任何情况下不裁剪。</p></li>
+<li><p>人力储备：指导教师每周固定答疑窗口；高风险触发时 24 小时内发起专题咨询。</p></li>
+</ul>
+<p><strong>▍8.2 技术降级链</strong></p>
+<table style="width:94%;">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 25%" />
+<col style="width: 33%" />
+<col style="width: 22%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>层面</strong></th>
+<th style="text-align: center;"><strong>首选方案</strong></th>
+<th style="text-align: center;"><strong>降级 / 兜底方案</strong></th>
+<th style="text-align: center;"><strong>最终手段</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">大模型能力</td>
+<td>DeepSeek V4（结构化输出）</td>
+<td>重试 3 次 → RuleLLM 确定性规则引擎</td>
+<td>转人工工作台处理</td>
+</tr>
+<tr>
+<td style="text-align: center;">编排框架</td>
+<td>LangGraph 1.2.x 图+Checkpointer</td>
+<td>回退已验证小版本</td>
+<td>手写状态机承载主链路</td>
+</tr>
+<tr>
+<td style="text-align: center;">实时通道</td>
+<td>议价室 WebSocket</td>
+<td>HTTP 短轮询 + 服务端权威状态</td>
+<td>页面刷新拉取</td>
+</tr>
+<tr>
+<td style="text-align: center;">部署形态</td>
+<td>本机一键启动脚本（P0）</td>
+<td>第二台已验证设备 + 离线录屏</td>
+<td>录屏演示 + 口述</td>
+</tr>
+<tr>
+<td style="text-align: center;">数据层</td>
+<td>SQLite(WAL) + 定时备份</td>
+<td>种子脚本重建 / 备份恢复</td>
+<td>内存库演示</td>
+</tr>
+</tbody>
+</table>
+<p><strong>九 风险沟通、评审与闭环</strong></p>
+<ul>
+<li><p>周度监控：每周周报包含“风险登记册状态”小节——新增/升级/降级/关闭事项、触发指标读数、缓冲消耗。</p></li>
+<li><p>升级路径：低风险留观；中风险周报通报并执行预防措施；高风险 24 小时内告知指导教师，在里程碑评审会做专项决策。</p></li>
+<li><p>闭环要求：风险触发后须记录“触发时间 → 处置动作 → 结果验证 → 对计划/文档的修订”，验证有效方可关闭；无效则升级并重估 P、I。</p></li>
+<li><p>基线联动：任何因风险导致的范围、进度、设计变更，须同步更新 SRS 变更候选表、任务队列与甘特图，保持三份文件一致。</p></li>
+</ul>
+<p><strong>▍9.1 风险闭环记录表（模板，随周报填写）</strong></p>
+<table style="width:98%;">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 25%" />
+<col style="width: 22%" />
+<col style="width: 18%" />
+<col style="width: 9%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>风险编号</strong></th>
+<th style="text-align: center;"><strong>触发日期</strong></th>
+<th style="text-align: center;"><strong>触发情形描述</strong></th>
+<th style="text-align: center;"><strong>处置动作</strong></th>
+<th style="text-align: center;"><strong>结果 / 验证</strong></th>
+<th style="text-align: center;"><strong>关闭日期</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>附录 风险检查清单（每周逐项过一遍）</strong></p>
+<ul>
+<li><p>本周是否有任务偏离计划超过 1 天？关键路径任务是否阻塞？</p></li>
+<li><p>无 API Key 环境下系统能否完整启动并跑通主链路？LLM 失败率与耗时是否在阈值内？</p></li>
+<li><p>并发抢单测试是否仍然 0 超卖？锁是否存在未释放记录？</p></li>
+<li><p>C1–C8 剧本本周是否全部可运行、断言与期望是否一致？</p></li>
+<li><p>veto 对抗测试、越权接口测试是否仍全部通过？</p></li>
+<li><p>interrupt 挂起的三级案件能否正确恢复、终裁后状态是否流转？</p></li>
+<li><p>新增需求是否经过评估并记入变更候选，而非直接开发？</p></li>
+<li><p>截图、周报、决策轨迹等交付素材是否已同步归档？</p></li>
+<li><p>依赖是否出现弃用/漏洞公告？锁定版本是否仍可安装？</p></li>
+<li><p>距离下一里程碑还有几个工作日、缓冲还剩多少？</p></li>
+</ul>
+<p>本风险计划 V1.0 于 2026 年 10 月 13 日随 SRS V4.0 基线发布，滚动维护至项目结题。</p>
+</body>
+</html>

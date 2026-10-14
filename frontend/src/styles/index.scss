@@ -1,0 +1,11 @@
+// =============================================================
+// 全局样式入口
+// 顺序：reset → 双主题（Element Plus 深度变量）→ 动效 → 通用类
+// =============================================================
+
+@use 'reset';
+@use 'element-light';
+@use 'element-dark';
+@use 'console-tokens';
+@use 'animations';
+@use 'utilities';

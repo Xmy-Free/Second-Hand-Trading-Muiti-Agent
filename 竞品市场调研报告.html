@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>/* 被演示 deck 以 iframe 嵌入时默认白色主题，单独打开仍为深色 */
+if(window.self!==window.top){document.documentElement.dataset.theme='light';}</script>
+<title>校园二手交易平台 · 竞品市场调研报告 2026</title>
+<meta name="x-content-type" content="presentation" />
+<meta name="x-presentation-version" content="3.0" />
+<meta name="x-presentation-indicator" content="deck-stage .slide" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   校园二手交易 Multi-Agent · 竞品市场调研报告 v3
+   深空 / 晨白 双主题 · p5.js 九 Agent 协作星群 · 真实平台截图
+   ============================================================ */
+:root,html[data-theme="dark"]{
+  --bg:#050912; --bg2:#0a1224;
+  --wrap-a:rgba(129,140,248,.10); --wrap-b:rgba(94,234,212,.08); --wrap-c:#02050b;
+  --panel:rgba(14,23,43,.72); --panel-2:rgba(18,30,55,.55); --panel-solid:#0d1730;
+  --line:rgba(148,163,184,.16); --line-2:rgba(94,234,212,.28);
+  --txt:#e9f0fb; --txt-2:#b7c7e2; --mut:#7d90b3;
+  --teal:#5eead4; --indigo:#818cf8; --pink:#f472b6; --gold:#fbbf24; --green:#34d399; --red:#ff5d73;
+  --grad:linear-gradient(100deg,#5eead4,#818cf8 55%,#f472b6);
+  --shadow:0 30px 80px -30px rgba(0,0,0,.85);
+  --chip-bg:rgba(255,255,255,.03);
+  --vignette:radial-gradient(120% 90% at 50% 42%,transparent 55%,rgba(2,6,14,.72) 100%);
+  --grain-op:.5; --grain-blend:overlay;
+  --browser-bar:rgba(12,20,38,.92); --browser-url:rgba(255,255,255,.08);
+}
+html[data-theme="light"]{
+  --bg:#eef3fb; --bg2:#f8fbff;
+  --wrap-a:rgba(79,70,229,.10); --wrap-b:rgba(13,148,136,.10); --wrap-c:#e7eef9;
+  --panel:rgba(255,255,255,.88); --panel-2:rgba(255,255,255,.72); --panel-solid:#ffffff;
+  --line:rgba(30,58,95,.14); --line-2:rgba(13,148,136,.4);
+  --txt:#16233c; --txt-2:#38486a; --mut:#6b7d9c;
+  --teal:#0d9488; --indigo:#4f46e5; --pink:#db2777; --gold:#d97706; --green:#059669; --red:#e11d48;
+  --grad:linear-gradient(100deg,#0d9488,#4f46e5 55%,#db2777);
+  --shadow:0 26px 60px -28px rgba(35,65,110,.38);
+  --chip-bg:rgba(13,148,136,.07);
+  --vignette:radial-gradient(120% 90% at 50% 42%,transparent 60%,rgba(196,212,236,.55) 100%);
+  --grain-op:.28; --grain-blend:multiply;
+  --browser-bar:#f2f5fa; --browser-url:#e4eaf4;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--wrap-c);
+  transition:background .5s ease}
+body{font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;color:var(--txt);
+  -webkit-font-smoothing:antialiased;transition:color .5s ease}
+::selection{background:rgba(94,234,212,.3)}
+.font-d{font-family:"Sora","Noto Sans SC",sans-serif}
+
+/* ---------- 舞台缩放 ---------- */
+#deck-wrap{position:fixed;inset:0;overflow:hidden;
+  background:var(--bg);
+  transition:background .5s ease}
+#deck-stage{position:absolute;top:50%;left:50%;width:1920px;height:1080px;
+  transform-origin:center center;background:var(--bg);overflow:hidden;
+  transition:background .5s ease}
+#star-host{position:absolute;inset:0;z-index:0;overflow:hidden}
+#star-host canvas{display:block;width:100%!important;height:100%!important}
+.stage-vignette{position:absolute;inset:0;z-index:1;pointer-events:none;background:var(--vignette)}
+.stage-grain{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:var(--grain-op);
+  mix-blend-mode:var(--grain-blend);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");}
+
+/* ---------- 幻灯片基类 ---------- */
+.slide{position:absolute;inset:0;z-index:2;opacity:0;visibility:hidden;
+  transform:scale(1.015);transition:opacity .7s ease,transform .7s cubic-bezier(.22,.8,.3,1),visibility 0s .7s;
+  padding:60px 80px 50px;display:flex;flex-direction:column}
+.slide.active{opacity:1;visibility:visible;transform:scale(1);transition:opacity .7s ease,transform .7s cubic-bezier(.22,.8,.3,1)}
+.slide.active .reveal{animation:rise .9s cubic-bezier(.22,.8,.3,1) both}
+.slide.active .reveal.d1{animation-delay:.08s}.slide.active .reveal.d2{animation-delay:.16s}
+.slide.active .reveal.d3{animation-delay:.24s}.slide.active .reveal.d4{animation-delay:.32s}
+.slide.active .reveal.d5{animation-delay:.40s}.slide.active .reveal.d6{animation-delay:.48s}
+.slide.active .reveal.d7{animation-delay:.56s}.slide.active .reveal.d8{animation-delay:.64s}
+@keyframes rise{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(94,234,212,.35)}50%{box-shadow:0 0 0 12px rgba(94,234,212,0)}}
+@keyframes shimmer{background-position:200% 0}
+@keyframes sheen{0%{transform:translateX(-120%) skewX(-18deg)}100%{transform:translateX(240%) skewX(-18deg)}}
+
+/* 页眉 */
+.s-head{position:relative;flex:none;margin-bottom:20px}
+.chap{display:flex;align-items:center;gap:14px;font-family:"JetBrains Mono",monospace;font-size:13.5px;
+  letter-spacing:.32em;color:var(--teal);margin-bottom:12px}
+.chap::before{content:"";width:42px;height:2px;background:var(--grad);border-radius:2px;
+  box-shadow:0 0 10px var(--teal)}
+.s-title{font-family:"Sora","Noto Sans SC",sans-serif;font-weight:700;font-size:34px;line-height:1.3;
+  letter-spacing:.01em;max-width:1640px}
+.s-title em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.s-sub{margin-top:8px;font-size:16px;color:var(--mut);font-weight:300;letter-spacing:.04em}
+.s-body{flex:1;min-height:0;position:relative}
+.s-foot{flex:none;display:flex;justify-content:space-between;align-items:center;margin-top:14px;
+  font-size:12px;color:var(--mut);letter-spacing:.05em;border-top:1px solid var(--line);padding-top:10px}
+.s-foot .src{max-width:1240px}
+
+/* 玻璃面板 */
+.glass{background:var(--panel);border:1px solid var(--line);border-radius:18px;
+  backdrop-filter:blur(18px) saturate(1.3);box-shadow:var(--shadow);position:relative;overflow:hidden;
+  transition:background .5s ease,border-color .5s ease}
+.glass::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(160deg,rgba(255,255,255,.08),transparent 30%)}
+html[data-theme="light"] .glass::before{background:linear-gradient(160deg,rgba(255,255,255,.9),transparent 42%)}
+.glass::after{content:"";position:absolute;top:0;left:0;right:0;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--teal),transparent);opacity:.5}
+.glass-title{display:flex;align-items:center;gap:10px;font-family:"Sora","Noto Sans SC",sans-serif;
+  font-size:15.5px;font-weight:600;color:var(--txt-2);letter-spacing:.05em;padding:16px 22px 0}
+.glass-title .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 12px var(--teal)}
+.chart{width:100%;height:100%}
+.chart-fallback{display:none;height:100%;padding:22px;flex-direction:column;justify-content:center;gap:11px}
+.no-lib .chart-fallback{display:flex}.no-lib .chart{display:none}
+.chart-fallback .fb-row{display:flex;justify-content:space-between;align-items:baseline;
+  border-bottom:1px dashed var(--line);padding-bottom:8px;font-size:14px;color:var(--txt-2)}
+.chart-fallback .fb-row b{font-family:"JetBrains Mono",monospace;font-size:20px;color:var(--teal)}
+
+/* Tab 切换 */
+.tab-wrap{margin-left:auto;display:flex;gap:4px;background:var(--chip-bg);border:1px solid var(--line);
+  border-radius:9px;padding:3px}
+.tab-btn{border:0;background:transparent;color:var(--mut);font-family:inherit;font-size:12.5px;
+  letter-spacing:.05em;padding:6px 15px;border-radius:7px;cursor:pointer;transition:.25s;white-space:nowrap}
+.tab-btn:hover{color:var(--txt-2)}
+.tab-btn.on{background:linear-gradient(120deg,rgba(94,234,212,.22),rgba(129,140,248,.22));color:var(--teal);
+  box-shadow:inset 0 0 0 1px var(--line-2)}
+.tab-pane{position:absolute;inset:54px 10px 10px;display:none}
+.tab-pane.on{display:block}
+
+/* ============================================================ P1 封面 */
+#s1{padding:0;justify-content:flex-end}
+.cover-bg-label{position:absolute;top:52px;left:84px;z-index:3;display:flex;align-items:center;gap:14px;
+  font-family:"JetBrains Mono",monospace;font-size:14px;letter-spacing:.38em;color:var(--txt-2)}
+.cover-bg-label .bar{width:54px;height:2px;background:var(--grad)}
+.cover-meta{position:absolute;top:52px;right:84px;z-index:3;text-align:right;font-family:"JetBrains Mono",monospace;
+  font-size:13px;letter-spacing:.18em;color:var(--mut);line-height:1.9}
+.cover-meta b{color:var(--teal);font-weight:700}
+.cover-center{position:absolute;z-index:3;left:84px;right:84px;top:206px;text-align:center}
+.cover-eyebrow{display:inline-flex;align-items:center;gap:10px;padding:9px 22px;border-radius:999px;
+  border:1px solid var(--line-2);background:var(--panel);backdrop-filter:blur(10px);
+  font-family:"JetBrains Mono",monospace;font-size:13.5px;letter-spacing:.3em;color:var(--teal);margin-bottom:30px}
+.cover-eyebrow .pulse{width:8px;height:8px;border-radius:50%;background:var(--teal);animation:pulseGlow 2.4s infinite}
+.cover-title{font-family:"Sora","Noto Sans SC",sans-serif;font-size:84px;font-weight:800;line-height:1.12;letter-spacing:.01em}
+.cover-title .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  background-size:200% auto;animation:shimmer 6s linear infinite}
+.cover-en{margin-top:12px;font-family:"Sora",sans-serif;font-size:19px;font-weight:300;letter-spacing:.42em;
+  color:var(--mut);text-transform:uppercase}
+.cover-thesis{margin:22px auto 0;max-width:1040px;font-size:18px;line-height:1.75;color:var(--txt-2);font-weight:300}
+.cover-thesis b{color:var(--gold);font-weight:500}
+/* 封面：平台截图右向左无缝轮播 */
+.cover-marquee{position:absolute;z-index:3;left:0;right:0;top:600px;height:176px;overflow:hidden;
+  pointer-events:auto;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
+.mq-track{display:flex;width:max-content;height:100%;align-items:center;
+  animation:mqScroll 46s linear infinite;will-change:transform}
+.cover-marquee:hover .mq-track{animation-play-state:paused}
+@keyframes mqScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.mq-item{flex:none;width:306px;height:166px;margin:0 9px;border-radius:13px;overflow:hidden;background:#fff;
+  border:1px solid rgba(148,163,184,.35);position:relative;cursor:zoom-in;
+  box-shadow:0 20px 44px -20px rgba(0,0,0,.55);
+  transition:transform .35s cubic-bezier(.22,.8,.3,1),border-color .3s,box-shadow .35s}
+.mq-item:hover{transform:translateY(-8px) scale(1.045);border-color:var(--line-2);
+  box-shadow:0 32px 64px -20px rgba(13,148,136,.55);z-index:5}
+.cs-bar{height:22px;flex:none;display:flex;align-items:center;gap:5px;padding:0 9px;background:var(--browser-bar);border-bottom:1px solid var(--line)}
+.cs-bar i{width:8px;height:8px;border-radius:50%;display:block}
+.cs-bar i:nth-child(1){background:#ff5f57}.cs-bar i:nth-child(2){background:#febc2e}.cs-bar i:nth-child(3){background:#28c840}
+.cs-bar em{margin-left:5px;font-style:normal;font-family:"JetBrains Mono",monospace;font-size:8.5px;color:var(--mut);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-img{position:absolute;left:0;right:0;top:22px;bottom:0;background:#fff}
+.cs-img img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+.cs-name{position:absolute;left:8px;bottom:7px;z-index:2;font-family:"Sora","Noto Sans SC",sans-serif;
+  font-size:10.5px;font-weight:700;color:#fff;background:rgba(8,15,30,.72);padding:3px 9px;border-radius:99px;
+  letter-spacing:.04em;backdrop-filter:blur(4px);pointer-events:none}
+.mq-item::after{content:"官网实拍";position:absolute;top:28px;right:7px;z-index:2;font-family:"JetBrains Mono",monospace;
+  font-size:8px;letter-spacing:.1em;font-weight:700;color:#06231d;background:rgba(94,234,212,.9);
+  padding:2px 7px;border-radius:99px;pointer-events:none}
+
+/* 全站截图 Lightbox */
+#lightbox{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;
+  background:rgba(3,7,16,.88);backdrop-filter:blur(8px)}
+#lightbox.on{display:flex;animation:lbIn .28s cubic-bezier(.22,.8,.3,1)}
+@keyframes lbIn{from{opacity:0}to{opacity:1}}
+.lb-frame{position:relative;max-width:92vw;max-height:90vh;display:flex;flex-direction:column;align-items:center;
+  animation:lbPop .34s cubic-bezier(.22,.8,.3,1)}
+@keyframes lbPop{from{transform:scale(.92) translateY(14px);opacity:0}to{transform:none;opacity:1}}
+#lb-img{max-width:92vw;max-height:78vh;border-radius:12px;border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 40px 100px -30px rgba(0,0,0,.9);background:#fff;cursor:default}
+.lb-cap{margin-top:14px;display:flex;align-items:center;gap:12px;color:#e9f0fb;font-family:"Noto Sans SC",sans-serif;
+  font-size:14px;letter-spacing:.03em}
+.lb-cap b{font-size:15.5px}
+.lb-cap .lb-url{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:#8fa3c6;
+  background:rgba(255,255,255,.07);border:1px solid rgba(148,163,184,.25);border-radius:99px;padding:3px 12px}
+.lb-cap .lb-idx{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:#5eead4}
+.lb-btn{position:absolute;z-index:2;width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.25);
+  background:rgba(12,20,38,.66);color:#e9f0fb;font-size:22px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;backdrop-filter:blur(8px);transition:.25s;font-family:inherit}
+.lb-btn:hover{background:rgba(94,234,212,.22);border-color:#5eead4;transform:scale(1.08)}
+#lb-close{top:3.5vh;right:2.6vw}
+#lb-prev{left:2.6vw;top:50%;transform:translateY(-50%)}
+#lb-next{right:2.6vw;top:50%;transform:translateY(-50%)}
+#lb-prev:hover,#lb-next:hover{transform:translateY(-50%) scale(1.08)}
+.lb-hint{position:absolute;bottom:2.6vh;left:0;right:0;text-align:center;color:#7d90b3;font-size:11.5px;
+  letter-spacing:.14em;font-family:"JetBrains Mono",monospace;pointer-events:none}
+.cover-kpis{position:absolute;z-index:3;left:84px;right:84px;bottom:122px;display:grid;
+  grid-template-columns:repeat(4,1fr);gap:22px}
+.kpi{padding:24px 28px 22px;border-radius:18px;background:var(--panel);border:1px solid var(--line);
+  backdrop-filter:blur(18px);position:relative;overflow:hidden;transition:background .5s ease}
+.kpi::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--grad);opacity:.85}
+.kpi::before{content:"";position:absolute;top:0;left:0;width:80px;height:160%;
+  background:linear-gradient(90deg,rgba(255,255,255,.1),transparent);
+  animation:sheen 7s ease-in-out infinite}
+html[data-theme="light"] .kpi::before{background:linear-gradient(90deg,rgba(255,255,255,.65),transparent)}
+.kpi:nth-child(2)::before{animation-delay:1.4s}.kpi:nth-child(3)::before{animation-delay:2.8s}.kpi:nth-child(4)::before{animation-delay:4.2s}
+.kpi .num{font-family:"Sora",sans-serif;font-size:44px;font-weight:800;line-height:1;background:var(--grad);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.kpi .unit{font-size:19px;font-weight:600;color:var(--txt-2);margin-left:4px}
+.kpi .lab{margin-top:10px;font-size:13.5px;color:var(--mut);letter-spacing:.05em;line-height:1.5}
+.cover-bottom{position:absolute;z-index:3;left:84px;right:84px;bottom:44px;display:flex;justify-content:space-between;
+  align-items:center;font-size:13px;color:var(--mut);letter-spacing:.12em}
+.cover-bottom .hint{display:flex;gap:18px;align-items:center}
+.key{display:inline-block;padding:3px 10px;border:1px solid var(--line);border-radius:6px;font-family:"JetBrains Mono",monospace;
+  font-size:11.5px;color:var(--txt-2);background:var(--chip-bg)}
+.cover-who{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.2em}
+
+/* ============================================================ 通用排版件 */
+.grid-2{display:grid;gap:20px;height:100%}
+.g2-55{grid-template-columns:55fr 45fr}.g2-lr{grid-template-columns:47fr 53fr}.g2-44{grid-template-columns:44fr 56fr}
+.kpi-row3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
+.kpi3{padding:16px 20px;border-radius:14px;background:var(--panel-2);border:1px solid var(--line);
+  position:relative;overflow:hidden;transition:background .5s ease,border-color .5s ease}
+.kpi3::after{content:"";position:absolute;top:0;left:14px;right:14px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--teal),transparent)}
+.kpi3 .v{font-family:"Sora",sans-serif;font-size:32px;font-weight:800;color:var(--teal);line-height:1.1}
+.kpi3 .v.alt{color:var(--indigo)}.kpi3 .v.alt2{color:var(--pink)}
+.kpi3 .l{font-size:12.5px;color:var(--mut);margin-top:7px;letter-spacing:.03em;line-height:1.45}
+
+/* 痛点 P1-P4 紧凑药丸 */
+.pain-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 16px 14px}
+.pain-pill{padding:9px 12px;border-radius:11px;background:rgba(255,93,115,.07);
+  border:1px solid rgba(255,93,115,.28)}
+html[data-theme="light"] .pain-pill{background:rgba(225,29,72,.06);border-color:rgba(225,29,72,.25)}
+.pain-pill .pn{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--red);letter-spacing:.12em;font-weight:700}
+.pain-pill .pt{font-size:12.5px;font-weight:700;margin:2px 0 1px;color:var(--txt)}
+.pain-pill .pd{font-size:10.8px;color:var(--mut);line-height:1.4}
+
+/* 真实平台截图橱窗 */
+.shot-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;min-height:0}
+.shot-card{border-radius:16px;overflow:hidden;background:var(--panel);border:1px solid var(--line);
+  box-shadow:var(--shadow);display:flex;flex-direction:column;position:relative;cursor:zoom-in;
+  transition:transform .35s cubic-bezier(.22,.8,.3,1),box-shadow .35s,border-color .35s}
+.shot-card:hover{transform:translateY(-7px) scale(1.012);border-color:var(--line-2);
+  box-shadow:0 36px 70px -26px rgba(13,148,136,.5);z-index:6}
+.shot-bar{flex:none;display:flex;align-items:center;gap:7px;padding:9px 12px;background:var(--browser-bar);
+  border-bottom:1px solid var(--line)}
+html[data-theme="dark"] .shot-bar{background:var(--browser-bar)}
+.shot-bar i{width:10px;height:10px;border-radius:50%;display:block}
+.shot-bar i:nth-child(1){background:#ff5f57}.shot-bar i:nth-child(2){background:#febc2e}.shot-bar i:nth-child(3){background:#28c840}
+.shot-url{flex:1;margin-left:6px;height:18px;border-radius:9px;background:var(--browser-url);
+  display:flex;align-items:center;padding:0 10px;font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--mut);
+  letter-spacing:.04em;overflow:hidden;white-space:nowrap}
+.shot-img-wrap{position:relative;flex:1;min-height:0;overflow:hidden;background:#fff}
+.shot-img-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;
+  display:block;transition:transform .6s cubic-bezier(.22,.8,.3,1)}
+.shot-card:hover .shot-img-wrap img{transform:scale(1.045)}
+.shot-live{position:absolute;top:9px;left:9px;z-index:2;font-size:10px;letter-spacing:.14em;font-weight:700;
+  font-family:"JetBrains Mono",monospace;color:#06231d;background:rgba(94,234,212,.92);
+  padding:3px 9px;border-radius:99px;box-shadow:0 6px 16px -6px rgba(13,148,136,.7)}
+.shot-cap{flex:none;padding:10px 13px 11px}
+.shot-cap .cn{display:flex;align-items:baseline;gap:8px}
+.shot-cap .cn b{font-family:"Sora","Noto Sans SC",sans-serif;font-size:15px;font-weight:800}
+.shot-cap .cn em{font-style:normal;font-size:10px;color:var(--indigo);background:rgba(129,140,248,.13);
+  padding:2px 8px;border-radius:99px;letter-spacing:.06em;white-space:nowrap}
+.shot-cap .cs{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--teal);font-weight:700;margin:4px 0 3px}
+.shot-cap .cg{font-size:11px;color:var(--gold);line-height:1.4}
+.shot-cap .cg::before{content:"校园缺位 · ";color:var(--red);font-weight:700}
+
+/* 玩家小卡（备用统计条） */
+.pstrip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pstrip{padding:9px 13px;border-radius:11px;background:var(--panel-2);border:1px solid var(--line);font-size:11.5px;color:var(--mut)}
+.pstrip b{font-family:"JetBrains Mono",monospace;color:var(--teal);font-size:14px;margin-right:7px}
+
+/* P2 市场测算横向收窄阶梯（替代大漏斗） */
+.tier-panel{flex:1;min-height:0;display:flex;flex-direction:column}
+.tier-panel .glass-title{padding:13px 20px 0}
+.tier-list{flex:1;display:flex;flex-direction:column;justify-content:center;gap:7px;padding:8px 20px 12px}
+.tier{position:relative;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 17px;color:#f4f8ff;font-weight:600;overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 10px 24px -14px rgba(0,0,0,.5)}
+.tier .tl{font-size:12.5px;letter-spacing:.03em;display:flex;align-items:center;gap:8px;text-shadow:0 1px 3px rgba(0,0,0,.35)}
+.tier .tl i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.85);font-style:normal}
+.tier .tv{font-family:"Sora",sans-serif;font-size:17px;font-weight:800;text-shadow:0 1px 4px rgba(0,0,0,.4)}
+.tier.t1{width:100%;background:linear-gradient(100deg,#4338ca,#6366f1 60%,#818cf8)}
+.tier.t2{width:84%;background:linear-gradient(100deg,#6366f1,#22d3ee)}
+.tier.t3{width:66%;background:linear-gradient(100deg,#0d9488,#2dd4bf)}
+.tier.t4{width:50%;background:linear-gradient(100deg,#d97706,#fbbf24)}
+
+/* 三级阶梯 */
+.ladder{display:flex;flex-direction:column;gap:10px;margin-top:2px}
+.rung{display:grid;grid-template-columns:72px 1fr;gap:14px;align-items:stretch}
+.rung .lv{border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:"Sora","Noto Sans SC",sans-serif;font-weight:800;position:relative;overflow:hidden}
+.rung .lv .ln{font-size:23px;line-height:1}.rung .lv .ll{font-size:10.5px;letter-spacing:.12em;margin-top:4px}
+.rung.l1 .lv{background:linear-gradient(150deg,#5eead4,#2dd4bf);color:#06101f}
+html[data-theme="light"] .rung.l1 .lv{background:linear-gradient(150deg,#14b8a6,#0d9488);color:#fff}
+.rung.l2 .lv{background:linear-gradient(150deg,#818cf8,#6366f1);color:#fff}
+html[data-theme="light"] .rung.l2 .lv{background:linear-gradient(150deg,#6366f1,#4f46e5)}
+.rung.l3 .lv{background:linear-gradient(150deg,#fbbf24,#f59e0b);color:#1a1206}
+html[data-theme="light"] .rung.l3 .lv{background:linear-gradient(150deg,#f59e0b,#d97706);color:#fff}
+.rung .rc{padding:11px 18px;border-radius:13px;background:var(--panel-2);border:1px solid var(--line);transition:background .5s}
+.rung .rt{font-size:15px;font-weight:700;margin-bottom:2px}
+.rung.l1 .rt{color:var(--teal)}.rung.l2 .rt{color:var(--indigo)}.rung.l3 .rt{color:var(--gold)}
+.rung .rd{font-size:12.6px;color:var(--txt-2);line-height:1.5}
+.veto-bar{margin-top:10px;padding:11px 18px;border-radius:13px;border:1px solid rgba(251,191,36,.4);
+  background:linear-gradient(100deg,rgba(251,191,36,.14),rgba(255,93,115,.09));
+  display:flex;align-items:center;gap:14px;font-size:12.8px;line-height:1.5;color:var(--txt-2)}
+.veto-badge{flex:none;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:"Sora",sans-serif;font-weight:800;font-size:13px;color:#1a1206;
+  background:radial-gradient(circle at 32% 28%,#fde68a,#fbbf24 55%,#d97706);
+  box-shadow:0 0 24px rgba(251,191,36,.5);animation:floaty 3.4s ease-in-out infinite}
+.formula{font-family:"JetBrains Mono",monospace;font-size:12.8px;line-height:1.8;color:var(--txt-2);
+  background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:10px 18px;margin-top:10px}
+.formula b{color:var(--teal)}.formula .w{color:var(--indigo)}
+
+/* 结论 */
+.takeaways{display:flex;flex-direction:column;gap:6px;margin-top:2px}
+.tk{display:grid;grid-template-columns:32px 1fr;gap:11px;align-items:start}
+.tk .tn{width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-family:"Sora",sans-serif;font-weight:800;font-size:13px;color:var(--teal);
+  background:var(--chip-bg);border:1px solid var(--line-2)}
+.tk .tt{font-size:12.8px;line-height:1.48;color:var(--txt-2);padding-top:4px}
+.tk .tt b{color:var(--txt)}
+
+/* ---------- 导航 UI ---------- */
+#progress{position:absolute;top:0;left:0;height:3px;z-index:60;width:0;
+  background:var(--grad);box-shadow:0 0 14px rgba(94,234,212,.8);transition:width .55s cubic-bezier(.22,.8,.3,1)}
+#dots{position:absolute;right:32px;top:50%;transform:translateY(-50%);z-index:60;display:flex;
+  flex-direction:column;gap:17px}
+#dots button{width:11px;height:11px;border-radius:50%;border:1px solid color-mix(in srgb,var(--txt-2) 45%,transparent);
+  background:transparent;cursor:pointer;padding:0;position:relative;transition:.3s}
+#dots button:hover{border-color:var(--teal);transform:scale(1.25)}
+#dots button.on{background:var(--teal);border-color:var(--teal);box-shadow:0 0 14px var(--teal)}
+#dots button span{position:absolute;right:22px;top:50%;transform:translateY(-50%);white-space:nowrap;
+  font-size:12px;color:var(--txt-2);letter-spacing:.1em;opacity:0;pointer-events:none;transition:.25s;
+  background:var(--panel-solid);padding:4px 10px;border-radius:7px;border:1px solid var(--line);
+  box-shadow:var(--shadow)}
+#dots button:hover span{opacity:1;right:26px}
+#page-num{position:absolute;left:80px;bottom:18px;z-index:60;font-family:"JetBrains Mono",monospace;font-size:12.5px;
+  letter-spacing:.2em;color:var(--mut)}
+#page-num b{color:var(--teal);font-size:15px}
+.nav-actions{position:absolute;right:78px;bottom:12px;z-index:60;display:flex;gap:10px;align-items:center}
+.mini-btn{background:var(--panel);border:1px solid var(--line);color:var(--mut);border-radius:8px;
+  padding:6px 12px;font-size:11.5px;font-family:"JetBrains Mono",monospace;letter-spacing:.1em;
+  cursor:pointer;transition:.25s;display:inline-flex;align-items:center;gap:7px;backdrop-filter:blur(10px)}
+.mini-btn:hover{color:var(--teal);border-color:var(--teal);transform:translateY(-1px)}
+#theme-btn .ticon{font-size:13px;line-height:1}
+
+@media (prefers-reduced-motion:reduce){
+  .slide.active .reveal{animation:none}.cover-title .grad,.kpi::before{animation:none}
+  .veto-badge,.cover-eyebrow .pulse{animation:none}
+}
+</style>
+</head>
+<body>
+<div id="deck-wrap">
+  <div id="deck-stage">
+    <div id="star-host"></div>
+    <div class="stage-vignette"></div>
+    <div class="stage-grain"></div>
+    <div id="progress"></div>
+
+    <!-- ================= P1 封面 ================= -->
+    <section class="slide" id="s1">
+      <div class="cover-bg-label reveal"><span class="bar"></span>COMPETITIVE MARKET RESEARCH · 2026</div>
+      <div class="cover-meta reveal d1">校园二手交易平台 <b>Multi-Agent</b> 系统<br>SRS-MAS-2026-001 · V4 基线</div>
+      <div class="cover-center">
+        <div class="cover-eyebrow reveal d1"><span class="pulse"></span>1 COORDINATOR + 8 EXPERT AGENTS</div>
+        <h1 class="cover-title reveal d2">校园二手交易<br><span class="grad">竞品市场调研报告</span></h1>
+        <div class="cover-en reveal d3">From Traffic Platforms to Collaborative Agents</div>
+        <p class="cover-thesis reveal d4">当 <b>8500 亿</b>二手电商大盘撞上仅 <b>38.7%</b>的校园交易匹配率——<br>流量平台解决不了的信任与议价，正在留给多智能体协作系统。</p>
+      </div>
+      <div class="cover-marquee reveal d5"><div class="mq-track" id="mq-track">
+        <!-- 8 张实拍 ×2（JS 填充），右向左无缝轮播 -->
+      </div></div>
+      <div class="cover-kpis">
+        <div class="kpi reveal d4"><div><span class="num" data-count="8500">0</span><span class="unit">亿元</span></div><div class="lab">2025 中国二手电商交易规模<br>同比 +31.8%</div></div>
+        <div class="kpi reveal d5"><div><span class="num" data-count="200">0</span><span class="unit">亿元+</span></div><div class="lab">校园闲置交易潜在市场<br>92.3% 学生参与二手交易</div></div>
+        <div class="kpi reveal d6"><div><span class="num" data-count="38.7" data-dec="1">0</span><span class="unit">%</span></div><div class="lab">校园场景实际匹配成功率<br>83.6% 用户曾遭遇交易欺诈</div></div>
+        <div class="kpi reveal d7"><div><span class="num" data-count="9">0</span><span class="unit">类 Agent</span></div><div class="lab">1 协调者 + 8 专家协作架构<br>冲突检测 · 三级决策 · 安全否决</div></div>
+      </div>
+      <div class="cover-bottom reveal d8">
+        <div class="hint"><span class="key">← →</span><span class="key">Space</span>翻页<span class="key">F</span>全屏<span class="key">T</span>切换深/白主题</div>
+        <div class="cover-who">梁奕琦 · 2026.10 · 指导教师：曾志新</div>
+      </div>
+    </section>
+
+    <!-- ================= P2 市场全景 ================= -->
+    <section class="slide" id="s2">
+      <header class="s-head">
+        <div class="chap reveal">01 / MARKET LANDSCAPE</div>
+        <h2 class="s-title reveal d1">二手电商迈入 <em>8500 亿</em> 高增长时代，校园是密度最高的<em>增量战场</em></h2>
+        <div class="s-sub reveal d2">全国大盘五年翻倍，而校园市场以 200 亿+ 规模、92.3% 渗透率与封闭高频场景，成为验证 Agentic Commerce 的最佳沙盒</div>
+      </header>
+      <div class="s-body" style="display:grid;grid-template-rows:minmax(0,330px) minmax(0,1fr);gap:13px">
+        <!-- 上：数据带（静态市场趋势 + KPI + 横向市场测算） -->
+        <div style="display:grid;grid-template-columns:56fr 44fr;gap:14px;min-height:0">
+          <div class="glass reveal d2" style="display:flex;flex-direction:column;min-height:0">
+            <div class="glass-title"><span class="dot"></span>中国二手电商交易规模 2021–2027E（亿元）· 五年翻倍，2025 突破 8500 亿</div>
+            <div style="position:relative;flex:1;min-height:0;margin:0 8px 4px">
+              <div class="chart" id="chart-market"></div>
+              <div class="chart-fallback">
+                <div class="fb-row"><span>2021 → 2025</span><b>4,002 → 8,500</b></div>
+                <div class="fb-row"><span>2026E / 2027E</span><b>10,700 / 13,100</b></div>
+                <div class="fb-row"><span>五年复合增速</span><b style="color:var(--gold)">约 20.7%</b></div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;min-height:0">
+            <div class="kpi-row3 reveal d3" style="margin-bottom:0">
+              <div class="kpi3"><div class="v"><span data-count="3.28" data-dec="2">0</span>亿</div><div class="l">闲鱼月活 · 24.7 亿单/年</div></div>
+              <div class="kpi3"><div class="v alt"><span data-count="4">0</span>亿+</div><div class="l">转转注册 · 2025 营收 200 亿</div></div>
+              <div class="kpi3"><div class="v alt2"><span data-count="7.2" data-dec="1">0</span>次</div><div class="l">大学生年均二手交易频次</div></div>
+            </div>
+            <div class="glass reveal d4 tier-panel">
+              <div class="glass-title"><span class="dot" style="background:var(--indigo);box-shadow:0 0 12px var(--indigo)"></span>市场空间测算 TAM → SAM → SOM（研究测算）</div>
+              <div class="tier-list">
+                <div class="tier t1"><span class="tl"><i></i>TAM 全国二手电商</span><span class="tv">8,500 亿元</span></div>
+                <div class="tier t2"><span class="tl"><i></i>SAM 校园闲置市场</span><span class="tv">200 亿元</span></div>
+                <div class="tier t3"><span class="tl"><i></i>广西高校群可服务市场</span><span class="tv">≈ 8 亿元</span></div>
+                <div class="tier t4"><span class="tl"><i></i>SOM 首期三校试点</span><span class="tv">1,200 万元</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 下：垂类/回收/时尚阵营真实平台实拍墙 -->
+        <div class="shot-row reveal d5" style="grid-template-columns:repeat(4,1fr)">
+          <div class="shot-card">
+            <div class="shot-bar"><i></i><i></i><i></i><div class="shot-url">https://www.kongfz.com</div></div>
+            <div class="shot-img-wrap"><span class="shot-live">官网实拍 · 2026.10</span><img src="竞品调研_assets/shot-kongfz.png" alt="孔夫子旧书网官网截图" onerror="this.closest('.shot-card').style.display='none'"></div>
+            <div class="shot-cap">
+              <div class="cn"><b>孔夫子旧书网</b><em>垂类 C2C · 旧书</em></div>
+              <div class="cs">古旧书拍卖 · ¥5 起拍 · 书店区/书摊区</div>
+              <div class="cg">仅图书古籍品类，无智能撮合与校园履约</div>
+            </div>
+          </div>
+          <div class="shot-card">
+            <div class="shot-bar"><i></i><i></i><i></i><div class="shot-url">https://www.zhaoliangji.com</div></div>
+            <div class="shot-img-wrap"><span class="shot-live">官网实拍 · 2026.10</span><img src="竞品调研_assets/shot-zhaoliangji.png" alt="找靓机官网截图" onerror="this.closest('.shot-card').style.display='none'"></div>
+            <div class="shot-cap">
+              <div class="cn"><b>找靓机</b><em>二手 3C · 一机一码</em></div>
+              <div class="cs">2 亿+ 用户购机 · 万余商品自营验机</div>
+              <div class="cg">仅手机单一品类，一口价无议价代理</div>
+            </div>
+          </div>
+          <div class="shot-card">
+            <div class="shot-bar"><i></i><i></i><i></i><div class="shot-url">https://www.paipai.com</div></div>
+            <div class="shot-img-wrap"><span class="shot-live">官网实拍 · 2026.10</span><img src="竞品调研_assets/shot-paipai.png" alt="拍拍官网截图" onerror="this.closest('.shot-card').style.display='none'"></div>
+            <div class="shot-cap">
+              <div class="cn"><b>拍拍（爱回收严选）</b><em>京东系 B2C</em></div>
+              <div class="cs">一年质保 · 正规发票 · 千店联保</div>
+              <div class="cg">严选 B2C 不做同学间 C2C 撮合议价</div>
+            </div>
+          </div>
+          <div class="shot-card">
+            <div class="shot-bar"><i></i><i></i><i></i><div class="shot-url">https://hongbulin.com</div></div>
+            <div class="shot-img-wrap"><span class="shot-live">官网实拍 · 2026.10</span><img src="竞品调研_assets/shot-hongbulin.png" alt="红布林官网截图" onerror="this.closest('.shot-card').style.display='none'"></div>
+            <div class="shot-cap">
+              <div class="cn"><b>红布林</b><em>C2B2C · 循环时尚</em></div>
+              <div class="cs">2000+ 时尚品牌 · 寄售鉴定一体化</div>
+              <div class="cg">聚焦奢侈品时尚，与校园高频平价品类错位</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="s-foot reveal d6">
+        <span class="src">数据来源：《中国新电商发展报告(2026)》、网经社及高校问卷研究整理；2026E–2027E 与 SOM 为研究测算。截图来源：孔夫子旧书网、找靓机、拍拍、红布林官网，2026 年 10 月抓取，仅用于学术竞品分析</span>
+        <span class="foot-page"></span>
+      </footer>
+    </section>
+
+    <!-- ================= P3 用户 × 竞争（真实平台截图橱窗） ================= -->
+    <section class="slide" id="s3">
+      <header class="s-head">
+        <div class="chap reveal">02 / USERS & COMPETITIVE LANDSCAPE</div>
+        <h2 class="s-title reveal d1">学生不是不用二手平台，而是<em>匹配低效、信任缺位、议价耗神</em>——头部平台官网实拍，五阵营无人深耕校园</h2>
+        <div class="s-sub reveal d2">下列页面均为 2026 年 10 月抓取于各平台官网的真实截图：流量入口与验机回收体系成熟，但校园垂直的面交、议价代理与纠纷处置普遍缺位</div>
+      </header>
+      <div class="s-body" style="display:grid;grid-template-rows:minmax(0,40fr) minmax(0,60fr);gap:14px">
+        <div style="display:grid;grid-template-columns:47fr 53fr;gap:14px;min-height:0">
+          <div class="glass reveal d2" style="display:flex;flex-direction:column;min-height:0">
+            <div class="glass-title"><span class="dot" style="background:var(--red);box-shadow:0 0 12px var(--red)"></span>校园二手交易痛点量化（%，公开问卷研究整理）</div>
+            <div style="position:relative;flex:1;min-height:0;margin:0 8px">
+              <div class="chart" id="chart-pain"></div>
+              <div class="chart-fallback">
+                <div class="fb-row"><span>曾遭遇欺诈/纠纷（N=1500）</span><b style="color:var(--red)">83.6%</b></div>
+                <div class="fb-row"><span>议价反复、沟通成本高</span><b style="color:var(--red)">64%</b></div>
+                <div class="fb-row"><span>担忧货不对板/质量</span><b style="color:var(--gold)">57.3%</b></div>
+                <div class="fb-row"><span>欺诈投诉率</span><b style="color:var(--gold)">21.5%</b></div>
+                <div class="fb-row"><span>实际匹配成功率</span><b style="color:var(--teal)">38.7%</b></div>
+              </div>
+            </div>
+            <div class="pain-strip">
+              <div class="pain-pill"><div class="pn">P-1</div><div class="pt">信息不对称</div><div class="pd">描述失真、货不对板</div></div>
+              <div class="pain-pill"><div class="pn">P-2</div><div class="pt">信任缺失</div><div class="pd">无担保、隐私泄露</div></div>
+              <div class="pain-pill"><div class="pn">P-3</div><div class="pt">议价低效</div><div class="pd">反复砍价易谈崩</div></div>
+              <div class="pain-pill"><div class="pn">P-4</div><div class="pt">纠纷难处理</div><div class="pd">责任界定慢、维权无门</div></div>
+            </div>
+          </div>
+          <div class="glass reveal d3" style="display:flex;flex-direction:column;min-height:0">
+            <div class="glass-title"><span class="dot" style="background:var(--pink);box-shadow:0 0 12px var(--pink)"></span>五阵营竞争全景 · 校园用户使用时长占比（研究测算）</div>
+            <div style="position:relative;flex:1;min-height:0;margin:0 6px 8px">
+              <div class="chart" id="chart-rose"></div>
+              <div class="chart-fallback">
+                <div class="fb-row"><span>综合 C2C（闲鱼）</span><b>42%</b></div>
+                <div class="fb-row"><span>验机平台（转转）</span><b>20%</b></div>
+                <div class="fb-row"><span>校园原生（墙/群/跳蚤市场）</span><b>20%</b></div>
+                <div class="fb-row"><span>回收商（爱回收等）</span><b>12%</b></div>
+                <div class="fb-row"><span>垂类平台（多抓鱼等）</span><b>6%</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="shot-row reveal d5">
+          <div class="shot-card">
+            <div class="shot-bar"><i></i><i></i><i></i><div class="shot-url">https://www.goofish.com</div></div>
+            <div class="shot-img-wrap"><span class="shot-live">官网实拍 · 2026.10</span><img src="竞品调研_assets/shot-goofish.png" alt="闲鱼官网首页截图" onerror="this.closest('.shot-card').style.display='none'"></div>
+            <div class="shot-cap">
+              <div class="cn"><b>闲鱼</b><em>综合 C2C · 42%</em></div>
+              <div class="cs">MAU 3.28 亿 · 24.7 亿单/年</div>
+              <div class="cg">无校内面交与议价代理，纠纷靠人工客服</div>
+            </div>
+          </div>
+          <div class="shot-card">
+            <div class="shot-bar"><i></i><i></i><i></i><div class="shot-url">https://www.zhuanzhuan.com</div></div>
+            <div class="shot-img-wrap"><span class="shot-live">官网实拍 · 2026.10</span><img src="竞品调研_assets/shot-zhuanzhuan.png" alt="转转官网截图" onerror="this.closest('.shot-card').style.display='none'"></div>
+            <div class="shot-cap">
+              <div class="cn"><b>转转</b><em>验机担保 · 20%</em></div>
+              <div class="cs">注册 4 亿+ · 2025 营收 200 亿</div>
+              <div class="cg">重 3C 轻校园，官方验成本高、无面交</div>
+            </div>
+          </div>
+          <div class="shot-card">
+            <div class="shot-bar"><i></i><i></i><i></i><div class="shot-url">https://www.aihuishou.com</div></div>
+            <div class="shot-img-wrap"><span class="shot-live">官网实拍 · 2026.10</span><img src="竞品调研_assets/shot-aihuishou.png" alt="爱回收官网截图" onerror="this.closest('.shot-card').style.display='none'"></div>
+            <div class="shot-cap">
+              <div class="cn"><b>爱回收</b><em>回收商 · 12%</em></div>
+              <div class="cs">纽交所上市 · 7 大检测中心</div>
+              <div class="cg">B2C 单向回收，不做同学间 C2C 议价</div>
+            </div>
+          </div>
+          <div class="shot-card">
+            <div class="shot-bar"><i></i><i></i><i></i><div class="shot-url">https://www.duozhuayu.com</div></div>
+            <div class="shot-img-wrap"><span class="shot-live">官网实拍 · 2026.10</span><img src="竞品调研_assets/shot-duozhuayu.png" alt="多抓鱼官网截图" onerror="this.closest('.shot-card').style.display='none'"></div>
+            <div class="shot-cap">
+              <div class="cn"><b>多抓鱼</b><em>垂类平台 · 6%</em></div>
+              <div class="cs">二手书/服饰统一质检定价</div>
+              <div class="cg">仅图书服饰品类、平台一口价无议价</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="s-foot reveal d7">
+        <span class="src">截图来源：闲鱼、转转、爱回收、多抓鱼官方网站，2026 年 10 月抓取，仅用于学术竞品分析；数据来源：36氪、网经社、平台公开披露及高校问卷研究（N=304 / N=1500）</span>
+        <span class="foot-page"></span>
+      </footer>
+    </section>
+
+    <!-- ================= P4 3D 沙盘 × 热力/雷达 ================= -->
+    <section class="slide" id="s4">
+      <header class="s-head">
+        <div class="chap reveal">03 / POSITIONING & BENCHMARK</div>
+        <h2 class="s-title reveal d1">在「<em>智能化 × 校园垂直 × 交易保障</em>」三轴上，现有玩家集体留白——这正是 Multi-Agent 系统的空位</h2>
+        <div class="s-sub reveal d2">十维矩阵交叉验证、六维雷达叠加对比：流量平台 AI 化与校园适配上均≤3 分，本项目在校园/智能/可复现维度取满格</div>
+      </header>
+      <div class="s-body">
+        <div class="grid-2 g2-44" style="height:100%">
+          <div class="glass reveal d2" style="display:flex;flex-direction:column">
+            <div class="glass-title"><span class="dot"></span>3D 竞争定位沙盘 <span style="margin-left:auto;font-size:11.5px;color:var(--mut);font-family:'JetBrains Mono',monospace;letter-spacing:.08em">拖拽旋转 · 滚轮缩放</span></div>
+            <div style="position:relative;flex:1;min-height:0;margin:2px 8px 8px">
+              <div class="chart" id="chart-scatter3d"></div>
+              <div class="chart-fallback">
+                <div class="fb-row"><span>闲鱼（智能/校园/保障）</span><b>6 · 3 · 6</b></div>
+                <div class="fb-row"><span>转转</span><b>6 · 2.5 · 8</b></div>
+                <div class="fb-row"><span>爱回收</span><b>5 · 1 · 9</b></div>
+                <div class="fb-row"><span>多抓鱼</span><b>5.5 · 1.5 · 7.5</b></div>
+                <div class="fb-row"><span>校园墙 / 二手群</span><b>1 · 8.5 · 2</b></div>
+                <div class="fb-row"><span>本项目 MAS</span><b style="color:var(--gold)">9.2 · 9.5 · 8.5</b></div>
+              </div>
+            </div>
+          </div>
+          <div class="glass reveal d3" style="display:flex;flex-direction:column">
+            <div class="glass-title">
+              <span class="dot" style="background:var(--gold);box-shadow:0 0 12px var(--gold)"></span>
+              能力对标
+              <div class="tab-wrap">
+                <button class="tab-btn on" data-tab="heat">十维热力矩阵</button>
+                <button class="tab-btn" data-tab="radar">六维能力雷达</button>
+              </div>
+            </div>
+            <div class="tab-pane on" id="pane-heat">
+              <div class="chart" id="chart-heat"></div>
+              <div class="chart-fallback" id="heat-fb"></div>
+            </div>
+            <div class="tab-pane" id="pane-radar">
+              <div class="chart" id="chart-radar"></div>
+              <div class="chart-fallback">
+                <div class="fb-row"><span>本项目 MAS</span><b style="color:var(--gold)">5·4·5·5·5·5</b></div>
+                <div class="fb-row"><span>闲鱼</span><b>3·3·2·3·3·2</b></div>
+                <div class="fb-row"><span>转转</span><b>2·5·3·4·3·4</b></div>
+                <div class="fb-row"><span>校园墙/群</span><b>5·2·1·1·1·1</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="s-foot reveal d6">
+        <span class="src">评估方法：基于各平台公开功能与服务条款，按 1–5 分制打分；本项目为 SRS V4 设计目标值，模拟支付原型在信任担保项取 4 分</span>
+        <span class="foot-page"></span>
+      </footer>
+    </section>
+
+    <!-- ================= P5 破局与结论 ================= -->
+    <section class="slide" id="s5">
+      <header class="s-head">
+        <div class="chap reveal">04 / MOAT & CONCLUSION</div>
+        <h2 class="s-title reveal d1">以 <em>1+8 Agent 协作网络</em> 占据空位：冲突三级决策，是数据与流量都买不来的机制壁垒</h2>
+        <div class="s-sub reveal d2">Anthropic「Project Deal」已验证 AI 自主完成 186 笔二手交易；Agentic Commerce 窗口期开启，我们把"协商—仲裁—人工回环"做成可解释、可复现的系统</div>
+      </header>
+      <div class="s-body">
+        <div class="grid-2" style="height:100%;grid-template-columns:45fr 55fr">
+          <div class="glass reveal d2" style="display:flex;flex-direction:column">
+            <div class="glass-title"><span class="dot"></span>九 Agent 协作拓扑 · 黑板 SSOT + FIPA ACL 消息总线</div>
+            <div style="position:relative;flex:1;min-height:0;margin:2px 6px 8px">
+              <div class="chart" id="chart-graph"></div>
+              <div class="chart-fallback">
+                <div class="fb-row"><span>协调管理 Agent（中枢）</span><b>×1</b></div>
+                <div class="fb-row"><span>用户代理 / 商品 / 审核</span><b>3 专家</b></div>
+                <div class="fb-row"><span>搜索 / 议价 / 履约</span><b>3 专家</b></div>
+                <div class="fb-row"><span>信用 / 仲裁</span><b>2 专家</b></div>
+                <div class="fb-row"><span>通信协议</span><b style="color:var(--indigo)">FIPA ACL</b></div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;min-height:0">
+            <div class="ladder reveal d3">
+              <div class="rung l1"><div class="lv"><div class="ln">L1</div><div class="ll">对等协商</div></div>
+                <div class="rc"><div class="rt">一级 · 限时 ≤3 轮自动让步</div><div class="rd">单调让步规则 + 纳什参考价（双方让步空间乘积最大点）+ 规则解释与补材料，超时即升级</div></div></div>
+              <div class="rung l2"><div class="lv"><div class="ln">L2</div><div class="ll">协调仲裁</div></div>
+                <div class="rc"><div class="rt">二级 · 全局效用评分 + 加权投票</div><div class="rd">票权 × 置信度加权；协调者出具含依据裁决书，覆盖 C1–C7 议价、抢单、推荐偏差、信用分歧等场景</div></div></div>
+              <div class="rung l3"><div class="lv"><div class="ln">L3</div><div class="ll">人工兜底</div></div>
+                <div class="rc"><div class="rt">三级 · interrupt 冻结 → 证据包 → 终裁写回黑板</div><div class="rd">涉资金/违禁/校园安全即升级管理员，全程留痕、联动信用处罚，决策轨迹可回放</div></div></div>
+            </div>
+            <div class="veto-bar reveal d4"><div class="veto-badge">VETO</div>
+              <div><b style="color:var(--gold)">安全一票否决不可覆盖：</b>内容审核 Agent 对违禁品/欺诈交易拥有最高优先级否决，任何投票与效用得分均不得推翻；确定性规则优先于模型输出，无 API Key 时 RuleLLM 全量兜底。</div></div>
+            <div class="formula reveal d5">U = <b class="w">0.25</b>·用户满意度 + <b class="w">0.20</b>·交易成功率 + <b class="w">0.30</b>·平台安全性 + <b class="w">0.15</b>·公平性 − <b class="w">0.10</b>·处理成本　<span style="color:var(--mut)">｜权重可配置，P1 支持界面调参与 A/B 实验</span></div>
+            <div class="takeaways reveal d6">
+              <div class="tk"><div class="tn">1</div><div class="tt"><b>大盘与痛点共振：</b>8500 亿、+31.8% 高增长赛道里，200 亿校园市场仍只有 38.7% 匹配率</div></div>
+              <div class="tk"><div class="tn">2</div><div class="tt"><b>窗口期已开启：</b>Anthropic 186 笔自主交易验证 Agentic Commerce 可行，头部平台尚未布局校园多智能体</div></div>
+              <div class="tk"><div class="tn">3</div><div class="tt"><b>机制级壁垒：</b>三级冲突决策＋纳什议价＋veto 底线，是数据与流量都买不来的差异化</div></div>
+              <div class="tk"><div class="tn">4</div><div class="tt"><b>工程可复现：</b>LangGraph 编排＋黑板 SSOT＋FIPA ACL 契约，无 Key 时 RuleLLM 兜底，一键跑通 C1–C8 剧本</div></div>
+              <div class="tk"><div class="tn">5</div><div class="tt"><b>冷启动路径清晰：</b>三校试点（1,200 万 SOM）→ 桂林高校群 → 全国高校 SaaS，封闭高频场景易起量</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="s-foot reveal d7">
+        <span class="src">参考：Anthropic Project Deal（2026）、FIPA ACL 规范、LangGraph 1.x 文档、本项目 SRS V4.0（SRS-MAS-2026-001）</span>
+        <span class="foot-page"></span>
+      </footer>
+    </section>
+
+    <!-- 导航点 -->
+    <div id="dots"></div>
+    <div id="page-num"><b>01</b> <span class="pn-sep">/</span> <span id="pn-total">05</span></div>
+    <div class="nav-actions">
+      <button class="mini-btn" id="theme-btn"><span class="ticon">🌙</span><span class="tlabel">白色模式</span></button>
+      <button class="mini-btn" id="fs-btn">⛶ 全屏 [F]</button>
+    </div>
+  </div>
+</div>
+
+<!-- 截图全屏查看 Lightbox -->
+<div id="lightbox" aria-hidden="true">
+  <button class="lb-btn" id="lb-close" title="关闭 (Esc)">✕</button>
+  <button class="lb-btn" id="lb-prev" title="上一张 (←)">‹</button>
+  <button class="lb-btn" id="lb-next" title="下一张 (→)">›</button>
+  <div class="lb-frame">
+    <img id="lb-img" src="" alt="">
+    <div class="lb-cap"><span class="lb-idx" id="lb-idx"></span><b id="lb-title"></b><span class="lb-url" id="lb-url"></span></div>
+  </div>
+  <div class="lb-hint">点击空白处或按 Esc 关闭 · ← → 切换截图</div>
+</div>
+
+<script>
+/* ============================================================
+   1) 舞台自适应
+   ============================================================ */
+const stage=document.getElementById('deck-stage');
+function fit(){
+  // cover 缩放：始终铺满整个浏览器窗口（超宽/竖屏时等比裁切边缘），无留白
+  const s=Math.max(window.innerWidth/1920,window.innerHeight/1080);
+  stage.style.transform='translate(-50%,-50%) scale('+s+')';
+}
+window.addEventListener('resize',fit);fit();
+
+/* ============================================================
+   2) 翻页系统
+   ============================================================ */
+const slides=[...document.querySelectorAll('.slide')];
+const dotsWrap=document.getElementById('dots');
+const progress=document.getElementById('progress');
+const pageNum=document.getElementById('page-num');
+document.getElementById('pn-total').textContent=String(slides.length).padStart(2,'0');
+document.querySelectorAll('.foot-page').forEach((el,i)=>el.textContent=String(i+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0'));
+const dotNames=['封面','市场全景','用户与竞争','定位对标','破局结论'];
+let cur=0,lock=false;
+slides.forEach((s,i)=>{
+  const b=document.createElement('button');
+  b.innerHTML='<span>'+dotNames[i]+'</span>';
+  b.addEventListener('click',()=>goTo(i));
+  dotsWrap.appendChild(b);
+});
+const dots=[...dotsWrap.children];
+function goTo(i){
+  if(i<0||i>=slides.length||i===cur)return;
+  slides[cur].classList.remove('active');dots[cur].classList.remove('on');
+  cur=i;
+  slides[cur].classList.add('active');dots[cur].classList.add('on');
+  progress.style.width=((cur+1)/slides.length*100)+'%';
+  pageNum.innerHTML='<b>'+String(cur+1).padStart(2,'0')+'</b> <span class="pn-sep">/</span> '+String(slides.length).padStart(2,'0');
+  lock=true;setTimeout(()=>lock=false,720);
+  runCounters(slides[cur]);setArtMode(cur);
+  scheduleCharts(cur);updateMotion();
+}
+slides[0].classList.add('active');
+dots[0].classList.add('on');progress.style.width=(1/slides.length*100)+'%';
+window.addEventListener('keydown',e=>{
+  // 灯箱打开时：Esc 关闭、方向键切图，不触发翻页
+  if(lb.classList.contains('on')){
+    if(e.code==='Escape')lbClose();
+    else if(e.code==='ArrowRight')lbStep(1);
+    else if(e.code==='ArrowLeft')lbStep(-1);
+    e.preventDefault();return;
+  }
+  if(['ArrowRight','ArrowDown','Space','PageDown','Enter'].includes(e.code||e.key)){e.preventDefault();goTo(cur+1);}
+  else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.code||e.key)){e.preventDefault();goTo(cur-1);}
+  else if(e.code==='Home'){goTo(0);} else if(e.code==='End'){goTo(slides.length-1);}
+  else if(e.key==='f'||e.key==='F'){toggleFs();}
+  else if(e.key==='t'||e.key==='T'){toggleTheme();}
+});
+let wheelCd=0;
+stage.parentElement.addEventListener('wheel',e=>{
+  const now=Date.now();if(now<wheelCd||lock)return;
+  if(Math.abs(e.deltaY)>24){wheelCd=now+900;goTo(cur+(e.deltaY>0?1:-1));}
+},{passive:true});
+let tsx=0,tsy=0;
+stage.parentElement.addEventListener('touchstart',e=>{tsx=e.touches[0].clientX;tsy=e.touches[0].clientY},{passive:true});
+stage.parentElement.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tsx,dy=e.changedTouches[0].clientY-tsy;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy))goTo(cur+(dx<0?1:-1));
+  else if(Math.abs(dy)>70)goTo(cur+(dy<0?1:-1));
+},{passive:true});
+stage.parentElement.addEventListener('dblclick',toggleFs);
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen?.()}else{document.exitFullscreen?.()}}
+document.getElementById('fs-btn').addEventListener('click',toggleFs);
+
+/* ============================================================
+   3) 深 / 白主题切换（CSS 变量 + 图表与 p5 联动重建）
+   ============================================================ */
+let theme=document.documentElement.dataset.theme||'dark';
+function toggleTheme(){setTheme(theme==='dark'?'light':'dark');}
+function setTheme(t){
+  theme=t;
+  document.documentElement.dataset.theme=t;
+  const btn=document.getElementById('theme-btn');
+  btn.querySelector('.ticon').textContent=t==='dark'?'🌙':'☀️';
+  btn.querySelector('.tlabel').textContent=t==='dark'?'白色模式':'深色模式';
+  window.__artTheme=t;
+  if(window.__artApi&&window.__artApi.setTheme)window.__artApi.setTheme(t);
+  // 销毁并重建所有已初始化图表（含 3D），未访问页面将在进入时按新主题懒加载
+  Object.entries(chartInst).forEach(([id,c])=>{try{c.dispose()}catch(e){}});
+  for(const k in inited)delete inited[k];
+  for(const k in chartInst)delete chartInst[k];
+  radarInited=false;
+  document.querySelectorAll('.tab-pane').forEach(pn=>pn.classList.remove('on'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pane-heat').classList.add('on');
+  document.querySelector('.tab-btn[data-tab=heat]').classList.add('on');
+  if(window.__chartsReady)scheduleCharts(cur);
+  updateMotion();
+}
+document.getElementById('theme-btn').addEventListener('click',toggleTheme);
+/* 初始主题（嵌入白色）与按钮文案同步 */
+(function(){if(theme==='light'){const b=document.getElementById('theme-btn');b.querySelector('.ticon').textContent='☀️';b.querySelector('.tlabel').textContent='深色模式';window.__artTheme='light';}})();
+
+/* ============================================================
+   4) 数字计数器
+   ============================================================ */
+const counted=new WeakSet();
+function runCounters(root){
+  root.querySelectorAll('[data-count]').forEach(el=>{
+    if(counted.has(el))return;counted.add(el);
+    const target=parseFloat(el.dataset.count),dec=+(el.dataset.dec||0);
+    const t0=performance.now(),dur=1500;
+    (function tick(t){const p=Math.min((t-t0)/dur,1),e=1-Math.pow(1-p,3);
+      el.textContent=(target*e).toFixed(dec).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+      if(p<1)requestAnimationFrame(tick);})(t0);
+  });
+}
+setTimeout(()=>runCounters(slides[0]),400);
+
+/* ============================================================
+   3.5) 封面无缝轮播 + 全站截图 Lightbox
+   ============================================================ */
+const SHOTS=[
+  {src:'竞品调研_assets/shot-goofish.png',url:'goofish.com',name:'闲鱼 · 综合 C2C · MAU 3.28 亿'},
+  {src:'竞品调研_assets/shot-kongfz.png',url:'kongfz.com',name:'孔夫子旧书网 · 古旧书垂类'},
+  {src:'竞品调研_assets/shot-zhaoliangji.png',url:'zhaoliangji.com',name:'找靓机 · 二手 3C · 2 亿+ 用户'},
+  {src:'竞品调研_assets/shot-duozhuayu.png',url:'duozhuayu.com',name:'多抓鱼 · 二手书 / 服饰'},
+  {src:'竞品调研_assets/shot-paipai.png',url:'paipai.com',name:'拍拍 · 爱回收严选 · 京东系'},
+  {src:'竞品调研_assets/shot-zhuanzhuan.png',url:'zhuanzhuan.com',name:'转转 · 官方验 · 注册 4 亿+'},
+  {src:'竞品调研_assets/shot-aihuishou.png',url:'aihuishou.com',name:'爱回收 · 纽交所上市回收商'},
+  {src:'竞品调研_assets/shot-hongbulin.png',url:'hongbulin.com',name:'红布林 · 循环时尚 C2B2C'}
+];
+(function buildMarquee(){
+  const track=document.getElementById('mq-track');
+  const one=SHOTS.map(s=>
+    '<div class="mq-item"><div class="cs-bar"><i></i><i></i><i></i><em>'+s.url+'</em></div>'+
+    '<div class="cs-img"><img src="'+s.src+'" alt="'+s.name+'官网实拍" draggable="false"><span class="cs-name">'+s.name+'</span></div></div>'
+  ).join('');
+  track.innerHTML=one+one; // 复制一轮，配合 translateX(-50%) 实现无缝右向左滚动
+})();
+
+const lb=document.getElementById('lightbox');
+const lbImg=document.getElementById('lb-img');
+const lbTitle=document.getElementById('lb-title');
+const lbUrl=document.getElementById('lb-url');
+const lbIdxEl=document.getElementById('lb-idx');
+let lbIdx=0;
+function lbRender(){
+  const s=SHOTS[lbIdx];
+  lbImg.src=s.src;lbImg.alt=s.name;
+  lbTitle.textContent=s.name;lbUrl.textContent=s.url;
+  lbIdxEl.textContent=String(lbIdx+1).padStart(2,'0')+' / '+String(SHOTS.length).padStart(2,'0');
+}
+function lbOpen(src){
+  const i=SHOTS.findIndex(s=>s.src===src||s.src.endsWith(src.split('/').pop()));
+  lbIdx=i<0?0:i;lbRender();
+  lb.classList.add('on');lb.setAttribute('aria-hidden','false');
+}
+function lbClose(){lb.classList.remove('on');lb.setAttribute('aria-hidden','true');}
+function lbStep(d){lbIdx=(lbIdx+d+SHOTS.length)%SHOTS.length;lbRender();}
+document.addEventListener('click',e=>{
+  const card=e.target.closest('.mq-item,.shot-card');
+  if(card){const img=card.querySelector('img');if(img&&img.complete!==false)lbOpen(img.getAttribute('src'));}
+});
+lb.addEventListener('click',e=>{if(e.target===lb||e.target.classList.contains('lb-frame'))lbClose();});
+document.getElementById('lb-close').addEventListener('click',lbClose);
+document.getElementById('lb-prev').addEventListener('click',e=>{e.stopPropagation();lbStep(-1);});
+document.getElementById('lb-next').addEventListener('click',e=>{e.stopPropagation();lbStep(1);});
+
+/* ============================================================
+   5) 外部库加载：p5.js → ECharts → echarts-gl（多源回退）
+   ============================================================ */
+const HOSTS=['https://cdn.jsdelivr.net/npm/','https://unpkg.com/','https://fastly.jsdelivr.net/npm/'];
+function ls(host,pkg){return new Promise((res,rej)=>{const s=document.createElement('script');
+  s.src=host+pkg;s.onload=res;s.onerror=()=>{s.remove();rej();};document.head.appendChild(s);});}
+async function loadLibs(pkgs){
+  for(const h of HOSTS){
+    let ok=true;
+    for(const p of pkgs){try{await ls(h,p)}catch(e){ok=false;break;}}
+    if(ok)return true;
+  }
+  return false;
+}
+
+/* ============================================================
+   6) 「协作星群」p5.js 生成艺术（种子随机 · Perlin 流场 · 双主题）
+   ============================================================ */
+let artMode=0;
+function setArtMode(m){artMode=m;if(window.__artApi&&window.__artApi.setMode)window.__artApi.setMode(m);}
+const SKETCH=function(p){
+  const SEED=20261013;
+  let nodes=[],dust=[],flow=[],pulses=[],waves=[];
+  let mode=0,theme='dark',frame=0,mx=0,my=0,W=1920,H=1080;
+  let running=true,staticDone=false;
+  p.setup=function(){
+    const c=p.createCanvas(1920,1080);
+    c.parent('star-host');
+    p.pixelDensity(Math.min(window.devicePixelRatio||1,2));
+    p.randomSeed(SEED);p.noiseSeed(SEED);
+    initField();
+    theme=document.documentElement.dataset.theme||'dark';
+    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)running=false;
+  };
+  function initField(){
+    nodes=[];
+    for(let i=0;i<8;i++){
+      nodes.push({ang:i/8*p.TWO_PI+p.random(-.1,.1),
+        rx:p.random(700,780),ry:p.random(195,250),
+        spd:p.random(-.0004,.0004),sz:p.random(5,8),ci:i%3,
+        wob:p.random(p.TWO_PI),wobRx:p.random(20,40),wobRy:p.random(12,26)});
+    }
+    dust=[];
+    for(let i=0;i<160;i++)dust.push({x:p.random(W),y:p.random(H),z:p.random(.3,1.2),tw:p.random(p.TWO_PI)});
+    flow=[];
+    for(let i=0;i<82;i++)flow.push({x:p.random(W),y:p.random(H),c:Math.random()});
+  }
+  p.setTheme=function(t){theme=t;};
+  p.setMode=function(m){mode=m;};
+  function pal(){
+    if(theme==='light')return {t:p.color('#0d9488'),i:p.color('#4f46e5'),k:p.color('#db2777'),g:p.color('#d97706'),
+      dustR:60,dustG:82,dustB:120};
+    return {t:p.color('#5eead4'),i:p.color('#818cf8'),k:p.color('#f472b6'),g:p.color('#fbbf24'),
+      dustR:190,dustG:215,dustB:255};
+  }
+  const cX=()=>W/2+mx*12;
+  const cY=()=>H/2+my*12+(mode===0?20:0);
+  function nPos(n,t){
+    const a=n.ang+t*n.spd;
+    return [cX()+p.cos(a)*n.rx+p.cos(t*.00045+n.wob)*n.wobRx+mx*18,
+            cY()+p.sin(a)*n.ry+p.sin(t*.00045+n.wob)*n.wobRy+my*18];
+  }
+  p.draw=function(){
+    if(!running&&staticDone)return;
+    frame++;
+    const t=p.millis();
+    const P=pal();
+    const ncols=[P.t,P.i,P.k];
+    const density=mode===0?(theme==='light'?.75:.92):(mode===4?(theme==='light'?.42:.5):.3);
+    p.clear();
+    p.noStroke();
+    for(const s of dust){
+      const a=(.14+.46*s.z)*(0.62+0.38*p.sin(frame*.02+s.tw))*density;
+      p.fill(P.dustR,P.dustG,P.dustB,a*255);p.circle(s.x,s.y,s.z*1.6);
+    }
+    // Perlin 噪声流场
+    p.strokeWeight(theme==='light'?1.3:1.15);
+    for(const f of flow){
+      const ang=p.noise(f.x*.0011,f.y*.0011,t*.00006)*p.TWO_PI*2.2;
+      const nx=f.x+p.cos(ang)*1.15,ny=f.y+p.sin(ang)*1.15;
+      const col=f.c<.5?P.t:(f.c<.82?P.i:P.k);
+      p.stroke(p.red(col),p.green(col),p.blue(col),(theme==='light'?16:24)*density);
+      p.line(f.x,f.y,nx,ny);
+      f.x=nx;f.y=ny;
+      if(nx<0)f.x=W;if(nx>W)f.x=0;if(ny<0)f.y=H;if(ny>H)f.y=0;
+    }
+    const CP=[cX(),cY()];
+    const RP=nodes.map(n=>nPos(n,t));
+    // 协作边
+    p.strokeWeight(1.1);
+    for(let i=0;i<8;i++){
+      p.stroke(p.red(P.i),p.green(P.i),p.blue(P.i),(theme==='light'?44:52)*density);
+      p.line(CP[0],CP[1],RP[i][0],RP[i][1]);
+    }
+    const extra=[[0,3],[1,2],[0,4],[4,5],[5,7],[6,2],[6,7],[3,1],[4,6]];
+    p.stroke(p.red(P.i),p.green(P.i),p.blue(P.i),(theme==='light'?20:26)*density);
+    p.drawingContext.setLineDash([5,7]);
+    for(const [i,j] of extra)p.line(RP[i][0],RP[i][1],RP[j][0],RP[j][1]);
+    p.drawingContext.setLineDash([]);
+    // ACL 脉冲
+    if(frame%(mode===4?30:70)===0&&density>.3){
+      const a=nodes[(p.random(8))|0],b=nodes[(p.random(8))|0];
+      pulses.push({a,b,t:0,spd:p.random(.009,.018),col:mode===4?P.g:(p.random()<.65?P.t:P.i)});
+    }
+    for(let k=pulses.length-1;k>=0;k--){
+      const q=pulses[k];q.t+=q.spd;
+      const a=nPos(q.a,t),b=nPos(q.b,t);
+      const x=a[0]+(b[0]-a[0])*q.t,y=a[1]+(b[1]-a[1])*q.t;
+      p.noStroke();p.fill(q.col);p.circle(x,y,4.5);glow(x,y,11,q.col,.5*density);
+      if(q.t>=1)pulses.splice(k,1);
+    }
+    // 仲裁波
+    if((mode===0&&frame%440===0)||(mode===4&&frame%210===0))waves.push({t:0});
+    for(let k=waves.length-1;k>=0;k--){
+      const w=waves[k];w.t+=.011;
+      p.noFill();p.strokeWeight(2);
+      p.stroke(p.red(P.g),p.green(P.g),p.blue(P.g),(1-w.t)*120*density);
+      p.circle(CP[0],CP[1],40+w.t*560);
+      if(w.t>=1)waves.splice(k,1);
+    }
+    // 专家节点
+    p.noStroke();
+    RP.forEach((pt,i)=>{
+      const n=nodes[i],col=ncols[n.ci];
+      glow(pt[0],pt[1],22,col,(mode===0?.66:.5)*density);
+      p.fill(col);p.circle(pt[0],pt[1],n.sz*2);
+      p.fill(255,255,255,200*density);p.circle(pt[0]-n.sz*.32,pt[1]-n.sz*.32,n.sz*.62);
+    });
+    // 协调者
+    const cs=mode===0?19:14;
+    glow(CP[0],CP[1],50,P.g,(mode===0?.6:.46)*density);
+    p.fill(253,230,138,235*density);p.circle(CP[0],CP[1],cs);
+    p.fill(217,119,6,150*density);p.circle(CP[0]+2,CP[1]+3,cs*.62);
+    staticDone=true;
+  };
+  function glow(x,y,r,col,a){
+    if(a<=0)return;
+    for(let g=3;g>=1;g--){p.fill(p.red(col),p.green(col),p.blue(col),a*22/g);p.circle(x,y,r*g/1.4);}
+  }
+  document.addEventListener('mousemove',e=>{
+    const r=document.getElementById('star-host').getBoundingClientRect();
+    mx=(e.clientX-r.left)/r.width-.5;my=(e.clientY-r.top)/r.height-.5;
+  });
+};
+window.__artTheme='dark';
+
+/* ============================================================
+   7) ECharts 图表（双主题 token；3D 图 canvas 渲染器；禁止自动旋转）
+   ============================================================ */
+function CT(){
+  const light=theme==='light';
+  return {
+    axis:light?'#5b6d8a':'#8fa3c6',
+    cat:light?'#2f3f5e':'#cdd9ee',
+    split:light?'rgba(30,58,95,.12)':'rgba(148,163,184,.1)',
+    tipBg:light?'rgba(255,255,255,.96)':'rgba(8,15,30,.94)',
+    tipTxt:light?'#16233c':'#e9f0fb',
+    vmBorder:light?'rgba(30,58,95,.2)':'rgba(148,163,184,.25)',
+    legend:light?'#5b6d8a':'#b7c7e2',
+    teal:light?'#0d9488':'#5eead4', indigo:light?'#4f46e5':'#818cf8',
+    pink:light?'#db2777':'#f472b6', gold:light?'#d97706':'#fbbf24',
+    blue:light?'#0284c7':'#38bdf8', red:light?'#e11d48':'#ff5d73'
+  };
+}
+const chartFns={};
+const inited={};const chartInst={};
+const GL3D={scatter3d:'chart-scatter3d'};
+function scheduleCharts(page){
+  if(!window.__chartsReady)return;
+  const groups={1:[['chart-market','market']],
+    2:[['chart-pain','pain'],['chart-rose','rose']],
+    3:[['chart-scatter3d','scatter3d'],['chart-heat','heat']],
+    4:[['chart-graph','graph']]};
+  (groups[page]||[]).forEach(([id,type])=>{if(!inited[id]){inited[id]=1;setTimeout(()=>initChart(id,type),150);}});
+}
+let resizeTmr;
+window.addEventListener('resize',()=>{clearTimeout(resizeTmr);resizeTmr=setTimeout(()=>{
+  Object.values(chartInst).forEach(c=>{try{c.resize()}catch(e){}});updateMotion();
+},200)});
+function updateMotion(){ /* 自动旋转已禁用，此函数保留用于切页 resize */
+  Object.entries(GL3D).forEach(([type,id])=>{
+    const c=chartInst[id];if(!c)return;
+    if(document.getElementById(id).closest('.slide.active')){try{c.resize()}catch(e){}}
+  });
+}
+function initChart(id,type){
+  const el=document.getElementById(id);if(!el)return;
+  const c=echarts.init(el,null,{renderer:GL3D[type]?'canvas':'svg'});
+  chartInst[id]=c;
+  c.setOption(chartFns[type]());
+  el.addEventListener('webglcontextlost',e=>e.preventDefault());
+}
+
+/* ---------- P2: 市场规模静态组合图（渐变柱 + 平滑面积趋势，静止无旋转） ---------- */
+chartFns.market=()=>{
+  const T=CT();
+  const years=['2021','2022','2023','2024','2025','2026E','2027E'];
+  const vals=[4002,4802,5530,6451,8500,10700,13100];
+  const barData=vals.map((v,i)=>({value:v,
+    itemStyle:i===4?{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'#fde047'},{offset:1,color:'#d97706'}]},borderRadius:[7,7,0,0]}:
+      i>=5?{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(129,140,248,.55)'},{offset:1,color:'rgba(99,102,241,.28)'}]},borderRadius:[7,7,0,0]}:
+      {color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'#22d3ee'},{offset:1,color:'#4f46e5'}]},borderRadius:[7,7,0,0]}}));
+  return {
+    backgroundColor:'transparent',
+    tooltip:{trigger:'axis',axisPointer:{type:'shadow',shadowStyle:{color:'rgba(94,234,212,.08)'}},
+      backgroundColor:T.tipBg,borderColor:T.teal,textStyle:{color:T.tipTxt,fontFamily:'Noto Sans SC'},
+      formatter:ps=>{const i=ps[0].dataIndex;return years[i]+(i>=5?'（预测）':' 年')+'<br/><b style="color:'+T.teal+';font-size:15px">'+vals[i].toLocaleString()+'</b> 亿元'}},
+    grid:{left:10,right:20,top:34,bottom:8,containLabel:true},
+    xAxis:{type:'category',data:years,
+      axisLabel:{color:T.cat,fontSize:12.5,fontFamily:'Sora',fontWeight:600},
+      axisLine:{lineStyle:{color:T.vmBorder}},axisTick:{show:false}},
+    yAxis:{type:'value',max:14000,
+      axisLabel:{color:T.axis,fontSize:11,formatter:v=>v.toLocaleString()},
+      axisLine:{show:false},splitLine:{lineStyle:{color:T.split,type:'dashed'}}},
+    series:[
+      {name:'交易规模',type:'bar',data:barData,barWidth:'38%',z:2,
+        label:{show:true,position:'top',color:T.cat,fontFamily:'Sora',fontSize:10.5,fontWeight:700,
+          formatter:p=>p.value.toLocaleString()},
+        animationDelay:i=>i*110,animationDuration:1000,animationEasing:'cubicOut'},
+      {name:'增长趋势',type:'line',data:vals,smooth:.55,symbol:'circle',symbolSize:9,z:3,
+        lineStyle:{width:3.5,color:T.pink,shadowBlur:14,shadowColor:T.pink},
+        itemStyle:{color:T.pink,borderColor:'#fff',borderWidth:2},
+        areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[
+          {offset:0,color:theme==='light'?'rgba(219,39,119,.14)':'rgba(244,114,182,.22)'},
+          {offset:1,color:'rgba(244,114,182,0)'}]}},
+        markPoint:{symbol:'pin',symbolSize:52,
+          label:{fontSize:10.5,fontFamily:'Noto Sans SC',fontWeight:800,color:'#1a1206'},
+          itemStyle:{color:T.gold,shadowBlur:18,shadowColor:'rgba(251,191,36,.6)'},
+          data:[{coord:['2025',8500],value:'8500亿'}]},
+        animationDuration:1600}
+    ]
+  };
+};
+
+/* ---------- P3-A: 痛点横向条 ---------- */
+chartFns.pain=()=>{
+  const T=CT();
+  const rows=[['实际匹配成功率',38.7,'ok'],['欺诈投诉率',21.5,'warn'],['担忧货不对板 / 质量',57.3,'warn'],
+    ['议价反复、沟通成本高',64,'bad'],['曾遭遇欺诈 / 纠纷',83.6,'bad']];
+  const grad=k=>k==='ok'?{type:'linear',x:0,y:0,x2:1,y2:0,colorStops:[{offset:0,color:'#0f766e'},{offset:1,color:T.teal}]}:
+    k==='warn'?{type:'linear',x:0,y:0,x2:1,y2:0,colorStops:[{offset:0,color:'#92400e'},{offset:1,color:T.gold}]}:
+    {type:'linear',x:0,y:0,x2:1,y2:0,colorStops:[{offset:0,color:'#9f1239'},{offset:1,color:T.red}]};
+  return {backgroundColor:'transparent',
+    grid:{left:6,right:52,top:8,bottom:6,containLabel:true},
+    tooltip:{backgroundColor:T.tipBg,borderColor:T.red,textStyle:{color:T.tipTxt,fontFamily:'Noto Sans SC'},formatter:'{b}<br/><b>{c}%</b>'},
+    xAxis:{type:'value',max:100,splitLine:{show:false},axisLabel:{show:false},axisLine:{show:false},axisTick:{show:false}},
+    yAxis:{type:'category',inverse:true,data:rows.map(r=>r[0]),axisLine:{show:false},axisTick:{show:false},
+      axisLabel:{color:T.cat,fontSize:13,fontFamily:'Noto Sans SC',width:150,overflow:'truncate',margin:12}},
+    series:[{type:'bar',data:rows.map(r=>({value:r[1],itemStyle:{borderRadius:[0,7,7,0],color:grad(r[2])}})),
+      barWidth:16,
+      label:{show:true,position:'right',color:T.tipTxt,fontFamily:'Sora',fontSize:14,fontWeight:700,formatter:'{c}%'},
+      showBackground:true,backgroundStyle:{color:T.split,borderRadius:[0,7,7,0]},
+      animationDelay:i=>i*130,animationDuration:1000}]
+  };
+};
+
+/* ---------- P3-B: 玫瑰图 ---------- */
+chartFns.rose=()=>{
+  const T=CT();
+  return {backgroundColor:'transparent',
+    tooltip:{backgroundColor:T.tipBg,borderColor:T.pink,textStyle:{color:T.tipTxt,fontFamily:'Noto Sans SC'},formatter:'{b}<br/>校园使用时长占比 <b>{c}%</b>'},
+    legend:{bottom:2,textStyle:{color:T.legend,fontSize:11,fontFamily:'Noto Sans SC'},
+      itemWidth:11,itemHeight:11,icon:'roundRect',itemGap:10},
+    series:[{type:'pie',roseType:'radius',radius:['8%','58%'],center:['50%','42%'],
+      itemStyle:{borderColor:theme==='light'?'#fff':'rgba(5,9,18,.7)',borderWidth:3,borderRadius:6,
+        shadowBlur:theme==='light'?10:18,shadowColor:'rgba(0,0,0,.18)'},
+      label:{color:T.cat,fontSize:11.5,fontFamily:'Noto Sans SC',formatter:'{b}\n{c}%',lineHeight:15},
+      labelLine:{lineStyle:{color:T.vmBorder},length:6,length2:8},
+      emphasis:{itemStyle:{shadowBlur:26,shadowColor:T.pink},scaleSize:6},
+      data:[
+        {value:42,name:'综合C2C 闲鱼',itemStyle:{color:T.teal}},
+        {value:20,name:'验机 转转',itemStyle:{color:T.indigo}},
+        {value:20,name:'校园原生',itemStyle:{color:T.pink}},
+        {value:12,name:'回收商',itemStyle:{color:T.gold}},
+        {value:6,name:'垂类',itemStyle:{color:T.blue}}
+      ],
+      animationType:'scale',animationDuration:1100}]
+  };
+};
+
+/* ---------- P4-A: 3D 散点沙盘（静止视角） ---------- */
+chartFns.scatter3d=()=>{
+  const T=CT();
+  const pts=[
+    {n:'闲鱼',v:[6,3,6,26],c:T.teal,hot:false},
+    {n:'转转',v:[6,2.5,8,18],c:T.indigo,hot:false},
+    {n:'爱回收',v:[5,1,9,15],c:T.gold,hot:false},
+    {n:'多抓鱼',v:[5.5,1.5,7.5,11],c:T.blue,hot:false},
+    {n:'校园墙/二手群',v:[1,8.5,2,17],c:T.pink,hot:false},
+    {n:'本项目 MAS',v:[9.2,9.5,8.5,30],c:'#fde047',hot:true}
+  ];
+  const axis3d=(name,col)=>({name,nameTextStyle:{color:col,fontSize:13},type:'value',min:0,max:10,
+    axisLabel:{color:T.axis,fontSize:11},axisLine:{lineStyle:{color:T.vmBorder}},
+    splitLine:{lineStyle:{color:T.split}}});
+  return {backgroundColor:'transparent',
+    tooltip:{backgroundColor:T.tipBg,borderColor:T.gold,textStyle:{color:T.tipTxt,fontFamily:'Noto Sans SC'},
+      formatter:p=>'<b style="color:'+p.color+'">'+p.data.name+'</b><br/>智能化 '+p.value[0]+' · 校园垂直 '+p.value[1]+' · 交易保障 '+p.value[2]},
+    xAxis3D:axis3d('智能化',T.teal),yAxis3D:axis3d('校园垂直',T.pink),zAxis3D:axis3d('交易保障',T.indigo),
+    grid3D:{viewControl:{alpha:22,beta:34,autoRotate:false,distance:192},
+      light:{main:{intensity:1.5,shadow:true},ambient:{intensity:.55}},
+      environment:'auto',postEffect:{enable:false},axisPointer:{lineStyle:{color:T.gold}}},
+    series:[{type:'scatter3D',
+      data:pts.map(d=>({value:d.v,name:d.n,
+        itemStyle:{color:d.c,opacity:.94,borderColor:d.hot?'#fff':'rgba(255,255,255,.5)',borderWidth:d.hot?2:1},
+        label:d.hot?{color:'#fde047',fontWeight:800}:{}})),
+      symbolSize:d=>d[3]*2.1,
+      label:{show:true,formatter:p=>p.data.name,color:theme==='light'?'#16233c':'#dbe7fa',fontSize:13.5,fontFamily:'Noto Sans SC',
+        backgroundColor:theme==='light'?'rgba(255,255,255,.9)':'rgba(8,15,30,.78)',padding:[4,10],borderRadius:6,
+        borderColor:T.vmBorder,borderWidth:1},
+      emphasis:{label:{color:T.gold},itemStyle:{opacity:1}}}]
+  };
+};
+
+/* ---------- P4-B: 热力矩阵 ---------- */
+chartFns.heat=()=>{
+  const T=CT();
+  const dims=['校园场景适配','交易信任担保','智能议价撮合','纠纷仲裁处置','内容安全审核','隐私信息保护','AI 自主决策','校内面交履约','决策可解释性','实验可复现性'];
+  const players=['闲鱼','转转','爱回收','多抓鱼','校园墙/群','本项目'];
+  const m=[
+    [3,2,1,1,5,5],[3,5,5,5,1,4],[2,3,1,1,1,5],[3,4,4,4,1,5],[4,4,4,5,1,5],
+    [2,4,4,4,1,5],[3,3,3,3,1,5],[2,2,1,1,5,5],[2,3,3,2,1,5],[1,1,1,1,1,5]
+  ];
+  const data=[];
+  m.forEach((row,x)=>row.forEach((v,y)=>data.push([y,x,v])));
+  return {backgroundColor:'transparent',
+    tooltip:{backgroundColor:T.tipBg,borderColor:T.gold,textStyle:{color:T.tipTxt,fontFamily:'Noto Sans SC'},
+      formatter:p=>dims[p.value[1]]+' · '+players[p.value[0]]+'<br/>能力评级 <b>'+'★'.repeat(p.value[2])+'</b>'},
+    grid:{left:8,right:14,top:34,bottom:58,containLabel:true},
+    xAxis:{type:'category',data:players,position:'top',splitArea:{show:true},
+      axisLabel:{color:T.cat,fontSize:13,fontWeight:600,fontFamily:'Noto Sans SC',interval:0,
+        formatter:v=>v==='本项目'?'{g|★ '+v+'}':v,
+        rich:{g:{color:'#06101f',backgroundColor:'#fbbf24',borderRadius:5,padding:[4,9],fontSize:13,fontWeight:800}}},
+      axisLine:{show:false},axisTick:{show:false}},
+    yAxis:{type:'category',data:dims,inverse:true,splitArea:{show:true},
+      axisLabel:{color:theme==='light'?'#51617c':'#b7c7e2',fontSize:12.5,fontFamily:'Noto Sans SC'},
+      axisLine:{show:false},axisTick:{show:false}},
+    visualMap:{min:1,max:5,calculable:false,orient:'horizontal',left:'center',bottom:4,itemWidth:13,itemHeight:120,
+      text:['5 完备','1 缺失'],textStyle:{color:T.axis,fontSize:11.5,fontFamily:'Noto Sans SC'},
+      inRange:{color:['#7f1d1d','#b45309','#a16207','#0d9488','#5eead4']}},
+    series:[{type:'heatmap',data,
+      itemStyle:{borderColor:theme==='light'?'#fff':'rgba(5,9,18,.85)',borderWidth:4,borderRadius:8},
+      label:{show:true,color:'#06101f',fontFamily:'Sora',fontSize:16,fontWeight:800,
+        formatter:p=>p.value[2]===5?'★':'·'},
+      emphasis:{itemStyle:{shadowBlur:22,shadowColor:'rgba(251,191,36,.65)'}},
+      animationDelay:i=>i*14}]
+  };
+};
+function buildHeatFallback(){
+  const el=document.getElementById('heat-fb');if(!el||el.dataset.done)return;el.dataset.done=1;
+  const dims=['校园场景适配','交易信任担保','智能议价撮合','纠纷仲裁处置','内容安全审核','隐私信息保护','AI 自主决策','校内面交履约','决策可解释性','实验可复现性'];
+  const m=[[3,2,1,1,5,5],[3,5,5,5,1,4],[2,3,1,1,1,5],[3,4,4,4,1,5],[4,4,4,5,1,5],[2,4,4,4,1,5],[3,3,3,3,1,5],[2,2,1,1,5,5],[2,3,3,2,1,5],[1,1,1,1,1,5]];
+  el.innerHTML=dims.map((d,i)=>'<div class="fb-row"><span>'+d+'</span><b>'+m[i].join(' · ')+'</b></div>').join('');
+}
+
+/* ---------- P4-C: 六维雷达 ---------- */
+chartFns.radar=()=>{
+  const T=CT();
+  const dims=['校园场景适配','交易信任担保','智能议价撮合','纠纷仲裁处置','AI 自主决策','隐私信息保护'];
+  const mk=(name,color,val,fill)=>({name,value:val,
+    lineStyle:{color,width:2.5,shadowBlur:theme==='light'?6:12,shadowColor:color},
+    itemStyle:{color,borderColor:'#fff',borderWidth:1},
+    areaStyle:{color:{type:'radial',x:.5,y:.5,r:.8,colorStops:[{offset:0,color:fill},{offset:1,color}]},opacity:.24},
+    symbolSize:6});
+  return {backgroundColor:'transparent',
+    tooltip:{backgroundColor:T.tipBg,borderColor:T.teal,textStyle:{color:T.tipTxt,fontFamily:'Noto Sans SC'}},
+    legend:{bottom:4,icon:'roundRect',itemWidth:13,itemHeight:9,itemGap:22,
+      textStyle:{color:T.legend,fontSize:13,fontFamily:'Noto Sans SC'}},
+    radar:{indicator:dims.map(d=>({name:d,max:5,min:0})),center:['50%','48%'],radius:'63%',splitNumber:5,
+      axisName:{color:T.cat,fontSize:13.5,fontFamily:'Noto Sans SC',fontWeight:600,
+        backgroundColor:theme==='light'?'rgba(255,255,255,.7)':'rgba(8,15,30,.55)',borderRadius:6,padding:[4,10],
+        borderColor:T.vmBorder,borderWidth:1},
+      splitLine:{lineStyle:{color:T.split}},
+      splitArea:{areaStyle:{color:theme==='light'?['rgba(13,148,136,.03)','rgba(79,70,229,.035)']:['rgba(94,234,212,.025)','rgba(129,140,248,.03)']}},
+      axisLine:{lineStyle:{color:T.vmBorder}}},
+    series:[{type:'radar',animationDuration:1200,animationEasing:'cubicOut',
+      data:[
+        mk('本项目 MAS','#fbbf24',[5,4,5,5,5,5],'rgba(251,191,36,.05)'),
+        mk('闲鱼',T.teal,[3,3,2,3,3,2],'rgba(94,234,212,.05)'),
+        mk('转转',T.indigo,[2,5,3,4,3,4],'rgba(129,140,248,.05)'),
+        mk('校园墙/二手群',T.pink,[5,2,1,1,1,1],'rgba(244,114,182,.05)')
+      ]}]
+  };
+};
+
+/* ---------- P5: 力导向 Agent 网络 ---------- */
+chartFns.graph=()=>{
+  const T=CT();
+  const palette=[T.teal,T.indigo,T.pink];
+  const nodes=[
+    {id:'c',name:'协调管理',symbolSize:62,category:0,
+      itemStyle:{color:{type:'radial',x:.4,y:.3,r:1,colorStops:[{offset:0,color:'#fde68a'},{offset:1,color:'#d97706'}]},
+        shadowBlur:28,shadowColor:'rgba(217,119,6,.6)'},
+      label:{fontSize:15,fontWeight:800,color:'#1a1206'}},
+    ...[['用户代理',0],['商品管理',1],['内容审核',2],['搜索推荐',0],['议价谈判',1],['交易履约',2],['信用评价',0],['纠纷仲裁',1]]
+      .map(([n,k],i)=>({id:'e'+i,name:n,symbolSize:44,category:1,
+        itemStyle:{color:palette[[0,1,2,0,1,2,0,1][i]],shadowBlur:16,
+          shadowColor:palette[[0,1,2,0,1,2,0,1][i]]+(theme==='light'?'66':'88'),
+          borderColor:'rgba(255,255,255,.25)',borderWidth:1}}))
+  ];
+  const links=[];
+  for(let i=0;i<8;i++)links.push({source:'c',target:'e'+i});
+  [[0,3],[1,2],[0,4],[4,5],[5,7],[6,2],[6,7],[3,1],[4,6]].forEach(([a,b])=>
+    links.push({source:'e'+a,target:'e'+b,lineStyle:{color:'rgba(148,163,184,.4)',width:1,curveness:.12,type:'dashed'}}));
+  return {backgroundColor:'transparent',
+    tooltip:{backgroundColor:T.tipBg,borderColor:T.teal,textStyle:{color:T.tipTxt,fontFamily:'Noto Sans SC'},
+      formatter:p=>p.dataType==='node'?p.name+' Agent':''},
+    series:[{type:'graph',layout:'force',roaming:true,draggable:true,
+      categories:[{name:'协调者'},{name:'专家 Agent'}],data:nodes,links,center:['50%','52%'],
+      force:{repulsion:520,edgeLength:[90,170],gravity:.12,friction:.18},
+      label:{show:true,position:'bottom',color:T.cat,fontSize:13.5,fontFamily:'Noto Sans SC',formatter:p=>p.data.name},
+      lineStyle:{color:T.indigo,width:1.6,opacity:.8},
+      emphasis:{focus:'adjacency',lineStyle:{width:3,color:T.teal},label:{color:T.teal}},
+      edgeSymbol:['none','arrow'],edgeSymbolSize:7,
+      animationDuration:1600,animationEasingUpdate:'quinticInOut'}]
+  };
+};
+
+/* ---------- P4 Tab 切换 ---------- */
+let radarInited=false;
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+    document.querySelectorAll('.tab-pane').forEach(pn=>pn.classList.remove('on'));
+    const pane=document.getElementById('pane-'+btn.dataset.tab);pane.classList.add('on');
+    if(btn.dataset.tab==='radar'&&window.__chartsReady){
+      setTimeout(()=>{
+        if(!radarInited){initChart('chart-radar','radar');radarInited=true;}
+        else{try{chartInst['chart-radar'].resize()}catch(e){}}
+      },80);
+    }
+  });
+});
+
+/* ============================================================
+   8) 启动
+   ============================================================ */
+(async function boot(){
+  const p5ok=await loadLibs(['p5@1.9.4/lib/p5.min.js']);
+  if(p5ok&&typeof p5!=='undefined'){
+    const inst=new p5(SKETCH);
+    window.__artApi={
+      setMode:m=>{if(inst&&inst.setMode)inst.setMode(m);},
+      setTheme:t=>{if(inst&&inst.setTheme)inst.setTheme(t);}
+    };
+  }else{
+    document.getElementById('star-host').style.background=
+      'radial-gradient(circle at 50% 46%,rgba(129,140,248,.12),transparent 55%)';
+  }
+  const ecOk=await loadLibs(['echarts@5.5.0/dist/echarts.min.js','echarts-gl@2.0.9/dist/echarts-gl.min.js']);
+  if(ecOk&&typeof echarts!=='undefined'){
+    window.__chartsReady=true;
+    document.querySelectorAll('.glass.no-lib').forEach(g=>g.classList.remove('no-lib'));
+    scheduleCharts(cur);
+  }else{
+    document.querySelectorAll('.glass').forEach(g=>g.classList.add('no-lib'));
+    buildHeatFallback();
+  }
+})();
+setTimeout(()=>{if(!window.__chartsReady){document.querySelectorAll('.glass').forEach(g=>g.classList.add('no-lib'));buildHeatFallback();}},14000);
+</script>
+</body>
+</html>

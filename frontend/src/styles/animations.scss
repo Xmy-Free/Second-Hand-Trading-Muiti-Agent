@@ -1,0 +1,264 @@
+// =============================================================
+// 全局动效：关键帧 + 动画工具类 + 路由切换过渡
+// =============================================================
+
+@use 'tokens' as *;
+
+// ---------- 关键帧 ----------
+
+// 淡入上移
+@keyframes app-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 纯淡入
+@keyframes app-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// 缩放进场（弹层 / 卡片）
+@keyframes app-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+// 状态灯呼吸
+@keyframes app-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 currentColor;
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 0 6px transparent;
+    opacity: 0.72;
+  }
+}
+
+// 状态点外环波纹（在线指示）
+@keyframes app-pulse-ring {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+  70% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+// 消息滑入（议价室 / 通知流）
+@keyframes app-message-in {
+  from {
+    opacity: 0;
+    transform: translateX(-18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+@keyframes app-message-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+// 连线流光（Agent 拓扑 / 大屏）
+@keyframes app-flow-line {
+  0% {
+    background-position: 0% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+// 骨架屏微光扫过
+@keyframes app-shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+// 渐变流动（品牌字 / 主按钮）
+@keyframes app-gradient-pan {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+// 装饰光斑漂浮
+@keyframes app-float-slow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(28px, -32px, 0) scale(1.08);
+  }
+}
+@keyframes app-float-slower {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-36px, 24px, 0) scale(1.12);
+  }
+}
+
+// 表单错误抖动
+@keyframes app-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-7px);
+  }
+  40%,
+  80% {
+    transform: translateX(7px);
+  }
+}
+
+// 旋转
+@keyframes app-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 霓虹闪烁（深色告警）
+@keyframes app-neon-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+// ---------- 动画工具类 ----------
+.anim-fade-in-up {
+  animation: app-fade-in-up $duration-page $ease-decelerate both;
+}
+.anim-fade-in {
+  animation: app-fade-in $duration-slow $ease-standard both;
+}
+.anim-scale-in {
+  animation: app-scale-in $duration-slow $ease-decelerate both;
+}
+.anim-message-in {
+  animation: app-message-in $duration-slow $ease-decelerate both;
+}
+.anim-message-in-right {
+  animation: app-message-in-right $duration-slow $ease-decelerate both;
+}
+.anim-shake {
+  animation: app-shake 420ms $ease-standard;
+}
+.anim-spin {
+  animation: app-spin 1s linear infinite;
+}
+.anim-float-slow {
+  animation: app-float-slow 14s ease-in-out infinite;
+}
+.anim-float-slower {
+  animation: app-float-slower 18s ease-in-out infinite;
+}
+
+// 逐项延迟（与 .anim-fade-in-up 搭配）
+.stagger > * {
+  opacity: 0;
+  animation: app-fade-in-up $duration-page $ease-decelerate forwards;
+  @for $i from 1 through 12 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 60}ms;
+    }
+  }
+}
+
+// ---------- 路由页面切换过渡 ----------
+.page-fade-enter-active {
+  transition:
+    opacity $duration-slow $ease-decelerate,
+    transform $duration-slow $ease-decelerate;
+}
+.page-fade-leave-active {
+  transition:
+    opacity $duration-fast $ease-accelerate,
+    transform $duration-fast $ease-accelerate;
+}
+.page-fade-enter-from {
+  opacity: 0;
+  transform: translateY(14px);
+}
+.page-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+// ---------- 表单 / 弹层过渡 ----------
+.pop-enter-active {
+  transition: all $duration-slow $ease-decelerate;
+}
+.pop-leave-active {
+  transition: all $duration-fast $ease-accelerate;
+}
+.pop-enter-from,
+.pop-leave-to {
+  opacity: 0;
+  transform: scale(0.96) translateY(8px);
+}
+
+// 抽屉 / 折叠
+.collapse-enter-active,
+.collapse-leave-active {
+  transition: all $duration-slow $ease-standard;
+  overflow: hidden;
+}
+.collapse-enter-from,
+.collapse-leave-to {
+  opacity: 0;
+  max-height: 0;
+}

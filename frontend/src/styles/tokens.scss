@@ -1,0 +1,179 @@
+// =============================================================
+// 设计 Token · 校园二手交易 Multi-Agent 平台
+// 靛蓝 → 青蓝 品牌渐变体系 / 双主题（浅色业务 + 深色指挥中心）
+// 仅输出 SCSS 变量与 mixin，不产生 CSS
+// =============================================================
+
+// ---------- 品牌色：靛蓝 Indigo 阶层 ----------
+$brand-50: #eef2ff;
+$brand-100: #e0e7ff;
+$brand-200: #c7d2fe;
+$brand-300: #a5b4fc;
+$brand-400: #818cf8;
+$brand-500: #6366f1; // 主色
+$brand-600: #4f46e5;
+$brand-700: #4338ca;
+$brand-800: #3730a3;
+$brand-900: #312e81;
+
+// ---------- 辅助色：青蓝 Cyan ----------
+$accent-50: #ecfeff;
+$accent-100: #cffafe;
+$accent-200: #a5f3fc;
+$accent-300: #67e8f9;
+$accent-400: #22d3ee; // 渐变终点
+$accent-500: #06b6d4;
+$accent-600: #0891b2;
+$accent-700: #0e7490;
+
+// ---------- 语义色 ----------
+$success-50: #ecfdf5;
+$success-100: #d1fae5;
+$success-400: #34d399;
+$success-500: #10b981;
+$success-600: #059669;
+$success-700: #047857;
+
+$warning-50: #fffbeb;
+$warning-100: #fef3c7;
+$warning-400: #fbbf24;
+$warning-500: #f59e0b;
+$warning-600: #d97706;
+$warning-700: #b45309;
+
+$danger-50: #fef2f2;
+$danger-100: #fee2e2;
+$danger-400: #fb7185;
+$danger-500: #ef4444;
+$danger-600: #dc2626;
+$danger-700: #b91c1c;
+
+$info-50: #f0f9ff;
+$info-100: #e0f2fe;
+$info-400: #38bdf8;
+$info-500: #0ea5e9;
+$info-600: #0284c7;
+$info-700: #0369a1;
+
+// 品牌主渐变
+$gradient-brand: linear-gradient(135deg, #6366f1 0%, #22d3ee 100%);
+$gradient-brand-soft: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(34, 211, 238, 0.12) 100%);
+$gradient-brand-deep: linear-gradient(135deg, #4f46e5 0%, #0891b2 100%);
+
+// ---------- 中性色：Slate 灰阶层级 ----------
+$neutral-0: #ffffff;
+$neutral-50: #f8fafc;
+$neutral-100: #f1f5f9;
+$neutral-200: #e2e8f0;
+$neutral-300: #cbd5e1;
+$neutral-400: #94a3b8;
+$neutral-500: #64748b;
+$neutral-600: #475569;
+$neutral-700: #334155;
+$neutral-800: #1e293b;
+$neutral-900: #0f172a;
+$neutral-950: #020617;
+
+// ---------- 深色 Mission Control 指挥中心 ----------
+$console-bg: #0b1020; // 主背景
+$console-bg-deep: #070b16; // 最深底
+$console-surface: #111834; // 面板
+$console-surface-2: #161e3d; // 抬升面板
+$console-border: rgba(148, 163, 184, 0.14);
+$console-border-strong: rgba(129, 140, 248, 0.28);
+$console-glass: rgba(255, 255, 255, 0.04);
+$console-neon-indigo: #818cf8;
+$console-neon-cyan: #22d3ee;
+$console-neon-green: #34d399;
+$console-neon-amber: #fbbf24;
+$console-neon-red: #fb7185;
+
+// ---------- 圆角阶梯 ----------
+$radius-xs: 6px;
+$radius-sm: 8px;
+$radius-base: 10px;
+$radius-md: 12px;
+$radius-lg: 16px;
+$radius-xl: 20px;
+$radius-2xl: 24px;
+$radius-pill: 999px;
+
+// ---------- 间距阶梯（4px 基准网格） ----------
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+$space-8: 32px;
+$space-10: 40px;
+$space-12: 48px;
+$space-16: 64px;
+
+// ---------- 多层阴影 ----------
+$shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+$shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+$shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
+$shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12), 0 4px 8px rgba(15, 23, 42, 0.05);
+$shadow-xl: 0 24px 64px rgba(15, 23, 42, 0.18), 0 8px 16px rgba(15, 23, 42, 0.08);
+// 品牌发光
+$shadow-glow-indigo: 0 8px 28px rgba(99, 102, 241, 0.38);
+$shadow-glow-cyan: 0 8px 28px rgba(34, 211, 238, 0.32);
+$shadow-glow-brand: 0 10px 32px rgba(99, 102, 241, 0.35), 0 2px 8px rgba(34, 211, 238, 0.22);
+// 深色面板阴影 / 霓虹辉光
+$shadow-console-panel: 0 12px 40px rgba(2, 6, 23, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+$shadow-console-glow-indigo: 0 0 0 1px rgba(129, 140, 248, 0.35), 0 0 24px rgba(99, 102, 241, 0.35);
+$shadow-console-glow-cyan: 0 0 0 1px rgba(34, 211, 238, 0.35), 0 0 24px rgba(34, 211, 238, 0.28);
+$shadow-console-glow-green: 0 0 16px rgba(52, 211, 153, 0.4);
+$shadow-console-glow-red: 0 0 16px rgba(251, 113, 133, 0.4);
+
+// ---------- 字体 ----------
+$font-family:
+  'Inter', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+  'Helvetica Neue', Helvetica, Arial, system-ui, -apple-system, sans-serif;
+$font-family-mono:
+  'JetBrains Mono', 'SFMono-Regular', ui-monospace, Menlo, Consolas,
+  'Liberation Mono', monospace;
+
+// 字体阶
+$font-size-xs: 12px;
+$font-size-sm: 13px;
+$font-size-base: 14px;
+$font-size-md: 15px;
+$font-size-lg: 16px;
+$font-size-xl: 18px;
+$font-size-2xl: 20px;
+$font-size-3xl: 24px;
+$font-size-4xl: 30px;
+$font-size-5xl: 38px;
+
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-extrabold: 800;
+
+$line-height-tight: 1.25;
+$line-height-base: 1.5;
+$line-height-relaxed: 1.7;
+
+// ---------- 动效 ----------
+$duration-instant: 100ms;
+$duration-fast: 160ms;
+$duration-base: 220ms;
+$duration-slow: 320ms;
+$duration-slower: 480ms;
+$duration-page: 360ms;
+
+$ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+$ease-decelerate: cubic-bezier(0.22, 1, 0.36, 1); // 强调减速，进场
+$ease-accelerate: cubic-bezier(0.6, 0, 0.4, 1); // 加速，离场
+$ease-spring: cubic-bezier(0.34, 1.4, 0.5, 1); // 微回弹
+$ease-glow: cubic-bezier(0.25, 0.8, 0.3, 1);
+
+// ---------- 布局 ----------
+$layout-header-height: 64px;
+$layout-content-max: 1280px;
+$z-header: 1000;
+$z-dropdown: 2000;
+$z-modal: 3000;

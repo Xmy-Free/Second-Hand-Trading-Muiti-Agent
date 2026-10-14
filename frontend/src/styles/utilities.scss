@@ -1,0 +1,342 @@
+// =============================================================
+// 通用类：页面容器 / 玻璃卡片 / 渐变文字与按钮 / 状态灯 /
+// 骨架屏 / 流光连线 / 滚动条美化 / Element Plus 组件抛光
+// =============================================================
+
+@use 'tokens' as *;
+
+// ---------- 全局背景 ----------
+body {
+  background-image: var(--app-bg-page-gradient);
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+// ---------- 页面容器 ----------
+.page-container {
+  width: 100%;
+  max-width: $layout-content-max;
+  margin: 0 auto;
+  padding: $space-6 $space-6 $space-12;
+}
+.page-container--tight {
+  max-width: 1080px;
+}
+
+// ---------- 玻璃拟态卡片 ----------
+.glass-card {
+  position: relative;
+  background: var(--app-card-bg);
+  border: 1px solid var(--app-card-border);
+  border-radius: $radius-xl;
+  box-shadow: var(--app-shadow-card);
+  backdrop-filter: blur(var(--app-glass-blur)) saturate(1.4);
+  -webkit-backdrop-filter: blur(var(--app-glass-blur)) saturate(1.4);
+  transition:
+    transform $duration-base $ease-decelerate,
+    box-shadow $duration-base $ease-decelerate,
+    border-color $duration-base $ease-standard;
+}
+.glass-card--hover {
+  cursor: pointer;
+  &:hover {
+    transform: translateY(-4px);
+    border-color: var(--app-card-border-strong);
+    box-shadow: var(--app-shadow-card-hover);
+  }
+}
+.glass-card--pad {
+  padding: $space-6;
+}
+
+// 玻璃顶栏 / 面板
+.glass-bar {
+  background: var(--app-header-bg);
+  border-bottom: 1px solid var(--app-card-border);
+  backdrop-filter: blur(18px) saturate(1.5);
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+}
+
+// ---------- 渐变文字 ----------
+.gradient-text {
+  background: var(--app-gradient);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.gradient-text--animated {
+  animation: app-gradient-pan 6s ease-in-out infinite;
+}
+
+// ---------- 渐变主按钮（独立于 el-button 也可用） ----------
+.btn-gradient {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  height: 40px;
+  padding: 0 $space-6;
+  color: #fff;
+  font-weight: $font-weight-semibold;
+  white-space: nowrap;
+  background: var(--app-gradient);
+  background-size: 180% 180%;
+  border: none;
+  border-radius: $radius-base;
+  box-shadow: $shadow-glow-brand;
+  overflow: hidden;
+  transition:
+    transform $duration-fast $ease-spring,
+    box-shadow $duration-base $ease-standard,
+    background-position $duration-slow $ease-standard;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform $duration-slower $ease-standard;
+  }
+  &:hover {
+    transform: translateY(-2px);
+    background-position: 100% 50%;
+    box-shadow: 0 14px 36px rgba(99, 102, 241, 0.42), 0 4px 10px rgba(34, 211, 238, 0.25);
+    &::after {
+      transform: translateX(120%);
+    }
+  }
+  &:active {
+    transform: translateY(0) scale(0.98);
+  }
+  &:disabled,
+  &.is-loading {
+    opacity: 0.62;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+// ---------- 状态灯 ----------
+.status-dot {
+  position: relative;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+.status-dot--live {
+  color: var(--app-success);
+  animation: app-pulse 2s ease-in-out infinite;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: currentColor;
+    animation: app-pulse-ring 2s $ease-standard infinite;
+  }
+}
+.status-dot--warning {
+  color: var(--app-warning);
+  animation: app-neon-blink 1.6s ease-in-out infinite;
+}
+.status-dot--danger {
+  color: var(--app-danger);
+  animation: app-neon-blink 1.2s ease-in-out infinite;
+}
+
+// ---------- 骨架屏 ----------
+.skeleton {
+  border-radius: $radius-sm;
+  background-image: linear-gradient(
+    90deg,
+    var(--el-fill-color) 0%,
+    var(--el-fill-color-dark) 40%,
+    var(--el-fill-color) 80%
+  );
+  background-size: 800px 100%;
+  animation: app-shimmer 1.4s linear infinite;
+}
+
+// ---------- 流光连线（Agent 拓扑） ----------
+.flow-line {
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--app-brand), var(--app-accent), transparent);
+  background-size: 200% 100%;
+  animation: app-flow-line 2.4s linear infinite;
+}
+
+// ---------- 滚动条美化 ----------
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 132, 180, 0.35) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(120, 132, 180, 0.32);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  &:hover {
+    background: rgba(120, 132, 180, 0.55);
+    background-clip: content-box;
+  }
+}
+
+// =============================================================
+// Element Plus 组件级抛光
+// =============================================================
+
+// 主按钮 → 品牌渐变
+.el-button--primary {
+  &:not(.is-text):not(.is-link) {
+    background: var(--app-gradient);
+    background-size: 160% 160%;
+    border-color: transparent;
+    box-shadow: 0 6px 18px rgba(99, 102, 241, 0.3);
+    transition:
+      transform $duration-fast $ease-spring,
+      box-shadow $duration-base $ease-standard,
+      background-position $duration-slow $ease-standard,
+      opacity $duration-base $ease-standard;
+
+    &:hover,
+    &:focus {
+      background-position: 100% 50%;
+      border-color: transparent;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 26px rgba(99, 102, 241, 0.4);
+    }
+    &:active {
+      transform: translateY(0) scale(0.98);
+    }
+    &.is-disabled,
+    &.is-disabled:hover,
+    &.is-disabled:focus {
+      background: var(--el-disabled-bg-color);
+      background-image: none;
+      color: var(--el-disabled-text-color);
+      border-color: transparent;
+      box-shadow: none;
+      transform: none;
+    }
+  }
+}
+
+// 次级按钮：悬停品牌描边
+.el-button--default {
+  font-weight: $font-weight-medium;
+  transition: all $duration-base $ease-standard;
+  &:hover,
+  &:focus {
+    color: var(--app-brand);
+    border-color: var(--app-brand);
+    background: var(--app-brand-soft);
+  }
+}
+
+// 卡片
+.el-card {
+  border-radius: $radius-lg;
+  border-color: var(--app-card-border);
+  box-shadow: var(--app-shadow-card);
+  transition:
+    box-shadow $duration-base $ease-standard,
+    border-color $duration-base $ease-standard,
+    transform $duration-base $ease-decelerate;
+  &.is-never-shadow {
+    box-shadow: none;
+  }
+}
+.el-card__header {
+  padding: $space-4 $space-6;
+  font-weight: $font-weight-semibold;
+  border-bottom-color: var(--app-divider);
+}
+
+// 输入框：聚焦品牌微光
+.el-input__wrapper {
+  border-radius: $radius-base;
+  transition: box-shadow $duration-base $ease-standard;
+  &.is-focus,
+  &:hover {
+    box-shadow: 0 0 0 1px var(--app-brand) inset, 0 0 0 3px rgba(99, 102, 241, 0.12);
+  }
+}
+.el-select__wrapper {
+  border-radius: $radius-base;
+  &.is-focused {
+    box-shadow: 0 0 0 1px var(--app-brand) inset, 0 0 0 3px rgba(99, 102, 241, 0.12) !important;
+  }
+}
+.el-textarea__inner {
+  border-radius: $radius-base;
+  transition: box-shadow $duration-base $ease-standard;
+  &:focus {
+    box-shadow: 0 0 0 1px var(--app-brand) inset, 0 0 0 3px rgba(99, 102, 241, 0.12);
+  }
+}
+
+// 标签：圆润中字重
+.el-tag {
+  border-radius: $radius-pill;
+  font-weight: $font-weight-medium;
+  padding-inline: 10px;
+}
+
+// 弹层圆角与阴影
+.el-dialog {
+  border-radius: $radius-xl;
+  overflow: hidden;
+  box-shadow: var(--app-shadow-pop);
+}
+.el-message {
+  border-radius: $radius-md;
+  box-shadow: var(--app-shadow-card);
+  backdrop-filter: blur(12px);
+}
+.el-dropdown-menu,
+.el-select-dropdown,
+.el-popover.el-popper {
+  border-radius: $radius-md;
+  border-color: var(--app-card-border) !important;
+  box-shadow: var(--app-shadow-pop) !important;
+  overflow: hidden;
+}
+
+// 菜单：去除生硬默认下划线
+.el-menu {
+  border-right: none;
+  border-bottom: none;
+  background: transparent;
+}
+
+// 表格：轻化分隔线
+.el-table {
+  --el-table-border-color: var(--app-divider);
+  background: transparent;
+  th.el-table__cell {
+    background: var(--el-fill-color-light) !important;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+// 进度条 / 开关使用品牌色
+.el-switch.is-checked .el-switch__core {
+  border-color: var(--app-brand);
+  background-color: var(--app-brand);
+}
