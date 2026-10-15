@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WBS 工作分解结构（W1–W8 · 35 项工作包）· 校园二手交易平台 Multi-Agent 系统</title>
+<style>
+/* ===================== 双主题 Token ===================== */
+:root{
+  --bg:#060b16; --bg2:#0a1224;
+  --hero-a:rgba(94,234,212,.15); --hero-b:rgba(129,140,248,.18); --hero-c:rgba(244,114,182,.10);
+  --hero-l1:#0b1428; --hero-l2:#060b16;
+  --panel:rgba(15,24,44,.80); --panel-solid:#0d1628; --panel-hi:rgba(22,34,60,.92);
+  --line:rgba(148,163,184,.17); --line-strong:rgba(148,163,184,.34);
+  --txt:#e9f0fb; --mut:#8ba0c2; --sub-b:#d4def0;
+  --chip-txt:#c2d0e6; --chip-bg:rgba(12,20,38,.66);
+  --pkg-bg:rgba(255,255,255,.035); --pkg-bg-p1:rgba(251,191,36,.07);
+  --accent:#5eead4; --accent2:#818cf8; --pink:#f472b6; --gold:#fbbf24;
+  --nav-bg:rgba(10,17,33,.72); --btn-bg:rgba(16,26,48,.85); --btn-hover:rgba(94,234,212,.16);
+  --shadow:rgba(0,0,0,.82); --grid-glow:rgba(94,234,212,.06);
+  --rail:rgba(148,163,184,.30);
+  --ph1:#2dd4bf; --ph2:#38bdf8; --ph3:#818cf8; --ph4:#a78bfa;
+  --ph5:#fbbf24; --ph6:#fb923c; --ph7:#fb7185; --ph8:#f472b6;
+}
+[data-theme="light"]{
+  --bg:#edf2fa; --bg2:#e6edf8;
+  --hero-a:rgba(13,148,136,.13); --hero-b:rgba(79,70,229,.14); --hero-c:rgba(219,39,119,.08);
+  --hero-l1:#f7faff; --hero-l2:#e9f0fa;
+  --panel:rgba(255,255,255,.92); --panel-solid:#ffffff; --panel-hi:#ffffff;
+  --line:rgba(30,58,95,.15); --line-strong:rgba(30,58,95,.32);
+  --txt:#14223a; --mut:#5b6d8a; --sub-b:#29405f;
+  --chip-txt:#314563; --chip-bg:rgba(255,255,255,.82);
+  --pkg-bg:rgba(15,35,70,.035); --pkg-bg-p1:rgba(217,119,6,.06);
+  --accent:#0d9488; --accent2:#4f46e5; --pink:#db2777; --gold:#d97706;
+  --nav-bg:rgba(255,255,255,.78); --btn-bg:rgba(255,255,255,.9); --btn-hover:rgba(13,148,136,.12);
+  --shadow:rgba(35,65,110,.22); --grid-glow:rgba(13,148,136,.05);
+  --rail:rgba(71,101,140,.32);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--txt);
+  font-family:"Inter","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  transition:background .45s ease,color .45s;
+}
+body::before{content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(700px 380px at 88% -6%, var(--grid-glow), transparent 70%),
+    radial-gradient(600px 340px at -6% 30%, rgba(129,140,248,.07), transparent 70%);}
+::selection{background:rgba(94,234,212,.3)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(120,140,180,.35);border-radius:8px;border:2px solid var(--bg)}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ===================== 顶部导航 ===================== */
+.topnav{position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:12px 26px; background:transparent;
+  border-bottom:1px solid transparent; transition:padding .4s,background .4s,border-color .4s,box-shadow .4s}
+.topnav.scrolled{padding:9px 26px;background:var(--nav-bg);backdrop-filter:blur(16px) saturate(1.4);
+  border-bottom-color:var(--line);box-shadow:0 10px 30px -18px var(--shadow)}
+.scroll-progress{position:fixed;top:0;left:0;height:2.5px;width:0;z-index:101;
+  background:linear-gradient(90deg,var(--accent),var(--accent2),var(--pink));
+  box-shadow:0 0 10px rgba(94,234,212,.7);border-radius:0 2px 2px 0;transition:width .12s linear}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand .logo{width:34px;height:34px;border-radius:10px;flex:none;position:relative;
+  background:conic-gradient(from 210deg,#5eead4,#818cf8,#f472b6,#5eead4);
+  box-shadow:0 6px 18px -6px rgba(94,234,212,.7)}
+.brand .logo::after{content:"";position:absolute;inset:3px;border-radius:8px;background:var(--panel-solid)}
+.brand .logo::before{content:"";position:absolute;inset:0;z-index:2;border-radius:10px;
+  background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.55),transparent 45%)}
+.brand b{font-size:14px;letter-spacing:.02em;white-space:nowrap}
+.brand small{display:block;font-size:10.5px;color:var(--mut);font-weight:500;letter-spacing:.14em}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-range{font-size:12px;color:var(--mut);padding:7px 13px;border:1px solid var(--line);border-radius:999px;
+  background:var(--chip-bg);white-space:nowrap}
+.nav-range b{color:var(--accent);font-weight:700}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;
+  border:1px solid var(--line);background:var(--btn-bg);color:var(--txt);border-radius:999px;
+  cursor:pointer;font-size:15px;box-shadow:0 6px 20px -10px var(--shadow);transition:.3s}
+.icon-btn:hover{border-color:var(--accent);background:var(--btn-hover);transform:translateY(-1px)}
+
+/* ===================== Hero ===================== */
+.hero{position:relative;min-height:440px;display:flex;align-items:center;padding-top:56px;
+  background:
+    radial-gradient(1200px 620px at 80% -12%, var(--hero-a), transparent 60%),
+    radial-gradient(900px 520px at 6% 108%, var(--hero-b), transparent 62%),
+    radial-gradient(700px 400px at 50% 130%, var(--hero-c), transparent 70%),
+    linear-gradient(180deg,var(--hero-l1) 0%, var(--hero-l2) 100%);
+  border-bottom:1px solid var(--line);overflow:hidden}
+.hero::after{content:"";position:absolute;inset:0;opacity:.5;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:56px 56px;
+  mask-image:radial-gradient(ellipse 90% 80% at 50% 30%,#000 30%,transparent 75%);
+  -webkit-mask-image:radial-gradient(ellipse 90% 80% at 50% 30%,#000 30%,transparent 75%)}
+#particles{position:absolute;inset:0;width:100%;height:100%}
+.hero-inner{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:60px 32px 50px;width:100%}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11.5px;letter-spacing:.3em;
+  color:var(--accent);font-weight:700;margin-bottom:20px}
+.eyebrow::before{content:"";width:28px;height:1px;background:linear-gradient(90deg,transparent,var(--accent))}
+.eyebrow::after{content:"";width:44px;height:1px;background:linear-gradient(90deg,var(--accent),transparent)}
+h1{font-size:clamp(32px,4.6vw,54px);font-weight:800;line-height:1.12;letter-spacing:-.015em}
+h1 .grad{background:linear-gradient(92deg,#14b8a6 0%,#6366f1 42%,#ec4899 78%,#f59e0b 100%);
+  background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:hueShift 9s linear infinite}
+:root[data-theme="dark"] h1 .grad{background:linear-gradient(92deg,#5eead4,#818cf8 42%,#f472b6 78%,#fbbf24 100%);
+  background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
+@keyframes hueShift{to{background-position:220% 0}}
+.sub{margin-top:18px;color:var(--mut);font-size:15px;line-height:1.85;max-width:920px}
+.sub b{color:var(--sub-b);font-weight:600}
+.stats{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.stat{position:relative;border:1px solid var(--line);background:var(--chip-bg);backdrop-filter:blur(8px);
+  border-radius:14px;padding:13px 18px;min-width:128px;overflow:hidden;
+  transition:transform .35s,border-color .35s,box-shadow .35s}
+.stat::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:.7}
+.stat:hover{transform:translateY(-3px);border-color:var(--line-strong);
+  box-shadow:0 16px 36px -18px var(--shadow)}
+.stat .num{font-size:27px;font-weight:800;line-height:1;letter-spacing:-.02em;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.stat .num em{font-style:normal;font-size:12px;color:var(--mut);-webkit-text-fill-color:var(--mut);font-weight:600;margin-left:2px}
+.stat .lab{margin-top:6px;font-size:11px;color:var(--mut);letter-spacing:.04em}
+
+/* ===================== 通用区块 ===================== */
+section{position:relative;z-index:1;max-width:1440px;margin:0 auto;padding:64px 32px 20px}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:30px;flex-wrap:wrap}
+.sec-no{font-size:11px;font-weight:800;letter-spacing:.32em;color:var(--accent);margin-bottom:9px}
+h2{font-size:clamp(22px,2.6vw,30px);font-weight:800;letter-spacing:-.01em;line-height:1.2}
+.sec-desc{font-size:13px;color:var(--mut);line-height:1.8;max-width:720px;margin-top:9px}
+.sec-desc b{color:var(--sub-b)}
+.sec-tag{font-size:11.5px;color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:8px 15px;
+  background:var(--chip-bg);white-space:nowrap}
+.sec-tag b{color:var(--accent2)}
+
+/* ===================== WBS 树图 ===================== */
+.tree-wrap{position:relative;padding:8px 0 0}
+.root-node{position:relative;margin:0 auto;width:min(900px,92%);text-align:center;color:#fff;
+  border-radius:18px;padding:18px 34px;overflow:hidden;
+  background:linear-gradient(120deg,#0f766e 0%,#4338ca 52%,#be185d 100%);
+  box-shadow:0 24px 60px -22px rgba(67,56,202,.75)}
+.root-node::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(600px 160px at 20% -40%,rgba(255,255,255,.28),transparent 60%)}
+.root-node::after{content:"";position:absolute;inset:0;opacity:.25;
+  background-image:linear-gradient(rgba(255,255,255,.4) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.4) 1px,transparent 1px);
+  background-size:34px 34px;
+  mask-image:linear-gradient(180deg,#000,transparent);-webkit-mask-image:linear-gradient(180deg,#000,transparent)}
+.root-node .r-en{font-size:10px;letter-spacing:3px;opacity:.78;text-transform:uppercase;position:relative}
+.root-node .r-cn{font-size:clamp(17px,2vw,22px);font-weight:800;margin-top:5px;position:relative;letter-spacing:.02em}
+.root-node .r-meta{margin-top:7px;font-size:11.5px;opacity:.85;position:relative;letter-spacing:.05em}
+
+.trunk{width:2px;height:26px;margin:0 auto;background:linear-gradient(180deg,var(--accent),var(--rail))}
+.rail-line{position:relative;height:2px;width:87.5%;margin:0 auto;background:var(--rail);border-radius:2px}
+.rail-line::before{content:"";position:absolute;left:0;top:0;height:2px;width:40px;
+  background:linear-gradient(90deg,var(--accent),transparent);border-radius:2px}
+
+.phase-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:12px;margin-top:0}
+.phase{position:relative;display:flex;flex-direction:column}
+.phase .stem-v{width:2px;height:18px;margin:0 auto;background:var(--rail);flex:none}
+.pcard{position:relative;display:flex;flex-direction:column;height:100%;
+  background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden;
+  backdrop-filter:blur(10px);box-shadow:0 14px 34px -22px var(--shadow);
+  transition:transform .35s cubic-bezier(.2,.7,.3,1),border-color .35s,box-shadow .35s}
+.pcard:hover{transform:translateY(-7px);border-color:var(--line-strong);
+  box-shadow:0 30px 60px -24px var(--shadow)}
+.pcard::after{content:"";position:absolute;inset:0;border-radius:15px;pointer-events:none;
+  opacity:0;transition:opacity .35s;
+  background:radial-gradient(420px 180px at 50% 0%,var(--ph-glow),transparent 70%)}
+.pcard:hover::after{opacity:1}
+.phead{position:relative;padding:12px 12px 11px;color:#fff;overflow:hidden}
+.phead::before{content:"";position:absolute;inset:0;opacity:.22;
+  background:radial-gradient(160px 80px at 85% -30%,#fff,transparent 60%)}
+.phead .wk{position:relative;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.phead .wk b{font-size:18px;font-weight:800;letter-spacing:.01em}
+.phead .wk span{font-size:9.5px;font-weight:700;letter-spacing:.12em;opacity:.9;
+  background:rgba(255,255,255,.18);border-radius:6px;padding:2px 7px}
+.phead .nm{position:relative;font-size:13px;font-weight:800;margin-top:7px;line-height:1.3}
+.phead .dt{position:relative;font-size:9.5px;opacity:.82;margin-top:3px;letter-spacing:.04em}
+.phead .en{position:relative;display:block;font-size:8.5px;letter-spacing:2px;opacity:.7;margin-top:5px;
+  text-transform:uppercase;font-weight:600}
+.pkgs{position:relative;padding:10px 9px 8px;display:flex;flex-direction:column;gap:6px;flex:1}
+.pkg{font-size:10.5px;line-height:1.42;color:var(--chip-txt);
+  background:var(--pkg-bg);border:1px solid var(--line);border-left-width:3px;
+  border-radius:8px;padding:6px 8px}
+.pkg .code{display:inline-block;font-size:9px;font-weight:800;color:var(--ph);
+  background:color-mix(in srgb,var(--ph) 14%,transparent);border-radius:5px;padding:1px 5px;margin-right:5px;
+  letter-spacing:.02em}
+.pkg .t{display:block;font-size:8.5px;color:var(--mut);margin-top:3px;letter-spacing:.03em}
+.pkg.p1{background:var(--pkg-bg-p1)}
+.pkg.p1 .code{color:var(--gold);background:color-mix(in srgb,var(--gold) 15%,transparent)}
+.pdeliver{position:relative;margin:0 9px 10px;padding:7px 9px;border-radius:9px;
+  font-size:9.5px;line-height:1.45;color:var(--sub-b);
+  background:var(--chip-bg);border:1px dashed var(--line-strong)}
+.pdeliver b{color:var(--ph);font-weight:800;letter-spacing:.03em}
+
+/* 八期配色 */
+.ph1{--ph:var(--ph1);--ph-glow:rgba(45,212,191,.14)}
+.ph2{--ph:var(--ph2);--ph-glow:rgba(56,189,248,.14)}
+.ph3{--ph:var(--ph3);--ph-glow:rgba(129,140,248,.15)}
+.ph4{--ph:var(--ph4);--ph-glow:rgba(167,139,250,.15)}
+.ph5{--ph:var(--ph5);--ph-glow:rgba(251,191,36,.14)}
+.ph6{--ph:var(--ph6);--ph-glow:rgba(251,146,60,.14)}
+.ph7{--ph:var(--ph7);--ph-glow:rgba(251,113,133,.14)}
+.ph8{--ph:var(--ph8);--ph-glow:rgba(244,114,182,.14)}
+.hg1{background:linear-gradient(135deg,#0f766e,#14b8a6)}
+.hg2{background:linear-gradient(135deg,#0369a1,#38bdf8)}
+.hg3{background:linear-gradient(135deg,#4338ca,#818cf8)}
+.hg4{background:linear-gradient(135deg,#7c3aed,#a78bfa)}
+.hg5{background:linear-gradient(135deg,#b45309,#fbbf24)}
+.hg6{background:linear-gradient(135deg,#c2410c,#fb923c)}
+.hg7{background:linear-gradient(135deg,#be123c,#fb7185)}
+.hg8{background:linear-gradient(135deg,#be185d,#f472b6)}
+.bl1{border-left-color:var(--ph1)!important}.bl2{border-left-color:var(--ph2)!important}
+.bl3{border-left-color:var(--ph3)!important}.bl4{border-left-color:var(--ph4)!important}
+.bl5{border-left-color:var(--ph5)!important}.bl6{border-left-color:var(--ph6)!important}
+.bl7{border-left-color:var(--ph7)!important}.bl8{border-left-color:var(--ph8)!important}
+
+/* ===================== 里程碑带 ===================== */
+.miles{margin-top:34px;background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  backdrop-filter:blur(10px);box-shadow:0 14px 34px -22px var(--shadow);
+  padding:22px 26px 18px;overflow-x:auto}
+.miles-title{display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:800;
+  color:var(--accent);letter-spacing:.06em;margin-bottom:20px}
+.miles-track{position:relative;display:grid;grid-template-columns:repeat(8,1fr);gap:10px;min-width:880px}
+.miles-track::before{content:"";position:absolute;top:9px;left:6%;right:6%;height:2px;border-radius:2px;
+  background:linear-gradient(90deg,#14b8a6,#818cf8,#fbbf24,#f472b6);opacity:.55}
+.ms{position:relative;text-align:center;padding-top:4px}
+.ms .dia{width:18px;height:18px;margin:0 auto 9px;transform:rotate(45deg);border-radius:4px;
+  background:var(--panel-solid);border:2.5px solid var(--mc);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--mc) 16%,transparent);transition:transform .3s}
+.ms:hover .dia{transform:rotate(45deg) scale(1.22)}
+.ms .mcode{font-size:11.5px;font-weight:800;color:var(--sub-b)}
+.ms .mdate{font-size:9.5px;color:var(--mut);margin-top:2px;letter-spacing:.04em}
+.ms .mname{font-size:10px;color:var(--mut);margin-top:3px;line-height:1.4}
+.mc1{--mc:#2dd4bf}.mc2{--mc:#38bdf8}.mc3{--mc:#818cf8}.mc4{--mc:#a78bfa}
+.mc5{--mc:#fbbf24}.mc6{--mc:#fb923c}.mc7{--mc:#fb7185}.mc8{--mc:#f472b6}
+
+/* ===================== 交付物矩阵 ===================== */
+.del-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:14px}
+.dcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 20px 16px;
+  backdrop-filter:blur(10px);box-shadow:0 14px 34px -24px var(--shadow);
+  transition:transform .35s,border-color .35s,box-shadow .35s;position:relative;overflow:hidden}
+.dcard:hover{transform:translateY(-5px);border-color:var(--line-strong);box-shadow:0 26px 54px -26px var(--shadow)}
+.dcard .dtop{height:3px;border-radius:3px;margin:-20px -20px 16px;background:linear-gradient(90deg,var(--dc1),var(--dc2))}
+.dcard .dico{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-size:18px;margin-bottom:12px;background:color-mix(in srgb,var(--dc1) 15%,transparent);
+  border:1px solid color-mix(in srgb,var(--dc1) 32%,transparent)}
+.dcard h3{font-size:14.5px;font-weight:800;letter-spacing:.01em}
+.dcard .dsub{font-size:10px;color:var(--mut);letter-spacing:.14em;margin-top:3px;text-transform:uppercase}
+.dcard ul{list-style:none;margin-top:13px;display:flex;flex-direction:column;gap:9px}
+.dcard li{position:relative;padding-left:19px;font-size:12px;line-height:1.55;color:var(--chip-txt)}
+.dcard li::before{content:"";position:absolute;left:2px;top:7px;width:7px;height:7px;border-radius:2px;
+  background:linear-gradient(135deg,var(--dc1),var(--dc2));transform:rotate(45deg)}
+.dcard li b{color:var(--sub-b);font-weight:700}
+.dc1{--dc1:#2dd4bf;--dc2:#38bdf8}
+.dc2{--dc1:#818cf8;--dc2:#a78bfa}
+.dc3{--dc1:#fb7185;--dc2:#f472b6}
+.dc4{--dc1:#fbbf24;--dc2:#fb923c}
+.dc5{--dc1:#34d399;--dc2:#2dd4bf}
+
+/* ===================== AC 覆盖 ===================== */
+.ac-panel{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  backdrop-filter:blur(10px);padding:22px 24px;box-shadow:0 14px 34px -24px var(--shadow)}
+.ac-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:9px;margin-top:16px}
+.ac{display:flex;align-items:center;gap:9px;font-size:11.5px;color:var(--chip-txt);
+  border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:var(--pkg-bg);
+  transition:.3s}
+.ac:hover{border-color:var(--accent);transform:translateY(-2px)}
+.ac i{font-style:normal;font-weight:800;font-size:10px;color:#04121a;background:linear-gradient(135deg,#5eead4,#818cf8);
+  border-radius:6px;padding:2px 6px;flex:none;letter-spacing:.02em}
+:root[data-theme="light"] .ac i{color:#fff}
+
+/* ===================== 原则条 ===================== */
+.rule-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.rule{display:flex;gap:15px;background:var(--panel);border:1px solid var(--line);border-radius:15px;
+  padding:18px 20px;backdrop-filter:blur(10px)}
+.rule .rno{flex:none;width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:800;color:var(--accent);
+  border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);
+  background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.rule h3{font-size:13.5px;font-weight:800;margin-bottom:6px}
+.rule p{font-size:11.5px;line-height:1.7;color:var(--mut)}
+.rule p b{color:var(--sub-b)}
+.p0-dot{color:#fb7185!important}.p1-dot{color:var(--gold)!important}
+
+/* ===================== 页脚 ===================== */
+footer{position:relative;z-index:1;margin-top:60px;border-top:1px solid var(--line);
+  background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--accent2) 7%,transparent));
+  padding:30px 32px 36px}
+.foot-inner{max-width:1440px;margin:0 auto;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  font-size:11.5px;color:var(--mut);line-height:1.9}
+.foot-inner b{color:var(--sub-b)}
+.foot-links{display:flex;gap:16px;flex-wrap:wrap}
+.foot-links a{color:var(--mut);text-decoration:none;border-bottom:1px dashed var(--line-strong);
+  padding-bottom:1px;transition:.3s}
+.foot-links a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ===================== 入场动效 ===================== */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
+.pcard.reveal{transition-delay:var(--d,0s)}
+.ms.reveal{transition-delay:var(--d,0s)}
+
+/* ===================== 响应式 ===================== */
+@media (max-width:1180px){
+  .phase-grid{grid-template-columns:repeat(4,1fr);gap:14px}
+  .rail-line{display:none}
+  .phase .stem-v{display:none}
+  .trunk{display:none}
+}
+@media (max-width:680px){
+  .phase-grid{grid-template-columns:repeat(2,1fr)}
+  section{padding:48px 18px 12px}
+  .hero-inner{padding:52px 20px 42px}
+  .stat{min-width:calc(50% - 6px);flex:1}
+}
+@media print{
+  .topnav,.scroll-progress,#particles{display:none!important}
+  body::before,.hero::after{display:none}
+  body{background:#fff;color:#14223a}
+  .hero{min-height:auto;background:none;border:none}
+  section{padding:28px 12px 8px;max-width:none}
+  .reveal{opacity:1;transform:none}
+  .pcard,.dcard,.ac-panel,.miles,.rule{break-inside:avoid;box-shadow:none;border-color:#c7d2e7}
+}
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="progress"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="brand">
+    <span class="logo"></span>
+    <div><b>校园二手交易 Multi-Agent</b><small>WBS · WORK BREAKDOWN STRUCTURE</small></div>
+  </div>
+  <div class="nav-right">
+    <span class="nav-range"><b>W1–W8</b> · 2026.09.14 – 11.08</span>
+    <button class="icon-btn" id="printBtn" title="打印 / 导出 PDF">🖨</button>
+    <button class="icon-btn" id="themeBtn" title="切换主题">🌙</button>
+  </div>
+</nav>
+
+<!-- ============ Hero ============ -->
+<header class="hero">
+  <canvas id="particles"></canvas>
+  <div class="hero-inner">
+    <div class="eyebrow">PROJECT WBS · 8 WEEKS · 35 WORK PACKAGES</div>
+    <h1>校园二手交易平台 <span class="grad">Multi-Agent 系统</span><br>工作分解结构 WBS</h1>
+    <p class="sub">
+      以 <b>1 个协调管理 Agent ＋ 8 个专家 Agent</b> 为交付主体，按 <b>8 个项目周（W1–W8）</b>分解为 8 个阶段、
+      35 项工作包，下接任务队列 <b>T1–T32</b>、上挂 <b>M1–M8 里程碑</b>，与《需求规格说明书 V4.0》、
+      8 期周报及项目甘特图<b>同源一致、可追溯、可验收</b>。核心研究线为
+      <b>黑板 SSOT ＋ FIPA ACL 消息总线 ＋ 三级冲突决策（对等协商 → 效用仲裁/加权投票 → 人工兜底）</b>。
+    </p>
+    <div class="stats">
+      <div class="stat"><div class="num"><span data-count="8">0</span><em> 项目周</em></div><div class="lab">W1–W8 · 09.14–11.08</div></div>
+      <div class="stat"><div class="num"><span data-count="9">0</span><em> 个 Agent</em></div><div class="lab">协调者 1 ＋ 专家 8</div></div>
+      <div class="stat"><div class="num"><span data-count="35">0</span><em> 工作包</em></div><div class="lab">对接 T1–T32 任务队列</div></div>
+      <div class="stat"><div class="num"><span data-count="8">0</span><em> 里程碑</em></div><div class="lab">M1 基线冻结 → M8 答辩</div></div>
+      <div class="stat"><div class="num"><span data-count="10">0</span><em>+ 冲突剧本</em></div><div class="lab">C1–C8 一键回归</div></div>
+      <div class="stat"><div class="num"><span data-count="32">0</span><em> 项 pytest</em></div><div class="lab">并发 · 故障注入 · 无 Key</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 01 WBS 树图 ============ -->
+<section id="tree">
+  <div class="sec-head reveal">
+    <div>
+      <div class="sec-no">01 · WBS HIERARCHY</div>
+      <h2>分层分解总览：8 阶段 · 35 工作包 · 8 里程碑</h2>
+      <p class="sec-desc">阶段（Level 2）按项目周切分，工作包（Level 3）标注 <b>WBS 编号 ＋ T 任务号</b>，金色为 <b>P1 增强项（可裁剪）</b>；
+        每阶段底部虚线框为该期关键产出，里程碑 M1–M8 与甘特图严格对齐。</p>
+    </div>
+    <span class="sec-tag">分解粒度：每包可独立验收 · 对应 <b>15 条验收准则 AC</b></span>
+  </div>
+
+  <div class="tree-wrap">
+    <div class="root-node reveal">
+      <div class="r-en">Campus Second-hand Trading · Multi-Agent Platform</div>
+      <div class="r-cn">校园二手交易 Multi-Agent 平台 —— 可运行 · 可演示 · 可解释 · 可复现</div>
+      <div class="r-meta">FastAPI · LangGraph · FIPA ACL · 黑板 SSOT · DeepSeek/RuleLLM 双引擎 ｜ Vue3 · Element Plus · Mission Control 控制台</div>
+    </div>
+    <div class="trunk"></div>
+    <div class="rail-line"></div>
+
+    <div class="phase-grid">
+
+      <!-- W1 -->
+      <div class="phase">
+        <div class="stem-v"></div>
+        <div class="pcard ph1 reveal" style="--d:.02s">
+          <div class="phead hg1">
+            <div class="wk"><b>W1</b><span>阶段 1</span></div>
+            <div class="nm">立项调研与范围定义</div>
+            <div class="dt">2026.09.14 – 09.20</div>
+            <span class="en">Research &amp; Scoping</span>
+          </div>
+          <div class="pkgs">
+            <div class="pkg bl1"><span class="code">1.1</span>业务链路调研与四大痛点梳理</div>
+            <div class="pkg bl1"><span class="code">1.2</span>七家竞品分析（闲鱼/转转/拍拍等）</div>
+            <div class="pkg bl1"><span class="code">1.3</span>技术预研：LangGraph 与 FIPA ACL</div>
+            <div class="pkg bl1"><span class="code">1.4</span>可行性评估与 P0/P1 范围初定</div>
+          </div>
+          <div class="pdeliver"><b>产出</b>　竞品调研报告 · 第 1 期周报 · 调研基线</div>
+        </div>
+      </div>
+
+      <!-- W2 -->
+      <div class="phase">
+        <div class="stem-v"></div>
+        <div class="pcard ph2 reveal" style="--d:.07s">
+          <div class="phead hg2">
+            <div class="wk"><b>W2</b><span>阶段 2</span></div>
+            <div class="nm">需求迭代与详细设计</div>
+            <div class="dt">2026.09.21 – 09.27</div>
+            <span class="en">Requirements &amp; Design</span>
+          </div>
+          <div class="pkgs">
+            <div class="pkg bl2"><span class="code">2.1</span>异常链路调研深化与资料整理</div>
+            <div class="pkg bl2"><span class="code">2.2</span><b>T1</b> 九张 Agent 角色卡与 IO 契约<span class="t">职责 / Pydantic Schema / 异常码</span></div>
+            <div class="pkg bl2"><span class="code">2.3</span>ACL 协议 · ER 模型 · 订单状态机</div>
+            <div class="pkg bl2"><span class="code">2.4</span>冲突检测清单与仲裁评分卡</div>
+          </div>
+          <div class="pdeliver"><b>产出</b>　详设说明书初稿（9 角色卡/ACL/ER/状态机）</div>
+        </div>
+      </div>
+
+      <!-- W3 -->
+      <div class="phase">
+        <div class="stem-v"></div>
+        <div class="pcard ph3 reveal" style="--d:.12s">
+          <div class="phead hg3">
+            <div class="wk"><b>W3</b><span>阶段 3</span></div>
+            <div class="nm">工程骨架与通信内核</div>
+            <div class="dt">2026.09.28 – 10.04</div>
+            <span class="en">Foundation &amp; MAS Kernel</span>
+          </div>
+          <div class="pkgs">
+            <div class="pkg bl3"><span class="code">3.1</span><b>T2</b> FastAPI / Vue3 工程骨架与配置</div>
+            <div class="pkg bl3"><span class="code">3.2</span><b>T3</b> SQLModel 数据模型与种子数据</div>
+            <div class="pkg bl3"><span class="code">3.3</span><b>T5</b> 类型化黑板 SSOT ＋ reducer</div>
+            <div class="pkg bl3"><span class="code">3.4</span>ACL 消息总线 · Agent 基类与注册表</div>
+            <div class="pkg bl3"><span class="code">3.5</span>需求 V1.0 → V2.0 两轮迭代</div>
+          </div>
+          <div class="pdeliver"><b>产出</b>　可登录空骨架 · 内核契约就绪</div>
+        </div>
+      </div>
+
+      <!-- W4 -->
+      <div class="phase">
+        <div class="stem-v"></div>
+        <div class="pcard ph4 reveal" style="--d:.17s">
+          <div class="phead hg4">
+            <div class="wk"><b>W4</b><span>阶段 4</span></div>
+            <div class="nm">九大 Agent 与冲突引擎</div>
+            <div class="dt">2026.10.05 – 10.11</div>
+            <span class="en">Agents ×9 · Conflict Core</span>
+          </div>
+          <div class="pkgs">
+            <div class="pkg bl4"><span class="code">4.1</span><b>T4/T6/T7</b> JWT 鉴权 · LLM 双引擎 · 检查点<span class="t">DeepSeek ↔ RuleLLM 自动降级</span></div>
+            <div class="pkg bl4"><span class="code">4.2</span><b>T8</b> 协调者与 LangGraph 主编排图</div>
+            <div class="pkg bl4"><span class="code">4.3</span><b>T9–T16</b> 八大专家 Agent 节点</div>
+            <div class="pkg bl4"><span class="code">4.4</span><b>T17–T19</b> 四类检测 · 一级协商 · 二级仲裁<span class="t">纳什让步 / 效用 U / 加权投票</span></div>
+            <div class="pkg bl4"><span class="code">4.5</span><b>T21–T23</b> REST API · 议价 WS · 前端脚手架</div>
+          </div>
+          <div class="pdeliver"><b>里程碑</b>　命令行主链路贯通（M3 前置）</div>
+        </div>
+      </div>
+
+      <!-- W5 -->
+      <div class="phase">
+        <div class="stem-v"></div>
+        <div class="pcard ph5 reveal" style="--d:.22s">
+          <div class="phead hg5">
+            <div class="wk"><b>W5</b><span>阶段 5</span></div>
+            <div class="nm">基线冻结与三端联调</div>
+            <div class="dt">2026.10.12 – 10.18</div>
+            <span class="en">Baseline &amp; Integration</span>
+          </div>
+          <div class="pkgs">
+            <div class="pkg bl5"><span class="code">5.1</span>需求 V4.0 冻结：15 FR / 15 AC</div>
+            <div class="pkg bl5"><span class="code">5.2</span><b>T20</b> 三级人工 interrupt · 熔断 · veto<span class="t">安全一票否决最高优先</span></div>
+            <div class="pkg bl5"><span class="code">5.3</span><b>T24</b> 卖家端：发布/议价/交付/申诉</div>
+            <div class="pkg bl5"><span class="code">5.4</span><b>T25</b> 买家端：市场→议价→支付→评价</div>
+          </div>
+          <div class="pdeliver"><b>M1</b> 10.13 基线冻结　<b>M2</b> 10.16 API/WS 贯通</div>
+        </div>
+      </div>
+
+      <!-- W6 -->
+      <div class="phase">
+        <div class="stem-v"></div>
+        <div class="pcard ph6 reveal" style="--d:.27s">
+          <div class="phead hg6">
+            <div class="wk"><b>W6</b><span>阶段 6</span></div>
+            <div class="nm">剧本 · 测试 · 管理台</div>
+            <div class="dt">2026.10.19 – 10.25</div>
+            <span class="en">Scenarios · QA · Console</span>
+          </div>
+          <div class="pkgs">
+            <div class="pkg bl6"><span class="code">6.1</span><b>T28</b> C1–C8 剧本库与一键运行器（≥10）</div>
+            <div class="pkg bl6"><span class="code">6.2</span><b>T26</b> 管理员工作台：终裁/熔断/回放</div>
+            <div class="pkg p1 bl6"><span class="code">6.3</span><b>T27</b> 黑板监控大屏（ECharts）　P1</div>
+            <div class="pkg bl6"><span class="code">6.4</span><b>T29</b> 质量门禁：32 pytest 全量回归</div>
+            <div class="pkg bl6"><span class="code">6.5</span>集成联调与缺陷修复缓冲（2 日）</div>
+          </div>
+          <div class="pdeliver"><b>M3</b> E2E 贯通　<b>M4</b> 三端就位　<b>M5</b> 测试通过</div>
+        </div>
+      </div>
+
+      <!-- W7 -->
+      <div class="phase">
+        <div class="stem-v"></div>
+        <div class="pcard ph7 reveal" style="--d:.32s">
+          <div class="phead hg7">
+            <div class="wk"><b>W7</b><span>阶段 7</span></div>
+            <div class="nm">可观测增强与一键启动</div>
+            <div class="dt">2026.10.26 – 11.01</div>
+            <span class="en">Observability &amp; Hardening</span>
+          </div>
+          <div class="pkgs">
+            <div class="pkg p1 bl7"><span class="code">7.1</span><b>T30</b> 效用权重对比实验工具　P1</div>
+            <div class="pkg bl7"><span class="code">7.2</span>LangSmith trace 接入与可视化调试</div>
+            <div class="pkg bl7"><span class="code">7.3</span><b>T31</b> start-all.ps1 一键启动 ＋ README</div>
+            <div class="pkg bl7"><span class="code">7.4</span>周报与过程资产沉淀（W1–W7）</div>
+          </div>
+          <div class="pdeliver"><b>M6</b> 10.30　P0 冻结 · 一键启动</div>
+        </div>
+      </div>
+
+      <!-- W8 -->
+      <div class="phase">
+        <div class="stem-v"></div>
+        <div class="pcard ph8 reveal" style="--d:.37s">
+          <div class="phead hg8">
+            <div class="wk"><b>W8</b><span>阶段 8</span></div>
+            <div class="nm">部署交付与结题答辩</div>
+            <div class="dt">2026.11.02 – 11.08</div>
+            <span class="en">Delivery &amp; Defense</span>
+          </div>
+          <div class="pkgs">
+            <div class="pkg p1 bl8"><span class="code">8.1</span><b>T32</b> Docker Compose 编排部署　P1</div>
+            <div class="pkg bl8"><span class="code">8.2</span>文档定稿：SRS V4 / 风险计划 / 测试报告</div>
+            <div class="pkg bl8"><span class="code">8.3</span>演示资产：HTML deck / 甘特图 / 流程图 / WBS</div>
+            <div class="pkg bl8"><span class="code">8.4</span>离线彩排：无 Key 全链路五分钟动线</div>
+          </div>
+          <div class="pdeliver"><b>M7</b> 11.04 彩排完成　<b>M8</b> 11.08 结题答辩</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 里程碑 -->
+    <div class="miles reveal">
+      <div class="miles-title">◆ 关键里程碑路径（M1–M8 · 与甘特图同源）</div>
+      <div class="miles-track">
+        <div class="ms mc1 reveal" style="--d:.02s"><div class="dia"></div><div class="mcode">M1</div><div class="mdate">10.13</div><div class="mname">需求基线 V4 冻结</div></div>
+        <div class="ms mc2 reveal" style="--d:.07s"><div class="dia"></div><div class="mcode">M2</div><div class="mdate">10.16</div><div class="mname">API / WebSocket 贯通</div></div>
+        <div class="ms mc3 reveal" style="--d:.12s"><div class="dia"></div><div class="mcode">M3</div><div class="mdate">10.19</div><div class="mname">交易主链路 E2E 贯通</div></div>
+        <div class="ms mc4 reveal" style="--d:.17s"><div class="dia"></div><div class="mcode">M4</div><div class="mdate">10.21</div><div class="mname">三端前端 ＋ 剧本就位</div></div>
+        <div class="ms mc5 reveal" style="--d:.22s"><div class="dia"></div><div class="mcode">M5</div><div class="mdate">10.23</div><div class="mname">全量测试门禁通过</div></div>
+        <div class="ms mc6 reveal" style="--d:.27s"><div class="dia"></div><div class="mcode">M6</div><div class="mdate">10.30</div><div class="mname">P0 冻结 · 一键启动</div></div>
+        <div class="ms mc7 reveal" style="--d:.32s"><div class="dia"></div><div class="mcode">M7</div><div class="mdate">11.04</div><div class="mname">离线彩排完成</div></div>
+        <div class="ms mc8 reveal" style="--d:.37s"><div class="dia"></div><div class="mcode">M8</div><div class="mdate">11.08</div><div class="mname">结题答辩</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 交付物 ============ -->
+<section id="deliverables">
+  <div class="sec-head reveal">
+    <div>
+      <div class="sec-no">02 · DELIVERABLES MATRIX</div>
+      <h2>交付物矩阵：五条工作流的可验收成果</h2>
+      <p class="sec-desc">每个工作包均归入唯一交付物主线，成果在仓库中均有对应代码或文档实体，答辩演示<b>不依赖外网与 API Key</b>。</p>
+    </div>
+    <span class="sec-tag">与仓库结构 <b>backend/app · frontend/src · 验证材料</b> 一一对应</span>
+  </div>
+
+  <div class="del-grid">
+    <div class="dcard dc1 reveal">
+      <div class="dtop"></div>
+      <div class="dico">📐</div>
+      <h3>需求与设计文档</h3>
+      <div class="dsub">Requirements · Design</div>
+      <ul>
+        <li><b>SRS V4.0</b>：15 项 FR ＋ 15 条 AC 基线</li>
+        <li>详设：<b>9 张角色卡</b> · ACL 字段表 · 异常码表</li>
+        <li>ER 模型与订单/商品状态机迁移表</li>
+        <li>竞品调研报告 · 风险计划 V1 · <b>8 期周报</b></li>
+      </ul>
+    </div>
+    <div class="dcard dc2 reveal">
+      <div class="dtop"></div>
+      <div class="dico">🧠</div>
+      <h3>Agent 内核与编排</h3>
+      <div class="dsub">Kernel · Orchestration</div>
+      <ul>
+        <li>kernel：黑板 SSOT · ACL 总线 · 注册表 · 检查点</li>
+        <li><b>9 个 Agent</b>：协调者 ＋ 用户/商品/审核/搜索/议价/履约/信用/仲裁</li>
+        <li><b>4 条 LangGraph 流程</b>：发布 / 交易 / 申诉 / 演示</li>
+        <li>DeepSeek 适配 ＋ RuleLLM 确定性兜底双引擎</li>
+      </ul>
+    </div>
+    <div class="dcard dc3 reveal">
+      <div class="dtop"></div>
+      <div class="dico">⚖️</div>
+      <h3>冲突决策（研究核心）</h3>
+      <div class="dsub">Conflict Resolution</div>
+      <ul>
+        <li>四类检测：资源 / 目标 / 知识 / 决策冲突</li>
+        <li>一级：≤3 轮对等协商（让步 ＋ <b>纳什参考价</b>）</li>
+        <li>二级：全局效用 U ＋ 三方加权投票（0.5/0.2/0.3）</li>
+        <li>三级：人工 interrupt 冻结 · veto 否决 · Agent 熔断</li>
+      </ul>
+    </div>
+    <div class="dcard dc4 reveal">
+      <div class="dtop"></div>
+      <div class="dico">🖥</div>
+      <h3>业务系统与三端前端</h3>
+      <div class="dsub">API · WebSocket · UI</div>
+      <ul>
+        <li>REST 全量接口（统一响应码/OpenAPI）＋ 议价 WebSocket</li>
+        <li>买家端：市场/议价室/订单/支付/评价/信用</li>
+        <li>卖家端：发布/我的商品/交付/申诉裁决书</li>
+        <li><b>Mission Control 控制台</b>五区块：总览/追踪/总线/黑板/冲突</li>
+      </ul>
+    </div>
+    <div class="dcard dc5 reveal">
+      <div class="dtop"></div>
+      <div class="dico">✅</div>
+      <h3>质量验证与部署</h3>
+      <div class="dsub">QA · Observability · Delivery</div>
+      <ul>
+        <li><b>C1–C8 ≥10 剧本</b>一键回归与期望对照表</li>
+        <li>32 项 pytest：并发抢单 / LLM 故障注入 / 无 Key 全链路</li>
+        <li>LangSmith trace 可视化调试（节点级证据截图）</li>
+        <li>start-all.ps1 一键启动 · Docker Compose（P1）· README</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- AC 覆盖 -->
+  <div class="ac-panel reveal">
+    <div class="sec-no" style="margin-bottom:4px">ACCEPTANCE CRITERIA · 15 条验收准则全覆盖</div>
+    <div class="sec-desc" style="margin-top:0">工作包与 AC 双向可追溯：安全否决、主链路、并发抢单、议价规则、三级阶梯、SSOT 纠正、剧本、无 Key、可插拔、轨迹回放、ACL、LLM 故障、前端/可解释/工程质量 rubric。</div>
+    <div class="ac-grid">
+      <div class="ac"><i>AC-1</i>安全一票否决</div>
+      <div class="ac"><i>AC-2</i>主链路贯通</div>
+      <div class="ac"><i>AC-3</i>并发抢单一致</div>
+      <div class="ac"><i>AC-4</i>议价规则留痕</div>
+      <div class="ac"><i>AC-5</i>三级阶梯决策</div>
+      <div class="ac"><i>AC-6</i>黑板 SSOT 纠正</div>
+      <div class="ac"><i>AC-7</i>八场景 ≥10 剧本</div>
+      <div class="ac"><i>AC-8</i>无 Key 可演示</div>
+      <div class="ac"><i>AC-9</i>Agent 可插拔</div>
+      <div class="ac"><i>AC-10</i>决策轨迹回放</div>
+      <div class="ac"><i>AC-11</i>ACL 协议合规</div>
+      <div class="ac"><i>AC-12</i>LLM 故障降级</div>
+      <div class="ac"><i>AC-13</i>前端 rubric ≥4</div>
+      <div class="ac"><i>AC-14</i>结论可解释 rubric</div>
+      <div class="ac"><i>AC-15</i>工程质量 rubric</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 分解规则 ============ -->
+<section id="rules" style="padding-bottom:8px">
+  <div class="sec-head reveal">
+    <div>
+      <div class="sec-no">03 · DECOMPOSITION RULES</div>
+      <h2>编号规则与分解原则</h2>
+    </div>
+  </div>
+  <div class="rule-grid">
+    <div class="rule reveal">
+      <div class="rno">%</div>
+      <div>
+        <h3>100% 规则 · 交付物导向</h3>
+        <p>子层工作包之和 <b>100% 覆盖父级范围</b>，无遗漏、无交叉；每包产出可检查的文档/代码/测试实体，并至少映射一条 <b>AC 验收准则</b>。</p>
+      </div>
+    </div>
+    <div class="rule reveal">
+      <div class="rno">8h</div>
+      <div>
+        <h3>粒度控制 · 独立可验收</h3>
+        <p>工作包工作量控制在可于一个项目周内闭环的粒度；<b>W 周 → x.y 工作包 → T# 任务</b>三级编号，T 任务含依赖、验收标准与测试要求。</p>
+      </div>
+    </div>
+    <div class="rule reveal">
+      <div class="rno">P</div>
+      <div>
+        <h3>优先级与裁剪策略</h3>
+        <p><b class="p0-dot">P0 必交付</b>：内核/Agent/三级决策/三端主链路/测试；<b class="p1-dot">P1 增强项（金色标记）</b>：监控大屏、权重实验、Docker，进度受影响时优先裁剪以保 M8 答辩。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <div>
+      <b>校园二手交易平台 Multi-Agent 系统</b> · WBS 工作分解结构 v2.0（2026-10-15）<br>
+      梁奕琦（学号 2400320321）　指导老师：曾志新　｜　配套文档：SRS V4.0 · tasks.md 任务队列 · 项目甘特图 · 8 期周报
+    </div>
+    <div class="foot-links">
+      <a href="项目甘特图.html">项目甘特图</a>
+      <a href="系统流程图.html">系统流程图</a>
+      <a href="系统测试报告.html">系统测试报告</a>
+      <a href="ppt/校园二手交易Multi-Agent项目演示/校园二手交易Multi-Agent项目演示.html">答辩演示 Deck</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---------- 被演示 deck iframe 嵌入时浅色，独立打开深色 ---------- */
+if(window.self!==window.top){document.documentElement.dataset.theme='light';}
+const themeBtn=document.getElementById('themeBtn');
+function syncBtn(){themeBtn.textContent=document.documentElement.dataset.theme==='dark'?'🌙':'☀️';}
+syncBtn();
+themeBtn.addEventListener('click',()=>{
+  const d=document.documentElement;
+  d.dataset.theme=d.dataset.theme==='dark'?'light':'dark';syncBtn();
+});
+document.getElementById('printBtn').addEventListener('click',()=>window.print());
+
+/* ---------- 顶部导航 & 滚动进度 ---------- */
+const nav=document.getElementById('topnav'),prog=document.getElementById('progress');
+addEventListener('scroll',()=>{
+  nav.classList.toggle('scrolled',scrollY>40);
+  const h=document.documentElement.scrollHeight-innerHeight;
+  prog.style.width=(h>0?scrollY/h*100:0)+'%';
+},{passive:true});
+
+/* ---------- 入场动效 ---------- */
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
+}),{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ---------- 数字滚动 ---------- */
+const cio=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;cio.unobserve(e.target);
+  const el=e.target,end=+el.dataset.count,t0=performance.now(),dur=1200;
+  (function tick(now){
+    const p=Math.min((now-t0)/dur,1),v=Math.round((1-Math.pow(1-p,3))*end);
+    el.textContent=v;if(p<1)requestAnimationFrame(tick);
+  })(t0);
+}),{threshold:.6});
+document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
+
+/* ---------- Hero 粒子 ---------- */
+(function(){
+  const cv=document.getElementById('particles'),ctx=cv.getContext('2d');
+  let W,H,pts,DPR=Math.min(devicePixelRatio||1,2),RAF;
+  const N=56;
+  function palette(){
+    const dark=document.documentElement.dataset.theme!=='light';
+  return {
+    a:dark?'94,234,212':'13,148,136',
+    b:dark?'129,140,248':'79,70,229',
+    line:dark?'148,163,184':'71,101,140'
+  };}
+  let P=palette();
+  function resize(){
+    W=cv.offsetWidth;H=cv.offsetHeight;
+    cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);
+    pts=Array.from({length:N},()=>({
+      x:Math.random()*W,y:Math.random()*H,
+      vx:(Math.random()-.5)*.35,vy:(Math.random()-.35)*.35,
+      r:Math.random()*1.7+.7,c:Math.random()>.5?P.a:P.b
+    }));
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(const p of pts){
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);
+      ctx.fillStyle='rgba('+p.c+',.65)';ctx.fill();
+    }
+    for(let i=0;i<N;i++)for(let j=i+1;j<N;j++){
+      const a=pts[i],b=pts[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy);
+      if(d<120){
+        ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+        ctx.strokeStyle='rgba('+P.line+','+(1-d/120)*.22+')';
+        ctx.lineWidth=.7;ctx.stroke();
+      }
+    }
+    RAF=requestAnimationFrame(draw);
+  }
+  resize();draw();
+  addEventListener('resize',()=>{cancelAnimationFrame(RAF);resize();draw();});
+  new MutationObserver(()=>{P=palette();pts.forEach(p=>p.c=Math.random()>.5?P.a:P.b);})
+    .observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+})();
+</script>
+</body>
+</html>

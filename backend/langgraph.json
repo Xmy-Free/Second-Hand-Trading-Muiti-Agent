@@ -1,0 +1,10 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "publish_flow": "./app/graph/flows/publish_flow.py:build",
+    "trade_flow": "./app/graph/flows/trade_flow.py:build",
+    "appeal_flow": "./app/graph/flows/appeal_flow.py:build",
+    "demo_flow": "./app/graph/flows/demo_flow.py:build"
+  },
+  "env": ".env"
+}

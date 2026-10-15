@@ -11,6 +11,7 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 .venv/
+.venv-studio/
 venv/
 env/
 
@@ -29,6 +30,9 @@ pnpm-debug.log*
 *.db-shm
 *.sqlite
 *.sqlite3
+
+# ===== LangGraph Dev Server 本地状态 =====
+.langgraph_api/
 
 # ===== 日志 / 临时文件 =====
 *.log
